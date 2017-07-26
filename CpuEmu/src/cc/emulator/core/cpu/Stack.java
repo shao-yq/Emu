@@ -6,7 +6,7 @@ import cc.emulator.core.cpu.MemoryAccessor;
  * @author Shao Yongqing
  * Date: 2017/7/26.
  */
-public class Stack {
+public abstract class Stack {
     MemoryAccessor memoryAccessor;
     AddressGenerator addressGenerator;
 
@@ -31,8 +31,12 @@ public class Stack {
         this.sp = sp;
     }
 
-    private int                sp;
-    private int                ss;
+    public void addSp(int delta) {
+        this.sp += delta;
+    }
+
+    protected int                sp;
+    protected int                ss;
 
     /**
      * Pushes a value to the top of the stack.
@@ -55,9 +59,6 @@ public class Stack {
         this.addressGenerator = addressGenerator;
     }
 
-    protected void decSp(){
-        sp = sp - 2 & 0xffff;
-    }
 
     /**
      * Pops a value at the top of the stack.
@@ -74,8 +75,8 @@ public class Stack {
         return val;
     }
 
-    void incSp() {
-        sp = sp + 2 & 0xffff;
-    }
+    protected abstract void decSp();
+
+    protected abstract void incSp();
 
 }

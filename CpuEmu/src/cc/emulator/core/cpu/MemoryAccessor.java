@@ -11,7 +11,6 @@ public abstract class MemoryAccessor {
     DataRegister dataRegister;
 
 
-
     public DataListener getDataRegister() {
         return dataRegister;
     }
@@ -28,13 +27,10 @@ public abstract class MemoryAccessor {
 
     public MemoryAccessor(AddressBus addressBus, DataBus dataBus){
         dataRegister = createDataRegister();
-        this.dataBus = dataBus; // createDataBus();
-        this.addressBus = addressBus; // createAddressBus();
+        this.dataBus = dataBus;
+        this.addressBus = addressBus;
     }
 
-    //protected abstract AddressBus createAddressBus();
-
-    //protected abstract DataBus createDataBus();
 
     protected abstract DataRegister createDataRegister() ;
 

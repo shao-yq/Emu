@@ -11,9 +11,6 @@ public interface DataBus {
     int getDataWidth();
     void setDataWidth(int w);
 
-//    void receiveData(int v);
-//    void receiveData(long v);
-
     /**
      * Retrieve data from the bus, which is put before
      * @return data in 1, 2, 4 bytes

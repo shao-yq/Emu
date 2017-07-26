@@ -345,7 +345,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * erase them. The top of the stack changes only as the result of updating
      * the stack pointer.
      */
-    private int                sp;
+    //private int                sp;
 
     /**
      * BP (base pointer)
@@ -413,7 +413,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * The SS register points to the current stack segment, stack operations
      * are performed on locations in this segment.
      */
-     private int                ss;
+     //private int                ss;
 
     /**
      * ES (extra segment)
@@ -613,9 +613,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      */
     //protected final int[]      memory      = new int[0x100000];
     //public int[]      memory      = new int[0x100000];
-    public void setMemory(int[]mem){
+    //public void setMemory(int[]mem){
         //this.memory = mem;
-    }
+    //}
 
     /*
      * External Components
@@ -1142,7 +1142,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case BX: //  0b011: // BX
                 return bh << 8 | bl;
             case 0b100: // SP
-                return sp;
+                return getStack().getSp();  // sp;
             case 0b101: // BP
                 return bp;
             case 0b110: // SI
@@ -1199,7 +1199,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         case CS: // 0b01: // CS
             return cs;
         case SS: // 0b10: // SS
-            return ss;
+            return getStack().getSs();  // ss;
         case DS: // 0b11: // DS
             return ds;
         }
@@ -1275,11 +1275,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the value
      */
     private int pop() {
-        //return getStack().pop();
+        return getStack().pop();
 
-        final int val = getMem(W, getAddr(ss, sp));
-        sp = sp + 2 & 0xffff;
-        return val;
+//        final int val = getMem(W, getAddr(ss, sp));
+//        sp = sp + 2 & 0xffff;
+//        return val;
     }
 
     /**
@@ -1323,10 +1323,10 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      *            the value
      */
     private void push(final int val) {
-       // getStack().push(val);
+        getStack().push(val);
 
-        sp = sp - 2 & 0xffff;
-        setMem(W, getAddr(ss, sp), val);
+//        sp = sp - 2 & 0xffff;
+//        setMem(W, getAddr(ss, sp), val);
     }
 
     /**
@@ -1337,7 +1337,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         ip = 0x0000;
         cs = 0xffff;
         ds = 0x0000;
-        ss = 0x0000;
+        getStack().setSs(0x0000); // ss = 0x0000;
         es = 0x0000;
         for (int i = 0; i < 6; i++)
             queue[i] = 0;
@@ -1489,7 +1489,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 bh = val >>> 8 & 0xff;
                 break;
             case SP: //  0b100: // SP
-                sp = val & 0xffff;
+                getStack().setSp(val & 0xffff);     // sp = val & 0xffff;
                 break;
             case BP: //  0b101: // BP
                 bp = val & 0xffff;
@@ -1553,7 +1553,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             cs = val & 0xffff;
             break;
         case SS: //  0b10: // SS
-            ss = val & 0xffff;
+            getStack().setSs(val & 0xffff);     // ss = val & 0xffff;
             break;
         case DS: //  0b11: // DS
             ds = val & 0xffff;
@@ -1615,7 +1615,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 clocks += 2;
                 break;
             case 0x36: // SS: (segment override prefix)
-                os = ss;
+                os = getStack().getSs();    // ss;
                 clocks += 2;
                 break;
             case 0x3e: // DS: (segment override prefix)
@@ -3388,7 +3388,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
                 src = getMem(W);
                 ip = pop();
-                sp += src;
+                getStack().addSp(src);     // sp += src;
                 clocks += 12;
                 break;
 
@@ -3404,7 +3404,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 src = getMem(W);
                 ip = pop();
                 cs = pop();
-                sp += src;
+                getStack().addSp(src);     // sp += src;
                 clocks += 17;
                 break;
 

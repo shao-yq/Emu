@@ -15,7 +15,7 @@ public abstract class Cpu {
         while (tick());
     }
 
-    public abstract void setMemory(int[] memory) ;
+    //public abstract void setMemory(int[] memory) ;
     /**
      * Resets the CPU to its default state.
      */

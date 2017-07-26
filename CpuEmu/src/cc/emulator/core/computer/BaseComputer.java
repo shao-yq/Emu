@@ -47,7 +47,7 @@ public abstract class BaseComputer implements Computer {
         memory.reset();
         cpu =  createCpu(memory);
         cpu.reset();
-        cpu.setMemory(memory.getMemoryBase());
+        //cpu.setMemory(memory.getMemoryBase());
 
         memory.addDataListener(cpu.getMemoryAccessor().getDataRegister());
     }

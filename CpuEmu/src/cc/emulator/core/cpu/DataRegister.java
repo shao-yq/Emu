@@ -14,14 +14,5 @@ public class DataRegister implements  DataListener {
         }
 
     }
-//    @Override
-//    public void receiveData(int v) {
-//        //data = v;
-//    }
-//
-//    @Override
-//    public void receiveData(long v) {
-//        //data = (int)(v&0xFFFFFFFF);
-//        //data2 = (int)(v>>32);
-//    }
+
 }

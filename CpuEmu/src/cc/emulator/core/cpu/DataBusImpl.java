@@ -52,13 +52,4 @@ public abstract class DataBusImpl implements DataBus{
         data2 = v;
     }
 
-//    @Override
-//    public int readData(int w) {
-//        return data;
-//    }
-//
-//    @Override
-//    public void writeData(int v) {
-//        this.data = v;
-//    }
 }
