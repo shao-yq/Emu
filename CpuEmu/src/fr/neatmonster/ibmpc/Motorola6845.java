@@ -1,5 +1,7 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.DisplayController;
+
 /**
  * Motorola 6845 - Motorola 6845 - Cathode Ray Tube Controller
  *
@@ -15,7 +17,7 @@ package fr.neatmonster.ibmpc;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Motorola6845 implements Peripheral {
+public class Motorola6845 implements DisplayController {
     /** The index of the register to access. */
     private int         index;
     /** The registers accessed by the CPU. */

@@ -1,5 +1,8 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableIntervalTimer;
+
 /**
  * The Intel 8253 is a programmable counter/timer device designed for use as an
  * Intel microcomputer peripheral. It uses NMOS technology with a single +5V
@@ -35,13 +38,13 @@ package fr.neatmonster.ibmpc;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8253 implements Peripheral {
+public class Intel8253 implements ProgrammableIntervalTimer {
     /**
      * Intel 8259 - Programmable Interrupt Controller
      *
      * @see fr.neatmonster.ibmpc.Intel8259
      */
-    private final Intel8259 pic;
+    private final ProgrammableInterrupt pic;
 
     /** The actual value of each counter. */
     private final int[]     count   = new int[3];
@@ -60,7 +63,7 @@ public class Intel8253 implements Peripheral {
     /** The toggle for lsb, then msb reading. */
     private final boolean[] toggle  = new boolean[3];
 
-    public Intel8253(final Intel8259 pic) {
+    public Intel8253(ProgrammableInterrupt pic) {
         this.pic = pic;
     }
 
@@ -81,7 +84,7 @@ public class Intel8253 implements Peripheral {
      *
      * @param sc
      *            the timer
-     * @param high
+     * @param state
      *            the output state
      */
     private void output(final int sc, final boolean state) {

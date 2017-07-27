@@ -1,4 +1,4 @@
-package fr.neatmonster.ibmpc;
+package cc.emulator.core;
 
 public interface Peripheral {
 

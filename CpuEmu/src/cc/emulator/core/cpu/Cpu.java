@@ -1,12 +1,17 @@
 package cc.emulator.core.cpu;
 
+import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.computer.MemoryManager;
+import cc.emulator.core.Peripheral;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/25.
  */
 public abstract class Cpu {
+
+    protected Peripheral[] peripherals;
 
     /**
      * Execute all instructions.
@@ -66,4 +71,20 @@ public abstract class Cpu {
     public MemoryAccessor getMemoryAccessor() {
         return memoryAccessor;
     }
+
+    public void setPeripherals(Peripheral[] peripherals) {
+        this.peripherals = peripherals;
+    }
+
+    protected ProgrammableInterrupt pic;
+    public void setPic(ProgrammableInterrupt pic) {
+        this.pic = pic;
+    }
+    protected ProgrammableIntervalTimer pit;
+
+    public void setPit(ProgrammableIntervalTimer pit) {
+        this.pit = pit;
+    }
+
+
 }

@@ -1,5 +1,8 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammablePeripheralInterface;
+
 /**
  * The Intel 8255 is a general purpose programmable I/O device designed for use
  * with Intel microprocessors. It has 24 I/O pins which may be individually
@@ -14,13 +17,13 @@ package fr.neatmonster.ibmpc;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8255 implements Peripheral {
+public class Intel8255 implements ProgrammablePeripheralInterface {
     /**
      * Intel 8259 - Programmable Interrupt Controller
      *
      * @see fr.neatmonster.ibmpc.Intel8259
      */
-    private final Intel8259 pic;
+    private final ProgrammableInterrupt pic;
     /**
      * 4 ports of the PIC (A, B, C and Control) as registers.
      */
@@ -32,7 +35,7 @@ public class Intel8255 implements Peripheral {
      * @param pic
      *            the pic
      */
-    public Intel8255(final Intel8259 pic) {
+    public Intel8255(final ProgrammableInterrupt pic) {
         this.pic = pic;
         ports[0] = 0x2c;
     }

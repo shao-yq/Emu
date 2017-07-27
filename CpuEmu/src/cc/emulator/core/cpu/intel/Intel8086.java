@@ -1,8 +1,12 @@
 package cc.emulator.core.cpu.intel;
 
+import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
-import fr.neatmonster.ibmpc.*;
+import cc.emulator.core.Peripheral;
+import fr.neatmonster.ibmpc.Intel8253;
+import fr.neatmonster.ibmpc.Intel8259;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -201,6 +205,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     protected AddressGenerator createAddressGenerator() {
         return new IntelAddressGenerator();
     }
+
+
 
     /**
      * Entry point. For now it executes a little test program.
@@ -617,59 +623,6 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         //this.memory = mem;
     //}
 
-    /*
-     * External Components
-     */
-    /**
-     * Intel 8237 - Direct Memory Access Controller
-     *
-     * @see fr.neatmonster.ibmpc.Intel8237
-     */
-    private final Intel8237 dma         = new Intel8237();
-
-    /**
-     * Intel 8259 - Programmable Interrupt Controller
-     *
-     * @see fr.neatmonster.ibmpc.Intel8259
-     */
-    private final Intel8259 pic         = new Intel8259();
-
-    /**
-     * Intel 8253 - Programmable Interval Timer
-     *
-     * @see fr.neatmonster.ibmpc.Intel8253
-     */
-    private final Intel8253 pit         = new Intel8253(pic);
-
-    /**
-     * Intel 8255 - Programmable Peripheral Interface
-     *
-     * @see fr.neatmonster.ibmpc.Intel8255
-     */
-    private final Intel8255 ppi         = new Intel8255(pic);
-
-    /**
-     * Motorola 6845 - Cathode Ray Tube Controller
-     *
-     * @see fr.neatmonster.ibmpc.Motorola6845
-     */
-    private final Motorola6845 crtc        = new Motorola6845();
-
-    /**
-     * IBMCGA - Color Graphics Adapter
-     *
-     * @see fr.neatmonster.ibmpc.IBMCGA
-     */
-    @SuppressWarnings("unused")
-    private final IBMCGA       cga         = new IBMCGA(this, ppi, crtc);
-
-    /**
-     * An array containing all peripherals.
-     *
-     * The CGA, technically a peripheral, interacts directly with the CPU in
-     * this implementation and by doing so does not use the I/O space.
-     */
-    private final Peripheral[] peripherals = new Peripheral[] { dma, pic, pit, ppi, crtc };
 
     /*
      * Typical 8086 Machine Instruction Format

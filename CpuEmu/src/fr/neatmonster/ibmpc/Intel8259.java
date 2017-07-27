@@ -1,5 +1,7 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.ProgrammableInterrupt;
+
 /**
  * The Intel 8259 Programmable Interrupt Controller handles up to eight vectored
  * priority interrupts for the CPU. It is cascadable for up to 64 vectored
@@ -13,7 +15,7 @@ package fr.neatmonster.ibmpc;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8259 implements Peripheral {
+public class Intel8259 implements ProgrammableInterrupt {
     /**
      * Interrupt Mask Register (IMR)
      *

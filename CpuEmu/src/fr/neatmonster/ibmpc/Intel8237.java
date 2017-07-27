@@ -1,5 +1,8 @@
 package fr.neatmonster.ibmpc;
 
+
+import cc.emulator.core.DirectMemoryAccess;
+
 /**
  * The 8237 Multimode Direct Memory Access (DMA) Controller is a peripheral
  * interface circuit for microprocessor systems. It is designed to improve
@@ -21,7 +24,7 @@ package fr.neatmonster.ibmpc;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8237 implements Peripheral {
+public class Intel8237 implements DirectMemoryAccess {
     /*
      * Each channel has a pair of Base Address and Base Word Count registers.
      * These 16-bit registers store the original value of their associated
