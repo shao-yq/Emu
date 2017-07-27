@@ -1,10 +1,12 @@
-package cc.emulator.core.cpu;
+package cc.emulator.core.cpu.bus;
+
+import cc.emulator.core.cpu.bus.DataBus;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/26.
  */
-public abstract class DataBusImpl implements DataBus{
+public abstract class DataBusImpl implements DataBus {
     int mode;
     @Override
     public void setMode(int mode) {

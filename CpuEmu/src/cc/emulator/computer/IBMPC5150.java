@@ -32,7 +32,7 @@ public class IBMPC5150 extends PersonalComputer {
      *
      * @see fr.neatmonster.ibmpc.Intel8259
      */
-    protected  ProgrammableInterrupt createProgrammableInterruptController(){
+    protected ProgrammableInterruptController createProgrammableInterruptController(){
         return new Intel8259();
     }
     /**
@@ -41,7 +41,7 @@ public class IBMPC5150 extends PersonalComputer {
      * @see fr.neatmonster.ibmpc.Intel8253
      */
 
-    protected  ProgrammableIntervalTimer createProgrammableIntervalTimer(ProgrammableInterrupt pic){
+    protected  ProgrammableIntervalTimer createProgrammableIntervalTimer(ProgrammableInterruptController pic){
         return new Intel8253(pic);
     }
     /**
@@ -49,7 +49,7 @@ public class IBMPC5150 extends PersonalComputer {
      *
      * @see fr.neatmonster.ibmpc.Intel8255
      */
-    protected  ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterrupt pic){
+    protected  ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterruptController pic){
         return new Intel8255(pic);
     }
 

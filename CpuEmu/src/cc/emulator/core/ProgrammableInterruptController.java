@@ -4,7 +4,7 @@ package cc.emulator.core;
  * @author Shao Yongqing
  * Date: 2017/7/27.
  */
-public interface ProgrammableInterrupt extends Peripheral{
+public interface ProgrammableInterruptController extends Peripheral{
     /**
      * Call an interruption request on the specified line.
      *

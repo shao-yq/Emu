@@ -1,7 +1,7 @@
 package cc.emulator.core.cpu.intel;
 
-import cc.emulator.core.cpu.AddressBus;
-import cc.emulator.core.cpu.DataBus;
+import cc.emulator.core.cpu.bus.AddressBus;
+import cc.emulator.core.cpu.bus.DataBus;
 
 /**
  * @author Shao Yongqing

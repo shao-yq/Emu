@@ -1,6 +1,6 @@
 package fr.neatmonster.ibmpc;
 
-import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableInterruptController;
 import cc.emulator.core.ProgrammablePeripheralInterface;
 
 /**
@@ -23,7 +23,7 @@ public class Intel8255 implements ProgrammablePeripheralInterface {
      *
      * @see fr.neatmonster.ibmpc.Intel8259
      */
-    private final ProgrammableInterrupt pic;
+    private final ProgrammableInterruptController pic;
     /**
      * 4 ports of the PIC (A, B, C and Control) as registers.
      */
@@ -35,7 +35,7 @@ public class Intel8255 implements ProgrammablePeripheralInterface {
      * @param pic
      *            the pic
      */
-    public Intel8255(final ProgrammableInterrupt pic) {
+    public Intel8255(final ProgrammableInterruptController pic) {
         this.pic = pic;
         ports[0] = 0x2c;
     }

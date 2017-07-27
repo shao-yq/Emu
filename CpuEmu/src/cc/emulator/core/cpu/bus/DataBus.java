@@ -1,10 +1,12 @@
-package cc.emulator.core.cpu;
+package cc.emulator.core.cpu.bus;
+
+import cc.emulator.core.cpu.Bus;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/26.
  */
-public interface DataBus {
+public interface DataBus extends Bus {
     void setMode(int mode);
     int getMode();
 

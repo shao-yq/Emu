@@ -1,6 +1,6 @@
 package fr.neatmonster.ibmpc;
 
-import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableInterruptController;
 import cc.emulator.core.ProgrammableIntervalTimer;
 
 /**
@@ -44,7 +44,7 @@ public class Intel8253 implements ProgrammableIntervalTimer {
      *
      * @see fr.neatmonster.ibmpc.Intel8259
      */
-    private final ProgrammableInterrupt pic;
+    private final ProgrammableInterruptController pic;
 
     /** The actual value of each counter. */
     private final int[]     count   = new int[3];
@@ -63,7 +63,7 @@ public class Intel8253 implements ProgrammableIntervalTimer {
     /** The toggle for lsb, then msb reading. */
     private final boolean[] toggle  = new boolean[3];
 
-    public Intel8253(ProgrammableInterrupt pic) {
+    public Intel8253(ProgrammableInterruptController pic) {
         this.pic = pic;
     }
 

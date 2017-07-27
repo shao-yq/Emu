@@ -1,9 +1,10 @@
 package cc.emulator.core.cpu;
 
-import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableInterruptController;
 import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.Peripheral;
+import cc.emulator.core.cpu.bus.DataBus;
 
 /**
  * @author Shao Yongqing
@@ -76,8 +77,8 @@ public abstract class Cpu {
         this.peripherals = peripherals;
     }
 
-    protected ProgrammableInterrupt pic;
-    public void setPic(ProgrammableInterrupt pic) {
+    protected ProgrammableInterruptController pic;
+    public void setPic(ProgrammableInterruptController pic) {
         this.pic = pic;
     }
     protected ProgrammableIntervalTimer pit;

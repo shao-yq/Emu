@@ -1,6 +1,6 @@
 package fr.neatmonster.ibmpc;
 
-import cc.emulator.core.ProgrammableInterrupt;
+import cc.emulator.core.ProgrammableInterruptController;
 
 /**
  * The Intel 8259 Programmable Interrupt Controller handles up to eight vectored
@@ -15,7 +15,7 @@ import cc.emulator.core.ProgrammableInterrupt;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8259 implements ProgrammableInterrupt {
+public class Intel8259 implements ProgrammableInterruptController {
     /**
      * Interrupt Mask Register (IMR)
      *

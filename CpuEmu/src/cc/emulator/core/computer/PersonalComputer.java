@@ -55,7 +55,7 @@ public abstract class PersonalComputer implements Computer {
         createPeripherals();
     }
     protected DirectMemoryAccess dma ;
-    protected ProgrammableInterrupt pic;
+    protected ProgrammableInterruptController pic;
     protected ProgrammableIntervalTimer pit;
     protected ProgrammablePeripheralInterface ppi;
     protected DisplayController crtc;
@@ -74,11 +74,11 @@ public abstract class PersonalComputer implements Computer {
 
     protected abstract DisplayController createDisplayController();
 
-    protected abstract ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterrupt pic);
+    protected abstract ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterruptController pic);
 
-    protected abstract ProgrammableIntervalTimer createProgrammableIntervalTimer(ProgrammableInterrupt pic);
+    protected abstract ProgrammableIntervalTimer createProgrammableIntervalTimer(ProgrammableInterruptController pic);
 
-    protected abstract ProgrammableInterrupt createProgrammableInterruptController();
+    protected abstract ProgrammableInterruptController createProgrammableInterruptController();
 
     protected abstract DirectMemoryAccess createDmaController();
 

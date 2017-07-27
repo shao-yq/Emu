@@ -1,12 +1,10 @@
 package cc.emulator.core.cpu.intel;
 
-import cc.emulator.core.ProgrammableInterrupt;
-import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
-import fr.neatmonster.ibmpc.Intel8253;
-import fr.neatmonster.ibmpc.Intel8259;
+import cc.emulator.core.cpu.bus.DataBus;
+import cc.emulator.core.cpu.register.StatusRegister;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -461,6 +459,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * operation. Different instructions affect the status flags differently.
      */
     private int                flags;
+    //ProgramStatusWord flags;
 
     /**
      * Queue
@@ -1066,21 +1065,21 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         if (w == B)
             // Byte data
             switch (reg) {
-            case 0b000: // AL
+            case AL: //  0b000: // AL
                 return al;
-            case 0b001: // CL
+            case CL: //  0b001: // CL
                 return cl;
-            case 0b010: // DL
+            case DL: //  0b010: // DL
                 return dl;
-            case 0b011: // BL
+            case BL: //  0b011: // BL
                 return bl;
-            case 0b100: // AH
+            case AH: //  0b100: // AH
                 return ah;
-            case 0b101: // CH
+            case CH: //  0b101: // CH
                 return ch;
-            case 0b110: // DH
+            case DH: //  0b110: // DH
                 return dh;
-            case 0b111: // BH
+            case BH: //  0b111: // BH
                 return bh;
             }
         else
@@ -1094,13 +1093,13 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 return dh << 8 | dl;
             case BX: //  0b011: // BX
                 return bh << 8 | bl;
-            case 0b100: // SP
+            case SP: //  0b100: // SP
                 return getStack().getSp();  // sp;
-            case 0b101: // BP
+            case BP: //  0b101: // BP
                 return bp;
-            case 0b110: // SI
+            case SI: //  0b110: // SI
                 return si;
-            case 0b111: // DI
+            case DI: //  0b111: // DI
                 return di;
             }
         return 0;
@@ -1127,7 +1126,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the value
      */
     private int getRM(final int w, final int mod, final int rm) {
-        if (mod == 0b11)
+        if (mod == REGISTER_TO_REGISTER_MODE)  // 0b11
             // Register-to-register mode
             return getReg(w, rm);
         else

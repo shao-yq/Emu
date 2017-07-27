@@ -1,7 +1,7 @@
 package cc.emulator.core.computer;
 
-import cc.emulator.core.cpu.AddressBus;
-import cc.emulator.core.cpu.DataBus;
+import cc.emulator.core.cpu.bus.AddressBus;
+import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.core.cpu.DataListener;
 import cc.emulator.core.cpu.MemoryAccessor;
 
