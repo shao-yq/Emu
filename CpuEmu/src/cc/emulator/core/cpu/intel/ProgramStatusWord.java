@@ -19,7 +19,7 @@ public class ProgramStatusWord extends StatusRegister{
      * incorporate the carry flag in their operations and can be used to
      * perform multibyte (e.g., 32-bit, 64-bit) addition and subtraction.
      */
-    private static final int   CF     = 1 << 0;
+    public static final int   CF     = 1 << 0;
 
     /**
      * PF (parity flag)
@@ -29,7 +29,7 @@ public class ProgramStatusWord extends StatusRegister{
      * otherwise it is cleared. PF is provided for 8080/8085 compatibility; it
      * can also be used to check ASCII characters for correct parity.
      */
-    private static final int   PF     = 1 << 2;
+    public static final int   PF     = 1 << 2;
 
     /**
      * AF (auxiliary carry flag)
@@ -41,7 +41,7 @@ public class ProgramStatusWord extends StatusRegister{
      * for the decimal adjust instructions and ordinarily is not used for any
      * other purpose.
      */
-    private static final int   AF     = 1 << 4;
+    public static final int   AF     = 1 << 4;
 
     /**
      * ZF (zero flag)
@@ -50,7 +50,7 @@ public class ProgramStatusWord extends StatusRegister{
      * set; otherwise ZF is cleared. A conditional jump instruction can be used
      * to alter the flow of the program if the result is or is not zero.
      */
-    private static final int   ZF     = 1 << 6;
+    public static final int   ZF     = 1 << 6;
 
     /**
      * SF (sign flag)
@@ -64,7 +64,7 @@ public class ProgramStatusWord extends StatusRegister{
      * unsigned operations typically ignore SF since the high-order bit of the
      * result is interpreted as a digit rather than a sign.
      */
-    private static final int   SF     = 1 << 7;
+    public static final int   SF     = 1 << 7;
 
     /**
      * TF (trap flag)
@@ -74,7 +74,7 @@ public class ProgramStatusWord extends StatusRegister{
      * each instruction, allowing a program to be inspected as it executes
      * instruction by instruction.
      */
-    private static final int   TF     = 1 << 8;
+    public static final int   TF     = 1 << 8;
 
     /**
      * IF (interrupt-enable flag)
@@ -83,7 +83,7 @@ public class ProgramStatusWord extends StatusRegister{
      * requests. Clearing IF disables these interrupts. IF has no affect on
      * either non-maskable external or internally generated interrupts.
      */
-    private static final int   IF     = 1 << 9;
+    public static final int   IF     = 1 << 9;
 
     /**
      * DF (direction flag)
@@ -93,7 +93,7 @@ public class ProgramStatusWord extends StatusRegister{
      * to left". Clearing DF causes string instructions to auto-increment, or
      * to process strings from "left to right."
      */
-    private static final int   DF     = 1 << 10;
+    public static final int   DF     = 1 << 10;
 
     /**
      * OF (overflow flag)
@@ -105,10 +105,10 @@ public class ProgramStatusWord extends StatusRegister{
      * the INFO (interrupt on overflow) instruction. OF may be ignored when
      * performing unsigned arithmetic.
      */
-    private static final int   OF     = 1 << 11;
+    public static final int   OF     = 1 << 11;
 
     /** Lookup table used for clipping results. */
-    private static final int[] MASK   = new int[] { 0xff, 0xffff };
+    public static final int[] MASK   = new int[] { 0xff, 0xffff };
     /** Lookup table used for setting the parity flag. */
     private static final int[] PARITY = {
             1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,

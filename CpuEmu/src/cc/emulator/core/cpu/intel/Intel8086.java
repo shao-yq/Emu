@@ -53,128 +53,11 @@ import java.io.InputStream;
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
 public class Intel8086 extends Cpu implements Intel8086Instruction {
-    /**
-     * CF (carry flag)
-     *
-     * If an addition results in a carry out of the high-order bit of the
-     * result, then CF is set; otherwise CF is cleared. If a subtraction
-     * results in a borrow into the high-order bit of the result, then CF is
-     * set; otherwise CF is cleared. Note that a signed carry is indicated by
-     * CF ≠ OF. CF can be used to detect an unsigned overflow. Two
-     * instructions, ADC (add with carry) and SBB (subtract with borrow),
-     * incorporate the carry flag in their operations and can be used to
-     * perform multibyte (e.g., 32-bit, 64-bit) addition and subtraction.
-     */
-    private static final int   CF     = 1 << 0;
-
-    /**
-     * PF (parity flag)
-     *
-     * If the low-order eight bits of an arithmetic or logical operation is
-     * zero contain an even number of 1-bits, then the parity flag is set,
-     * otherwise it is cleared. PF is provided for 8080/8085 compatibility; it
-     * can also be used to check ASCII characters for correct parity.
-     */
-    private static final int   PF     = 1 << 2;
-
-    /**
-     * AF (auxiliary carry flag)
-     *
-     * If an addition results in a carry out of the low-order half-byte of the
-     * result, then AF is set; otherwise AF is cleared. If a subtraction
-     * results in a borrow into the low-order half-byte of the result, then AF
-     * is set; otherwise AF is cleared. The auxiliary carry flag is provided
-     * for the decimal adjust instructions and ordinarily is not used for any
-     * other purpose.
-     */
-    private static final int   AF     = 1 << 4;
-
-    /**
-     * ZF (zero flag)
-     *
-     * If the result of an arithmetic or logical operation is zero, then ZF is
-     * set; otherwise ZF is cleared. A conditional jump instruction can be used
-     * to alter the flow of the program if the result is or is not zero.
-     */
-    private static final int   ZF     = 1 << 6;
-
-    /**
-     * SF (sign flag)
-     *
-     * Arithmetic and logical instructions set the sign flag equal to the
-     * high-order bit (bit 7 or 15) of the result. For signed binary numbers,
-     * the sign flag will be 0 for positive results and 1 for negative results
-     * (so long as overflow does not occur). A conditional jump instruction can
-     * be used following addition or subtraction to alter the flow of the
-     * program depending on the sign of the result. Programs performing
-     * unsigned operations typically ignore SF since the high-order bit of the
-     * result is interpreted as a digit rather than a sign.
-     */
-    private static final int   SF     = 1 << 7;
-
-    /**
-     * TF (trap flag)
-     *
-     * Settings TF puts the processor into single-step mode for debugging. In
-     * this mode, the CPU automatically generates an internal interrupt after
-     * each instruction, allowing a program to be inspected as it executes
-     * instruction by instruction.
-     */
-    private static final int   TF     = 1 << 8;
-
-    /**
-     * IF (interrupt-enable flag)
-     *
-     * Setting IF allows the CPU to recognize external (maskable) interrupt
-     * requests. Clearing IF disables these interrupts. IF has no affect on
-     * either non-maskable external or internally generated interrupts.
-     */
-    private static final int   IF     = 1 << 9;
-
-    /**
-     * DF (direction flag)
-     *
-     * Setting DF causes string instructions to auto-decrement; that is, to
-     * process strings from the high addresses to low addresses, or from "right
-     * to left". Clearing DF causes string instructions to auto-increment, or
-     * to process strings from "left to right."
-     */
-    private static final int   DF     = 1 << 10;
-
-    /**
-     * OF (overflow flag)
-     *
-     * If the result of an operation is too large a positive number, or too
-     * small a negative number to fit in the destination operand (excluding the
-     * sign bit), then OF is set; otherwise OF is cleared. OF thus indicates
-     * signed arithmetic overflow; it can be tested with a conditional jump or
-     * the INFO (interrupt on overflow) instruction. OF may be ignored when
-     * performing unsigned arithmetic.
-     */
-    private static final int   OF     = 1 << 11;
 
 
     /** Lookup table used for clipping results. */
     private static final int[] MASK   = new int[] { 0xff, 0xffff };
-    /** Lookup table used for setting the parity flag. */
-    private static final int[] PARITY = {
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1
-    };
+
     /** Lookup table used for setting the sign and overflow flags. */
     private static final int[] BITS   = new int[] { 8, 16 };
     /** Lookup table used for setting the overflow flag. */
@@ -664,12 +547,12 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the result
      */
     private int adc(final int w, final int dst, final int src) {
-        final int carry = flags.hasFlag(CF)? 1 : 0;    // (flags & CF) == CF ? 1 : 0;
+        final int carry = flags.hasFlag(ProgramStatusWord.CF)? 1 : 0;    // (flags & CF) == CF ? 1 : 0;
         final int res = dst + src + carry & MASK[w];
 
-        flags.setFlag(CF, carry == 1 ? res <= dst : res < dst);
-        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlag(ProgramStatusWord.CF, carry == 1 ? res <= dst : res < dst);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
         flags.setFlags(w, res);
 
         return res;
@@ -689,9 +572,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int add(final int w, final int dst, final int src) {
         final int res = dst + src & MASK[w];
 
-        flags.setFlag(CF, res < dst);
-        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlag(ProgramStatusWord.CF, res < dst);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
         flags.setFlags(w, res);
 
         return res;
@@ -742,8 +625,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             return;
         }*/
         push(flags.getData());
-        flags.setFlag(IF, false);
-        flags.setFlag(TF, false);
+        flags.setFlag(ProgramStatusWord.IF, false);
+        flags.setFlag(ProgramStatusWord.TF, false);
         push(cs);
         push(ip);
         ip = getMem(0b1, type * 4);
@@ -762,8 +645,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int dec(final int w, final int dst) {
         final int res = dst - 1 & MASK[w];
 
-        flags.setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
-        flags.setFlag(OF, res == SIGN[w] - 1);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ 1) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, res == SIGN[w] - 1);
         flags.setFlags(w, res);
 
         return res;
@@ -1181,8 +1064,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int inc(final int w, final int dst) {
         final int res = dst + 1 & MASK[w];
 
-        flags.setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
-        flags.setFlag(OF, res == SIGN[w]);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ 1) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, res == SIGN[w]);
         flags.setFlags(w, res);
 
         return res;
@@ -1227,8 +1110,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      *            the result
      */
     private void logic(final int w, final int res) {
-        flags.setFlag(CF, false);
-        flags.setFlag(OF, false);
+        flags.setFlag(ProgramStatusWord.CF, false);
+        flags.setFlag(ProgramStatusWord.OF, false);
         flags.setFlags(w, res);
     }
 
@@ -1321,53 +1204,15 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the result
      */
     private int sbb(final int w, final int dst, final int src) {
-        final int carry = flags.hasFlag(CF)?1:0;  // flags & CF) == CF ? 1 : 0;
+        final int carry = flags.hasFlag(ProgramStatusWord.CF)?1:0;  // flags & CF) == CF ? 1 : 0;
         final int res = dst - src - carry & MASK[w];
 
-        flags.setFlag(CF, carry > 0 ? dst <= src : dst < src);
-        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        flags.setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlag(ProgramStatusWord.CF, carry > 0 ? dst <= src : dst < src);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
         flags.setFlags(w, res);
 
         return res;
-    }
-
-    /**
-     * Sets or clears a flag.
-     *
-     * @param flag
-     *            the flag to affect
-     * @param set
-     *            true to set, false to clear
-     */
-    private void setFlag(final int flag, final boolean set) {
-        if (set)
-            flags.setFlag(flag);
-        else
-            flags.clearFlag(flag);
-
-        //flags.setFlag(flag, set);
-
-//        if (set)
-//            flags |= flag;
-//        else
-//            flags &= ~flag;
-    }
-
-    /**
-     * Sets the parity, zero and sign flags.
-     *
-     * @param w
-     *            word/byte operation
-     * @param res
-     *            the result
-     */
-    private void setFlags(final int w, final int res) {
-        flags.setFlags(w, res);
-
-//        setFlag(PF, PARITY[res & 0xff] > 0);
-//        setFlag(ZF, res == 0);
-//        setFlag(SF, (shift(res, 8 - BITS[w]) & SF) > 0);
     }
 
     /**
@@ -1549,9 +1394,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int sub(final int w, final int dst, final int src) {
         final int res = dst - src & MASK[w];
 
-        flags.setFlag(CF, dst < src);
-        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        flags.setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlag(ProgramStatusWord.CF, dst < src);
+        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
+        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
         flags.setFlags(w, res);
 
         return res;
@@ -1564,13 +1409,13 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      */
     public boolean tick() {
         // Single-step mode.
-        if (getFlag(TF)) {
+        if (flags.hasFlag(ProgramStatusWord.TF)) {
             callInt(1);
             clocks += 50;
         }
 
         // External maskable interrupts.
-        if (getFlag(IF) && pic.hasInt()) {
+        if (flags.hasFlag(ProgramStatusWord.IF) && pic.hasInt()) {
             callInt(pic.nextInt());
             clocks += 61;
         }
@@ -2284,14 +2129,14 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * ZF is undefined following execution of AAA.
              */
             case AAA: //  0x37: // AAA
-                if ((al & 0xf) > 9 || getFlag(AF)) {
+                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
                     al += 6;
                     ah = ah + 1 & 0xff;
-                    flags.setFlag(CF, true);
-                    flags.setFlag(AF, true);
+                    flags.setFlag(ProgramStatusWord.CF, true);
+                    flags.setFlag(ProgramStatusWord.AF, true);
                 } else {
-                    flags.setFlag(CF, false);
-                    flags.setFlag(AF, false);
+                    flags.setFlag(ProgramStatusWord.CF, false);
+                    flags.setFlag(ProgramStatusWord.AF, false);
                 }
                 al &= 0xf;
                 clocks += 4;
@@ -2310,20 +2155,20 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case DAA:  //  0x27:  // DAA
             {
                 final int oldAL = al;
-                final boolean oldCF = getFlag(CF);
-                flags.setFlag(CF, false);
-                if ((al & 0xf) > 9 || getFlag(AF)) {
+                final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
+                flags.setFlag(ProgramStatusWord.CF, false);
+                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
                     al += 6;
-                    flags.setFlag(CF, oldCF || al < 0);
+                    flags.setFlag(ProgramStatusWord.CF, oldCF || al < 0);
                     al &= 0xff;
-                    flags.setFlag(AF, true);
+                    flags.setFlag(ProgramStatusWord.AF, true);
                 } else
-                    flags.setFlag(AF, false);
+                    flags.setFlag(ProgramStatusWord.AF, false);
                 if (oldAL > 0x99 || oldCF) {
                     al = al + 0x60 & 0xff;
-                    flags.setFlag(CF, true);
+                    flags.setFlag(ProgramStatusWord.CF, true);
                 } else
-                    flags.setFlag(CF, false);
+                    flags.setFlag(ProgramStatusWord.CF, false);
                 flags.setFlags(B, al);
                 clocks += 4;
                 break;
@@ -2504,14 +2349,14 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * AAS.
              */
             case AAS: //  0x3f: // AAS
-                if ((al & 0xf) > 9 || getFlag(AF)) {
+                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
                     al -= 6;
                     ah = ah - 1 & 0xff;
-                    flags.setFlag(CF, true);
-                    flags.setFlag(AF, true);
+                    flags.setFlag(ProgramStatusWord.CF, true);
+                    flags.setFlag(ProgramStatusWord.AF, true);
                 } else {
-                    flags.setFlag(CF, false);
-                    flags.setFlag(AF, false);
+                    flags.setFlag(ProgramStatusWord.CF, false);
+                    flags.setFlag(ProgramStatusWord.AF, false);
                 }
                 al &= 0xf;
                 clocks += 4;
@@ -2530,20 +2375,20 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case DAS: //  0x2f: // DAS
             {
                 final int oldAL = al;
-                final boolean oldCF = getFlag(CF);
-                flags.setFlag(CF, false);
-                if ((al & 0xf) > 9 || getFlag(AF)) {
+                final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
+                flags.setFlag(ProgramStatusWord.CF, false);
+                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
                     al -= 6;
-                    flags.setFlag(CF, oldCF || (al & 0xff) > 0);
+                    flags.setFlag(ProgramStatusWord.CF, oldCF || (al & 0xff) > 0);
                     al &= 0xff;
-                    flags.setFlag(AF, true);
+                    flags.setFlag(ProgramStatusWord.AF, true);
                 } else
-                    flags.setFlag(AF, false);
+                    flags.setFlag(ProgramStatusWord.AF, false);
                 if (oldAL > 0x99 || oldCF) {
                     al = al - 0x60 & 0xff;
-                    flags.setFlag(CF, true);
+                    flags.setFlag(ProgramStatusWord.CF, true);
                 } else
-                    flags.setFlag(CF, false);
+                    flags.setFlag(ProgramStatusWord.CF, false);
                 flags.setFlags(B, al);
                 clocks += 4;
                 break;
@@ -3128,8 +2973,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case MOVS_DEST16_SRC16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setMem(w, getAddr(es, di), src);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 17;
                 break;
 
@@ -3156,9 +3001,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(w, getAddr(es, di));
                 src = getMem(w, getAddr(os, si));
                 sub(w, src, dst);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
+                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                if (rep == 1 && !flags.hasFlag(ProgramStatusWord.ZF) || rep == 2 && flags.hasFlag(ProgramStatusWord.ZF))
                     rep = 0;
                 clocks += 22;
                 break;
@@ -3186,8 +3031,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(w, getAddr(es, di));
                 src = getReg(w, AX);
                 sub(w, src, dst);
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
+                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                if (rep == 1 && !flags.hasFlag(ProgramStatusWord.ZF) || rep == 2 && flags.hasFlag(ProgramStatusWord.ZF))
                     rep = 0;
                 clocks += 15;
                 break;
@@ -3208,7 +3053,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case LODS_SRC16: //  0xad: // LODS SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setReg(w, AX, src);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 13;
                 break;
 
@@ -3225,7 +3070,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case STOS_DEST16: //   0xab: // STOS DEST-STR16
                 src = getReg(w, AX);
                 setMem(w, getAddr(es, di), src);
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 10;
                 break;
 
@@ -3469,7 +3314,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JO_SHORT: //   0x70: // JO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(OF)) {
+                if (flags.hasFlag(ProgramStatusWord.OF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3484,7 +3329,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNO_SHORT: //  0x71: // JNO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!getFlag(OF)) {
+                if (!flags.hasFlag(ProgramStatusWord.OF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3499,7 +3344,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JB__JNAE__JC_SHORT: //   0x72: // JB/JNAE/JC SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(CF)) {
+                if (flags.hasFlag(ProgramStatusWord.CF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3514,7 +3359,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNB__JAE__JNC_SHORT: //  0x73: // JNB/JAE/JNC SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!getFlag(CF)) {
+                if (!flags.hasFlag(ProgramStatusWord.CF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3529,7 +3374,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JE__JZ_SHORT: //  0x74: // JE/JZ SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(ZF)) {
+                if (flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3544,7 +3389,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNE__JNZ_SHORT: //  0x75: // JNE/JNZ SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!getFlag(ZF)) {
+                if (!flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3559,7 +3404,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JBE__JNA_SHORT: //   0x76: // JBE/JNA SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(CF) | getFlag(ZF)) {
+                if (flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3574,7 +3419,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNBE__JA_SHORT: //   0x77: // JNBE/JA SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(getFlag(CF) | getFlag(ZF))) {
+                if (!(flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF))) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3589,7 +3434,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JS_SHORT: //   0x78: // JS SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(SF)) {
+                if (flags.hasFlag(ProgramStatusWord.SF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3604,7 +3449,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNS_SHORT: //  0x79: // JNS SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!getFlag(SF)) {
+                if (!flags.hasFlag(ProgramStatusWord.SF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3619,7 +3464,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JP__JPE_SHORT: //  0x7a: // JP/JPE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(PF)) {
+                if (flags.hasFlag(ProgramStatusWord.PF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3634,7 +3479,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!getFlag(PF)) {
+                if (!flags.hasFlag(ProgramStatusWord.PF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3649,7 +3494,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(SF) ^ getFlag(OF)) {
+                if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3664,7 +3509,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(getFlag(SF) ^ getFlag(OF))) {
+                if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF))) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3679,7 +3524,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (getFlag(SF) ^ getFlag(OF) | getFlag(ZF)) {
+                if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3694,7 +3539,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JNLE__JG_SHORT: //  0x7f: // JNLE/JG SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(getFlag(SF) ^ getFlag(OF) | getFlag(ZF))) {
+                if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF))) {
                     ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
@@ -3744,7 +3589,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
-                if (src != 0 && getFlag(ZF)) {
+                if (src != 0 && flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 18;
                 } else
@@ -3765,7 +3610,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
-                if (src != 0 && !getFlag(ZF)) {
+                if (src != 0 && !flags.hasFlag(ProgramStatusWord.ZF)) {
                     ip = ip + dst & 0xffff;
                     clocks += 19;
                 } else
@@ -3846,7 +3691,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * interrupt procedure if overflow occurs.
              */
             case INTO: //  0xce: // INTO
-                if (getFlag(OF)) {
+                if (flags.hasFlag(ProgramStatusWord.OF)) {
                     callInt(4);
                     clocks += 53;
                 } else
@@ -3890,7 +3735,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * the RCL and RCR instructions.
              */
             case CLC: //  0xf8: // CLC
-                flags.setFlag(CF, false);
+                flags.setFlag(ProgramStatusWord.CF, false);
                 clocks += 2;
                 break;
 
@@ -3901,7 +3746,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * and affects no other flags.
              */
             case CMC: //  0xf5: // CMC
-                flags.setFlag(CF, !getFlag(CF));
+                flags.setFlag(ProgramStatusWord.CF, !flags.hasFlag(ProgramStatusWord.CF));
                 clocks += 2;
                 break;
 
@@ -3911,7 +3756,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * STC (Set Carry flag) sets CF to 1 and affects no other flags.
              */
             case STC: //   0xf9: // STC
-                flags.setFlag(CF, true);
+                flags.setFlag(ProgramStatusWord.CF, true);
                 clocks += 2;
                 break;
 
@@ -3923,7 +3768,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * CLD does not affect any other flags.
              */
             case CLD: //   0xfc: // CLD
-                flags.setFlag(DF, false);
+                flags.setFlag(ProgramStatusWord.DF, false);
                 clocks += 2;
                 break;
 
@@ -3935,7 +3780,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * STD does not affect any other flags.
              */
             case STD : //  0xfd: // STD
-                flags.setFlag(DF, true);
+                flags.setFlag(ProgramStatusWord.DF, true);
                 clocks += 2;
                 break;
 
@@ -3950,7 +3795,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * software interrupt. CLI does not affect any other flags.
              */
             case CLI : //  0xfa: // CLI
-                flags.setFlag(IF, false);
+                flags.setFlag(ProgramStatusWord.IF, false);
                 clocks += 2;
                 break;
 
@@ -3964,7 +3809,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * does not affect any other flags.
              */
             case STI : //  0xfb: // STI
-                flags.setFlag(IF, true);
+                flags.setFlag(ProgramStatusWord.IF, true);
                 clocks += 2;
                 break;
 
@@ -4200,9 +4045,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         dst |= tempCF ? 0b1 : 0b0;
                         dst &= MASK[w];
                     }
-                    flags.setFlag(CF, (dst & 0b1) == 0b1);
+                    flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
                     if (src == 1)
-                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
                     break;
                 case MOD_ROR: //   0b001: // ROR
                     for (int cnt = 0; cnt < src; ++cnt) {
@@ -4211,50 +4056,50 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         dst |= (tempCF ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
                     }
-                    flags.setFlag(CF, msb(w, dst));
+                    flags.setFlag(ProgramStatusWord.CF, msb(w, dst));
                     if (src == 1)
-                        flags.setFlag(OF, msb(w, dst) ^ msb(w, dst << 1));
+                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ msb(w, dst << 1));
                     break;
                 case MOD_RCL: //   0b010: // RCL
                     for (int cnt = 0; cnt < src; ++cnt) {
                         tempCF = msb(w, dst);
                         dst <<= 1;
-                        dst |= getFlag(CF) ? 0b1 : 0b0;
+                        dst |= flags.hasFlag(ProgramStatusWord.CF) ? 0b1 : 0b0;
                         dst &= MASK[w];
-                        flags.setFlag(CF, tempCF);
+                        flags.setFlag(ProgramStatusWord.CF, tempCF);
                     }
                     if (src == 1)
-                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
                     break;
                 case MOD_RCR: //   0b011: // RCR
                     if (src == 1)
-                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
                     for (int cnt = 0; cnt < src; ++cnt) {
                         tempCF = (dst & 0b1) == 0b1;
                         dst >>>= 1;
-                        dst |= (getFlag(CF) ? 1 : 0) * SIGN[w];
+                        dst |= (flags.hasFlag(ProgramStatusWord.CF) ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
-                        flags.setFlag(CF, tempCF);
+                        flags.setFlag(ProgramStatusWord.CF, tempCF);
                     }
                     break;
                 case MOD_SAL__SHL: //   0b100: // SAL/SHL
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(CF, (dst & SIGN[w]) == SIGN[w]);
+                        flags.setFlag(ProgramStatusWord.CF, (dst & SIGN[w]) == SIGN[w]);
                         dst <<= 1;
                         dst &= MASK[w];
                     }
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(OF, (dst & SIGN[w]) == SIGN[w] ^ getFlag(CF));
+                        flags.setFlag(ProgramStatusWord.OF, (dst & SIGN[w]) == SIGN[w] ^ flags.hasFlag(ProgramStatusWord.CF));
                     if (src > 0)
                         flags.setFlags(w, dst);
                     break;
                 case MOD_SHR: //   0b101: // SHR
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(OF, (dst & SIGN[w]) == SIGN[w]);
+                        flags.setFlag(ProgramStatusWord.OF, (dst & SIGN[w]) == SIGN[w]);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(CF, (dst & 0b1) == 0b1);
+                        flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
                         dst >>>= 1;
                         dst &= MASK[w];
                     }
@@ -4264,9 +4109,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 case MOD_SAR: //   0b111: // SAR
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(OF, false);
+                        flags.setFlag(ProgramStatusWord.OF, false);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(CF, (dst & 0b1) == 0b1);
+                        flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
                         dst = signconv(w, dst);
                         dst >>= 1;
                         dst &= MASK[w];
@@ -4316,7 +4161,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                     break;
                 case MOD_NEG: //   0b011: // NEG
                     dst = sub(w, 0, src);
-                    flags.setFlag(CF, dst > 0);
+                    flags.setFlag(ProgramStatusWord.CF, dst > 0);
                     setRM(w, mod, rm, dst);
                     clocks += mod == 0b11 ? 3 : 16;
                     break;
@@ -4326,11 +4171,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
                         if (ah > 0) {
-                            flags.setFlag(CF, true);
-                            flags.setFlag(OF, true);
+                            flags.setFlag(ProgramStatusWord.CF, true);
+                            flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
-                            flags.setFlag(CF, false);
-                            flags.setFlag(OF, false);
+                            flags.setFlag(ProgramStatusWord.CF, false);
+                            flags.setFlag(ProgramStatusWord.OF, false);
                         }
                         clocks += mod == 0b11 ? (77 - 70) / 2 : (83 - 76) / 2;
                     } else {
@@ -4339,11 +4184,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         setReg(W, AX, (int) lres);
                         setReg(W, DX, (int) (lres >>> 16));
                         if (getReg(W, DX) > 0) {
-                            flags.setFlag(CF, true);
-                            flags.setFlag(OF, true);
+                            flags.setFlag(ProgramStatusWord.CF, true);
+                            flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
-                            flags.setFlag(CF, false);
-                            flags.setFlag(OF, false);
+                            flags.setFlag(ProgramStatusWord.CF, false);
+                            flags.setFlag(ProgramStatusWord.OF, false);
                         }
                         clocks += mod == 0b11 ? (133 - 118) / 2 : (139 - 124) / 2;
                     }
@@ -4356,11 +4201,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
                         if (ah > 0x00 && ah < 0xff) {
-                            flags.setFlag(CF, true);
-                            flags.setFlag(OF, true);
+                            flags.setFlag(ProgramStatusWord.CF, true);
+                            flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
-                            flags.setFlag(CF, false);
-                            flags.setFlag(OF, false);
+                            flags.setFlag(ProgramStatusWord.CF, false);
+                            flags.setFlag(ProgramStatusWord.OF, false);
                         }
                         clocks += mod == 0b11 ? (98 - 80) / 2 : (154 - 128) / 2;
                     } else {
@@ -4372,11 +4217,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         setReg(W, DX, (int) (lres >>> 16));
                         final int dx = getReg(W, DX);
                         if (dx > 0x0000 && dx < 0xffff) {
-                            flags.setFlag(CF, true);
-                            flags.setFlag(OF, true);
+                            flags.setFlag(ProgramStatusWord.CF, true);
+                            flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
-                            flags.setFlag(CF, false);
-                            flags.setFlag(OF, false);
+                            flags.setFlag(ProgramStatusWord.CF, false);
+                            flags.setFlag(ProgramStatusWord.OF, false);
                         }
                         clocks += mod == 0b11 ? (104 - 86) / 2 : (160 - 134) / 2;
                     }
