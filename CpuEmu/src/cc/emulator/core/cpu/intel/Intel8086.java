@@ -667,10 +667,10 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         final int carry = flags.hasFlag(CF)? 1 : 0;    // (flags & CF) == CF ? 1 : 0;
         final int res = dst + src + carry & MASK[w];
 
-        setFlag(CF, carry == 1 ? res <= dst : res < dst);
-        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
-        setFlags(w, res);
+        flags.setFlag(CF, carry == 1 ? res <= dst : res < dst);
+        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -689,10 +689,10 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int add(final int w, final int dst, final int src) {
         final int res = dst + src & MASK[w];
 
-        setFlag(CF, res < dst);
-        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
-        setFlags(w, res);
+        flags.setFlag(CF, res < dst);
+        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -742,8 +742,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             return;
         }*/
         push(flags.getData());
-        setFlag(IF, false);
-        setFlag(TF, false);
+        flags.setFlag(IF, false);
+        flags.setFlag(TF, false);
         push(cs);
         push(ip);
         ip = getMem(0b1, type * 4);
@@ -762,9 +762,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int dec(final int w, final int dst) {
         final int res = dst - 1 & MASK[w];
 
-        setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
-        setFlag(OF, res == SIGN[w] - 1);
-        setFlags(w, res);
+        flags.setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
+        flags.setFlag(OF, res == SIGN[w] - 1);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -1181,9 +1181,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int inc(final int w, final int dst) {
         final int res = dst + 1 & MASK[w];
 
-        setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
-        setFlag(OF, res == SIGN[w]);
-        setFlags(w, res);
+        flags.setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
+        flags.setFlag(OF, res == SIGN[w]);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -1227,9 +1227,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      *            the result
      */
     private void logic(final int w, final int res) {
-        setFlag(CF, false);
-        setFlag(OF, false);
-        setFlags(w, res);
+        flags.setFlag(CF, false);
+        flags.setFlag(OF, false);
+        flags.setFlags(w, res);
     }
 
     /**
@@ -1324,10 +1324,10 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         final int carry = flags.hasFlag(CF)?1:0;  // flags & CF) == CF ? 1 : 0;
         final int res = dst - src - carry & MASK[w];
 
-        setFlag(CF, carry > 0 ? dst <= src : dst < src);
-        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
-        setFlags(w, res);
+        flags.setFlag(CF, carry > 0 ? dst <= src : dst < src);
+        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        flags.setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -1549,10 +1549,10 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     private int sub(final int w, final int dst, final int src) {
         final int res = dst - src & MASK[w];
 
-        setFlag(CF, dst < src);
-        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
-        setFlags(w, res);
+        flags.setFlag(CF, dst < src);
+        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        flags.setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        flags.setFlags(w, res);
 
         return res;
     }
@@ -2287,11 +2287,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 if ((al & 0xf) > 9 || getFlag(AF)) {
                     al += 6;
                     ah = ah + 1 & 0xff;
-                    setFlag(CF, true);
-                    setFlag(AF, true);
+                    flags.setFlag(CF, true);
+                    flags.setFlag(AF, true);
                 } else {
-                    setFlag(CF, false);
-                    setFlag(AF, false);
+                    flags.setFlag(CF, false);
+                    flags.setFlag(AF, false);
                 }
                 al &= 0xf;
                 clocks += 4;
@@ -2311,20 +2311,20 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             {
                 final int oldAL = al;
                 final boolean oldCF = getFlag(CF);
-                setFlag(CF, false);
+                flags.setFlag(CF, false);
                 if ((al & 0xf) > 9 || getFlag(AF)) {
                     al += 6;
-                    setFlag(CF, oldCF || al < 0);
+                    flags.setFlag(CF, oldCF || al < 0);
                     al &= 0xff;
-                    setFlag(AF, true);
+                    flags.setFlag(AF, true);
                 } else
-                    setFlag(AF, false);
+                    flags.setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
                     al = al + 0x60 & 0xff;
-                    setFlag(CF, true);
+                    flags.setFlag(CF, true);
                 } else
-                    setFlag(CF, false);
-                setFlags(B, al);
+                    flags.setFlag(CF, false);
+                flags.setFlags(B, al);
                 clocks += 4;
                 break;
             }
@@ -2507,11 +2507,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 if ((al & 0xf) > 9 || getFlag(AF)) {
                     al -= 6;
                     ah = ah - 1 & 0xff;
-                    setFlag(CF, true);
-                    setFlag(AF, true);
+                    flags.setFlag(CF, true);
+                    flags.setFlag(AF, true);
                 } else {
-                    setFlag(CF, false);
-                    setFlag(AF, false);
+                    flags.setFlag(CF, false);
+                    flags.setFlag(AF, false);
                 }
                 al &= 0xf;
                 clocks += 4;
@@ -2531,20 +2531,20 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             {
                 final int oldAL = al;
                 final boolean oldCF = getFlag(CF);
-                setFlag(CF, false);
+                flags.setFlag(CF, false);
                 if ((al & 0xf) > 9 || getFlag(AF)) {
                     al -= 6;
-                    setFlag(CF, oldCF || (al & 0xff) > 0);
+                    flags.setFlag(CF, oldCF || (al & 0xff) > 0);
                     al &= 0xff;
-                    setFlag(AF, true);
+                    flags.setFlag(AF, true);
                 } else
-                    setFlag(AF, false);
+                    flags.setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
                     al = al - 0x60 & 0xff;
-                    setFlag(CF, true);
+                    flags.setFlag(CF, true);
                 } else
-                    setFlag(CF, false);
-                setFlags(B, al);
+                    flags.setFlag(CF, false);
+                flags.setFlags(B, al);
                 clocks += 4;
                 break;
             }
@@ -2603,7 +2603,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 else {
                     ah = al / src & 0xff;
                     al = al % src & 0xff;
-                    setFlags(W, getReg(W, AX));
+                    flags.setFlags(W, getReg(W, AX));
                     clocks += 83;
                 }
                 break;
@@ -2672,7 +2672,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 src = getMem(B);
                 al = ah * src + al & 0xff;
                 ah = 0;
-                setFlags(B, al);
+                flags.setFlags(B, al);
                 clocks += 60;
                 break;
 
@@ -3890,7 +3890,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * the RCL and RCR instructions.
              */
             case CLC: //  0xf8: // CLC
-                setFlag(CF, false);
+                flags.setFlag(CF, false);
                 clocks += 2;
                 break;
 
@@ -3901,7 +3901,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * and affects no other flags.
              */
             case CMC: //  0xf5: // CMC
-                setFlag(CF, !getFlag(CF));
+                flags.setFlag(CF, !getFlag(CF));
                 clocks += 2;
                 break;
 
@@ -3911,7 +3911,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * STC (Set Carry flag) sets CF to 1 and affects no other flags.
              */
             case STC: //   0xf9: // STC
-                setFlag(CF, true);
+                flags.setFlag(CF, true);
                 clocks += 2;
                 break;
 
@@ -3923,7 +3923,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * CLD does not affect any other flags.
              */
             case CLD: //   0xfc: // CLD
-                setFlag(DF, false);
+                flags.setFlag(DF, false);
                 clocks += 2;
                 break;
 
@@ -3935,7 +3935,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * STD does not affect any other flags.
              */
             case STD : //  0xfd: // STD
-                setFlag(DF, true);
+                flags.setFlag(DF, true);
                 clocks += 2;
                 break;
 
@@ -3950,7 +3950,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * software interrupt. CLI does not affect any other flags.
              */
             case CLI : //  0xfa: // CLI
-                setFlag(IF, false);
+                flags.setFlag(IF, false);
                 clocks += 2;
                 break;
 
@@ -3964,7 +3964,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * does not affect any other flags.
              */
             case STI : //  0xfb: // STI
-                setFlag(IF, true);
+                flags.setFlag(IF, true);
                 clocks += 2;
                 break;
 
@@ -4200,9 +4200,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         dst |= tempCF ? 0b1 : 0b0;
                         dst &= MASK[w];
                     }
-                    setFlag(CF, (dst & 0b1) == 0b1);
+                    flags.setFlag(CF, (dst & 0b1) == 0b1);
                     if (src == 1)
-                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     break;
                 case MOD_ROR: //   0b001: // ROR
                     for (int cnt = 0; cnt < src; ++cnt) {
@@ -4211,9 +4211,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         dst |= (tempCF ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
                     }
-                    setFlag(CF, msb(w, dst));
+                    flags.setFlag(CF, msb(w, dst));
                     if (src == 1)
-                        setFlag(OF, msb(w, dst) ^ msb(w, dst << 1));
+                        flags.setFlag(OF, msb(w, dst) ^ msb(w, dst << 1));
                     break;
                 case MOD_RCL: //   0b010: // RCL
                     for (int cnt = 0; cnt < src; ++cnt) {
@@ -4221,58 +4221,58 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         dst <<= 1;
                         dst |= getFlag(CF) ? 0b1 : 0b0;
                         dst &= MASK[w];
-                        setFlag(CF, tempCF);
+                        flags.setFlag(CF, tempCF);
                     }
                     if (src == 1)
-                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     break;
                 case MOD_RCR: //   0b011: // RCR
                     if (src == 1)
-                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
+                        flags.setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     for (int cnt = 0; cnt < src; ++cnt) {
                         tempCF = (dst & 0b1) == 0b1;
                         dst >>>= 1;
                         dst |= (getFlag(CF) ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
-                        setFlag(CF, tempCF);
+                        flags.setFlag(CF, tempCF);
                     }
                     break;
                 case MOD_SAL__SHL: //   0b100: // SAL/SHL
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        setFlag(CF, (dst & SIGN[w]) == SIGN[w]);
+                        flags.setFlag(CF, (dst & SIGN[w]) == SIGN[w]);
                         dst <<= 1;
                         dst &= MASK[w];
                     }
                     // Determine overflow.
                     if (src == 1)
-                        setFlag(OF, (dst & SIGN[w]) == SIGN[w] ^ getFlag(CF));
+                        flags.setFlag(OF, (dst & SIGN[w]) == SIGN[w] ^ getFlag(CF));
                     if (src > 0)
-                        setFlags(w, dst);
+                        flags.setFlags(w, dst);
                     break;
                 case MOD_SHR: //   0b101: // SHR
                     // Determine overflow.
                     if (src == 1)
-                        setFlag(OF, (dst & SIGN[w]) == SIGN[w]);
+                        flags.setFlag(OF, (dst & SIGN[w]) == SIGN[w]);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        setFlag(CF, (dst & 0b1) == 0b1);
+                        flags.setFlag(CF, (dst & 0b1) == 0b1);
                         dst >>>= 1;
                         dst &= MASK[w];
                     }
                     if (src > 0)
-                        setFlags(w, dst);
+                        flags.setFlags(w, dst);
                     break;
                 case MOD_SAR: //   0b111: // SAR
                     // Determine overflow.
                     if (src == 1)
-                        setFlag(OF, false);
+                        flags.setFlag(OF, false);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        setFlag(CF, (dst & 0b1) == 0b1);
+                        flags.setFlag(CF, (dst & 0b1) == 0b1);
                         dst = signconv(w, dst);
                         dst >>= 1;
                         dst &= MASK[w];
                     }
                     if (src > 0)
-                        setFlags(w, dst);
+                        flags.setFlags(w, dst);
                     break;
                 }
                 setRM(w, mod, rm, dst);
@@ -4316,7 +4316,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                     break;
                 case MOD_NEG: //   0b011: // NEG
                     dst = sub(w, 0, src);
-                    setFlag(CF, dst > 0);
+                    flags.setFlag(CF, dst > 0);
                     setRM(w, mod, rm, dst);
                     clocks += mod == 0b11 ? 3 : 16;
                     break;
@@ -4326,11 +4326,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
                         if (ah > 0) {
-                            setFlag(CF, true);
-                            setFlag(OF, true);
+                            flags.setFlag(CF, true);
+                            flags.setFlag(OF, true);
                         } else {
-                            setFlag(CF, false);
-                            setFlag(OF, false);
+                            flags.setFlag(CF, false);
+                            flags.setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (77 - 70) / 2 : (83 - 76) / 2;
                     } else {
@@ -4339,11 +4339,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         setReg(W, AX, (int) lres);
                         setReg(W, DX, (int) (lres >>> 16));
                         if (getReg(W, DX) > 0) {
-                            setFlag(CF, true);
-                            setFlag(OF, true);
+                            flags.setFlag(CF, true);
+                            flags.setFlag(OF, true);
                         } else {
-                            setFlag(CF, false);
-                            setFlag(OF, false);
+                            flags.setFlag(CF, false);
+                            flags.setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (133 - 118) / 2 : (139 - 124) / 2;
                     }
@@ -4356,11 +4356,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
                         if (ah > 0x00 && ah < 0xff) {
-                            setFlag(CF, true);
-                            setFlag(OF, true);
+                            flags.setFlag(CF, true);
+                            flags.setFlag(OF, true);
                         } else {
-                            setFlag(CF, false);
-                            setFlag(OF, false);
+                            flags.setFlag(CF, false);
+                            flags.setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (98 - 80) / 2 : (154 - 128) / 2;
                     } else {
@@ -4372,11 +4372,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                         setReg(W, DX, (int) (lres >>> 16));
                         final int dx = getReg(W, DX);
                         if (dx > 0x0000 && dx < 0xffff) {
-                            setFlag(CF, true);
-                            setFlag(OF, true);
+                            flags.setFlag(CF, true);
+                            flags.setFlag(OF, true);
                         } else {
-                            setFlag(CF, false);
-                            setFlag(OF, false);
+                            flags.setFlag(CF, false);
+                            flags.setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (104 - 86) / 2 : (160 - 134) / 2;
                     }

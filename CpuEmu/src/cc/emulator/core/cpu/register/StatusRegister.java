@@ -41,4 +41,20 @@ public abstract class StatusRegister implements Register {
     }
 
 
+
+    /**
+     * Sets or clears a flag.
+     *
+     * @param flag
+     *            the flag to affect
+     * @param set
+     *            true to set, false to clear
+     */
+    public void setFlag( int flag,  boolean set) {
+        if (set)
+            setFlag(flag);
+        else
+            clearFlag(flag);
+    }
+
 }
