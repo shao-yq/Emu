@@ -1,98 +1,148 @@
 package cc.emulator.core.computer;
 
 import cc.emulator.core.*;
-import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.Cpu;
-import cc.emulator.core.cpu.intel.Intel8086;
 
-import fr.neatmonster.ibmpc.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/25.
  */
-public class PersonalComputer  extends BaseComputer {
-        /*
-     * External Components
-     */
-    /**
-     * Intel 8237 - Direct Memory Access Controller
-     *
-     * @see fr.neatmonster.ibmpc.Intel8237
-     */
-    private final DirectMemoryAccess dma         = new Intel8237();
+public abstract class PersonalComputer implements Computer {
+    public static final String BIOS = "bios";
+    public static final String BOOTLOADER = "bootloader";
+    public static final String RESOURCE = "resource";
+    public static final String BASE = "base";
 
-    /**
-     * Intel 8259 - Programmable Interrupt Controller
-     *
-     * @see fr.neatmonster.ibmpc.Intel8259
-     */
-    private final ProgrammableInterrupt pic         = new Intel8259();
+    protected String configFile;
+    protected Properties properties;
 
-    /**
-     * Intel 8253 - Programmable Interval Timer
-     *
-     * @see fr.neatmonster.ibmpc.Intel8253
-     */
-    private final ProgrammableIntervalTimer pit         = new Intel8253(pic);
+    protected Cpu cpu;
+    protected MemoryManager memory;
 
-    /**
-     * Intel 8255 - Programmable Peripheral Interface
-     *
-     * @see fr.neatmonster.ibmpc.Intel8255
-     */
-    private final ProgrammablePeripheralInterface ppi         = new Intel8255(pic);
+    public PersonalComputer(String configFile) {
+        this.configFile = configFile;
+    }
 
-    /**
-     * Motorola 6845 - Cathode Ray Tube Controller
-     *
-     * @see fr.neatmonster.ibmpc.Motorola6845
-     */
-    private final DisplayController crtc        = new Motorola6845();
-
-    /**
-     * IBMCGA - Color Graphics Adapter
-     *
-     * @see fr.neatmonster.ibmpc.IBMCGA
-     */
-    @SuppressWarnings("unused")
-    private  IBMCGA       cga ;//         = new IBMCGA(this, ppi, crtc);
-
-    /**
-     * An array containing all peripherals.
-     *
-     * The CGA, technically a peripheral, interacts directly with the CPU in
-     * this implementation and by doing so does not use the I/O space.
-     */
-    private  cc.emulator.core.Peripheral[] peripherals ;  // = new Peripheral[] { dma, pic, pit, ppi, crtc };
+    protected void loadConfigProperties(String configFile) throws IOException {
+        InputStream is = getClass().getResourceAsStream(configFile);
+        properties.load(is);
+        is.close();
+    }
+    protected abstract Cpu createCpu(MemoryManager mm);
+    protected abstract MemoryManager createMemoryManager();
 
     @Override
     public void reset() {
-        super.reset();
+        properties =  new Properties();
+        try {
+            loadConfigProperties(configFile);
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
 
-        cga         = new IBMCGA((Intel8086) cpu, (Intel8255) ppi, (Motorola6845) crtc);
-        peripherals = new Peripheral[] { dma, pic, pit, ppi, crtc };
+        memory =  createMemoryManager();
+        memory.reset();
+        cpu =  createCpu(memory);
+        cpu.reset();
+        //cpu.setMemory(memory.getMemoryBase());
 
-        cpu.setPeripherals(peripherals);
+        memory.addDataListener(cpu.getMemoryAccessor().getDataRegister());
 
-        cpu.setPic(pic);
-        cpu.setPit(pit);
+        createPeripherals();
+    }
+    protected DirectMemoryAccess dma ;
+    protected ProgrammableInterrupt pic;
+    protected ProgrammableIntervalTimer pit;
+    protected ProgrammablePeripheralInterface ppi;
+    protected DisplayController crtc;
+    protected   Display display;//         = new IBMCGA(this, ppi, crtc);
+
+    protected void createPeripherals() {
+        dma = createDmaController();
+        pic = createProgrammableInterruptController();
+        pit = createProgrammableIntervalTimer(pic);
+        ppi = createProgrammablePeripheralInterface(pic);
+        crtc = createDisplayController();
+        display =  createDisplay();
     }
 
-    public PersonalComputer(String configFile) {
-        super(configFile);
+    protected abstract Display createDisplay();
 
+    protected abstract DisplayController createDisplayController();
+
+    protected abstract ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterrupt pic);
+
+    protected abstract ProgrammableIntervalTimer createProgrammableIntervalTimer(ProgrammableInterrupt pic);
+
+    protected abstract ProgrammableInterrupt createProgrammableInterruptController();
+
+    protected abstract DirectMemoryAccess createDmaController();
+
+    private void start() {
+        cpu.run();
     }
 
 
-    protected Cpu createCpu(MemoryManager mm){
-        Intel8086 cpu = new Intel8086(mm);
-
-        return cpu;
+    protected void loadBios(int base, String biosResource) throws Exception{
+        memory.load(base, biosResource);
     }
 
-    protected MemoryManager createMemoryManager(){
-        return new  MemoryManager();
+    private void loadBootloader(int base, String res) throws Exception{
+        memory.load(base, res);
     }
 
+    @Override
+    public void powerDown() {
+
+    }
+
+    @Override
+    public void powerUp() {
+        reset();
+        try {
+            loadBios(getBiosBase(), getBiosResource());
+            loadBootloader(getBootloaderBase(), getBootloaderResource());
+            start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getBiosResource() {
+        return (String)properties.get(BIOS+"."+RESOURCE);
+    }
+
+    public String getBootloaderResource() {
+        return (String)properties.get(BOOTLOADER+"."+RESOURCE);
+    }
+
+    public int getBiosBase() {
+        int base = 0;
+        String baseStr = (String)properties.get(BIOS+"."+BASE);
+        if(baseStr != null) {
+            int ii = baseStr.indexOf("0x");
+            if(ii>=0)
+                baseStr = baseStr.substring(2);
+            base = Integer.parseInt(baseStr,16);
+        }
+
+        return base;
+    }
+
+    public int getBootloaderBase() {
+        int base = 0;
+        String baseStr = (String)properties.get(BOOTLOADER+"."+BASE);
+        if(baseStr != null) {
+            int ii = baseStr.indexOf("0x");
+            if(ii>=0)
+                baseStr = baseStr.substring(2);
+            base = Integer.parseInt(baseStr,16);
+        }
+
+        return base;
+    }
 }

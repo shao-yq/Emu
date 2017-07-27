@@ -1,7 +1,7 @@
 package cc.emulator.apps.computer;
 
 import cc.emulator.core.computer.Computer;
-import cc.emulator.core.computer.PersonalComputer;
+import cc.emulator.computer.IBMPC5150;
 
 /**
  * @author Shao Yongqing
@@ -10,7 +10,7 @@ import cc.emulator.core.computer.PersonalComputer;
 public class MyComputer {
     public static void main(final String[] args) {
         String configFile="/IBMPc.properties";
-        final Computer computer = new PersonalComputer(configFile);
+        final Computer computer = new IBMPC5150(configFile);
         // Power supply
         computer.powerUp();
     }

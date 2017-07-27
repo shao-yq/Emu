@@ -1,5 +1,6 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.computer.Display;
 import cc.emulator.core.cpu.intel.Intel8086;
 
 import java.awt.Color;
@@ -93,7 +94,7 @@ import javax.swing.JPanel;
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
 @SuppressWarnings("serial")
-public class IBMCGA extends JPanel implements KeyListener {
+public class IBMCGA extends JPanel implements KeyListener, Display {
     /**
      * Lookup table for conversions from CP437 to Unicode code points.
      */
