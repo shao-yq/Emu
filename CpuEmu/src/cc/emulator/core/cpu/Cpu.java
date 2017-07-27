@@ -38,6 +38,8 @@ public abstract class Cpu {
     AddressGenerator addressGenerator;
     MemoryAccessor memoryAccessor;
 
+    protected Decodable decoder;
+
     public MemoryManager getMemoryManager() {
         return memoryManager;
     }
@@ -52,7 +54,11 @@ public abstract class Cpu {
         stack = createStack();
         stack.setAddressGenerator(addressGenerator);
         stack.setMemoryAccessor(memoryAccessor);
+
+        decoder = createDecoder();
     }
+
+    protected abstract Decodable createDecoder();
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 

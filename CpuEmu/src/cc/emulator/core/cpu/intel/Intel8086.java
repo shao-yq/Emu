@@ -4,7 +4,6 @@ import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
-import cc.emulator.core.cpu.register.StatusRegister;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -183,6 +182,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
 
     public Intel8086(MemoryManager mm){
         super(mm);
+    }
+
+    @Override
+    protected Decodable createDecoder() {
+        return new IntelDecoder();
     }
 
     @Override
@@ -768,10 +772,16 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
     /**
      * Decodes the second byte of the instruction and increments IP accordingly.
      */
-    private void decode() {
-        mod = queue[1] >>> 6 & 0b11;
-        reg = queue[1] >>> 3 & 0b111;
-        rm  = queue[1]       & 0b111;
+    private void decode2() {
+
+//        mod = queue[1] >>> 6 & 0b11;
+//        reg = queue[1] >>> 3 & 0b111;
+//        rm  = queue[1]       & 0b111;
+
+        IntelInstruction instruction = (IntelInstruction) decoder.decode2(queue);
+        mod = instruction.mod;
+        reg = instruction.reg;
+        rm = instruction.rm;
 
         if (mod == 0b01)
             // 8-bit displacement follows
@@ -1594,9 +1604,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             queue[i] = getMem(B, getAddr(cs, ip + i));
 
         // Decode first byte.
-        op = queue[0];
-        d  = op >>> 1 & 0b1;
-        w  = op       & 0b1;
+        decode1();
+//        op = queue[0];
+//        d  = op >>> 1 & 0b1;
+//        w  = op       & 0b1;
+
         ip = ip + 1 & 0xffff; // Increment IP.
 
         // Only repeat string instructions.
@@ -1668,7 +1680,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
             case MOV_REG8_REG8__MEM8   : //   0x8a: // MOV REG8,REG8/MEM8
             case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     src = getReg(w, reg);
                     setRM(w, mod, rm, src);
@@ -1683,7 +1695,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             // Immediate to Register/Memory
             case MOV_REG8__MEM8_IMMED8   : // 0xc6: // MOV REG8/MEM8,IMMED8
             case MOV_REG16__MEM16_IMMED16: // 0xc7: // MOV REG16/MEM16,IMMED16
-                decode();
+                decode2();
                 switch (reg) {
                 case 0b000:
                     src = getMem(w);
@@ -1735,7 +1747,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             // Register/Memory to/from Segment Register
             case MOV_REG16_MEM16__SEGREG: //  0x8c: // MOV REG16/MEM16,SEGREG
             case MOV_SEGREG_REG16__MEM16: //  0x8e: // MOV SEGREG,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     src = getSegReg(reg);
                     setRM(W, mod, rm, src);
@@ -1827,7 +1839,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             // Register/Memory with Register
             case XCHG_REG8_REG8__MEM8   : // 0x86: // XCHG REG8,REG8/MEM8
             case XCHG_REG16_REG16__MEM16: // 0x87: // XCHG REG16,REG16/MEM16
-                decode();
+                decode2();
                 dst = getReg(w, reg);
                 src = getRM(w, mod, rm);
                 setReg(w, reg, src);
@@ -1949,7 +1961,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * XLAT instruction).
              */
             case LEA_REG16_MEM16: //  0x8d: // LEA REG16,MEM16
-                decode();
+                decode2();
                 src = getEA(mod, rm) - (os << 4);
                 setReg(w, reg, src);
                 clocks += 2;
@@ -1970,7 +1982,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * segment and that SI contains the offset of the string).
              */
             case LDS_REG16_MEM32: //  0xc5: // LDS REG16,MEM32
-                decode();
+                decode2();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 ds = getMem(W, src + 2);
@@ -1992,7 +2004,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * the offset of the string).
              */
             case LES_REG16_MEM32: //  0xc4: // LES REG16,MEM32
-                decode();
+                decode2();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 es = getMem(W, src + 2);
@@ -2157,7 +2169,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case ADD_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
             case ADD_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
             case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2200,7 +2212,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case ADC_REG16__MEM16_REG16: //  0x11: // ADC REG16/MEM16,REG16
             case ADC_REG8_REG8__MEM8   : //  0x12: // ADC REG8,REG8/MEM8
             case ADC_REG16_REG16__MEM16: //  0x13: // ADC REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2321,7 +2333,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case SUB_REG16__MEM16_REG16: //   0x29: // SUB REG16/MEM16,REG16
             case SUB_REG8_REG8__MEM8   : //   0x2a: // SUB REG8,REG8/MEM8
             case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2365,7 +2377,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case SBB_REG16__MEM16_REG16: //   0x19: // SBB REG16/MEM16,REG16
             case SBB_REG8_REG8__MEM8   : //   0x1a: // SBB REG8,REG8/MEM8
             case SBB_REG16_REG16__MEM16: //   0x1b: // SBB REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2447,7 +2459,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case CMP_REG16__MEM16_REG16: //  0x39: // CMP REG16/MEM16,REG16
             case CMP_REG8_REG8__MEM8   : //  0x3a: // CMP REG8,REG8/MEM8
             case CMP_REG16_REG16__MEM16: //  0x3b: // CMP REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2733,7 +2745,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
             case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
             case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2776,7 +2788,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
             case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
             case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2820,7 +2832,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
             case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
             case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
-                decode();
+                decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2862,7 +2874,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             // Register/Memory and Register
             case TEST_REG8__MEM8_REG8   : //   0x84: // TEST REG8/MEM8,REG8
             case TEST_REG16__MEM16_REG16: //   0x85: // TEST REG16/MEM16,REG16
-                decode();
+                decode2();
                 dst = getRM(w, mod, rm);
                 src = getReg(w, reg);
                 logic(w, dst & src);
@@ -3994,7 +4006,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case ESC_5_SOURCE: //   0xdd: // ESC 5,SOURCE
             case ESC_6_SOURCE: //   0xde: // ESC 6,SOURCE
             case ESC_7_SOURCE: //   0xdf: // ESC 7,SOURCE
-                decode();
+                decode2();
                 clocks += mod == 0b11 ? 2 : 8;
                 break;
 
@@ -4058,7 +4070,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 // SBB REG16/MEM16,IMMED8
                 // SUB REG16/MEM16,IMMED8
                 // CMP REG16/MEM16,IMMED8
-                decode();
+                decode2();
                 dst = getRM(w, mod, rm);
                 src = getMem(B);
                 if (op == 0x81)
@@ -4118,7 +4130,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * GROUP 1A
              */
             case POP_REG16__MEM16: //  0x8f: // POP REG16/MEM16
-                decode();
+                decode2();
                 switch (reg) {
                 case MOD_POP: //  0b000: // POP
                     src = pop();
@@ -4164,7 +4176,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 // SHR REG16/MEM16,CL
                 // SAR REG16/MEM16,CL
             {
-                decode();
+                decode2();
                 dst = getRM(w, mod, rm);
                 src = op == 0xd0 || op == 0xd1 ? 1 : cl;
                 boolean tempCF;
@@ -4278,7 +4290,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 // IMUL REG16/MEM16
                 // DIV REG16/MEM16
                 // IDIV REG16/MEM16
-                decode();
+                decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case MOD_TEST: //   0b000: // TEST
@@ -4423,7 +4435,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case 0xfe:
                 // INC REG8/MEM8
                 // DEC REG8/MEM8
-                decode();
+                decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG8__MEM8: //   0b000: // INC REG8/MEM8
@@ -4449,7 +4461,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 // JMP REG16/MEM16 (intra)
                 // JMP MEM16 (intersegment)
                 // PUSH REG16/MEM16
-                decode();
+                decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG16__MEM16: //   0b000: // INC REG16/MEM16
@@ -4494,5 +4506,16 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             }
         } while (rep > 0);
         return true;
+    }
+
+    private void decode1() {
+        IntelInstruction instruction = (IntelInstruction) decoder.decode(queue);
+        op = instruction.op;
+        d  = instruction.d;
+        w  = instruction.w;
+
+//        op = queue[0];
+//        d  = op >>> 1 & 0b1;
+//        w  = op       & 0b1;
     }
 }
