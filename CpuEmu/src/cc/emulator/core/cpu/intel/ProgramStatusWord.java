@@ -133,16 +133,7 @@ public class ProgramStatusWord extends StatusRegister{
     /** Lookup table used for setting the overflow flag. */
     private static final int[] SIGN   = new int[] { 0x80, 0x8000 };
 
-    /**
-     * Flags
-     *
-     * The 8086 has six 1-bit status flags that the EU posts to reflect certain
-     * properties of the result of an arithmetic or logic operation. A group of
-     * instructions is available that allow a program to alter its execution
-     * depending of the state of these flags, that is, on the result of a prior
-     * operation. Different instructions affect the status flags differently.
-     */
-    private int                flags;
+
 
     /**
      * Sets or clears a flag.
@@ -152,11 +143,11 @@ public class ProgramStatusWord extends StatusRegister{
      * @param set
      *            true to set, false to clear
      */
-    private void setFlag(final int flag, final boolean set) {
+    public void setFlag( int flag,  boolean set) {
         if (set)
-            flags |= flag;
+            setFlag(flag);
         else
-            flags &= ~flag;
+            clearFlag(flag);
     }
 
 
@@ -168,7 +159,7 @@ public class ProgramStatusWord extends StatusRegister{
      * @param res
      *            the result
      */
-    private void setFlags(final int w, final int res) {
+    public void setFlags(final int w, final int res) {
         setFlag(PF, PARITY[res & 0xff] > 0);
         setFlag(ZF, res == 0);
         setFlag(SF, (shift(res, 8 - BITS[w]) & SF) > 0);
@@ -220,18 +211,16 @@ public class ProgramStatusWord extends StatusRegister{
         return "PSW";
     }
 
-    @Override
-    public int getData() {
-        return flags;
-    }
 
-    @Override
-    public void setData(int data) {
-        flags =data;
-    }
 
     @Override
     public int getDataWidth() {
         return 2;
     }
+
+
+//    public int hasCF() {
+//        return (flags & CF) == CF ? 1 : 0;
+//    }
+
 }

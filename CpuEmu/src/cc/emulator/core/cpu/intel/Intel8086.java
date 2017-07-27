@@ -462,8 +462,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * depending of the state of these flags, that is, on the result of a prior
      * operation. Different instructions affect the status flags differently.
      */
-    private int                flags;
-    //ProgramStatusWord flags;
+    //private int                flags;
+    ProgramStatusWord         flags;
 
     /**
      * Queue
@@ -664,7 +664,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the result
      */
     private int adc(final int w, final int dst, final int src) {
-        final int carry = (flags & CF) == CF ? 1 : 0;
+        final int carry = flags.hasFlag(CF)? 1 : 0;    // (flags & CF) == CF ? 1 : 0;
         final int res = dst + src + carry & MASK[w];
 
         setFlag(CF, carry == 1 ? res <= dst : res < dst);
@@ -741,7 +741,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             }
             return;
         }*/
-        push(flags);
+        push(flags.getData());
         setFlag(IF, false);
         setFlag(TF, false);
         push(cs);
@@ -1010,7 +1010,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return true if set, false if cleared
      */
     private boolean getFlag(final int flag) {
-        return (flags & flag) > 0;
+        return flags.hasFlag(flag);
+//        return (flags & flag) > 0;
     }
 
     /**
@@ -1295,7 +1296,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * Resets the CPU to its default state.
      */
     public void reset() {
-        flags = 0;
+        flags = new ProgramStatusWord();
+        flags.setData(0);
+
         ip = 0x0000;
         cs = 0xffff;
         ds = 0x0000;
@@ -1318,7 +1321,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the result
      */
     private int sbb(final int w, final int dst, final int src) {
-        final int carry = (flags & CF) == CF ? 1 : 0;
+        final int carry = flags.hasFlag(CF)?1:0;  // flags & CF) == CF ? 1 : 0;
         final int res = dst - src - carry & MASK[w];
 
         setFlag(CF, carry > 0 ? dst <= src : dst < src);
@@ -1339,9 +1342,16 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      */
     private void setFlag(final int flag, final boolean set) {
         if (set)
-            flags |= flag;
+            flags.setFlag(flag);
         else
-            flags &= ~flag;
+            flags.clearFlag(flag);
+
+        //flags.setFlag(flag, set);
+
+//        if (set)
+//            flags |= flag;
+//        else
+//            flags &= ~flag;
     }
 
     /**
@@ -1353,9 +1363,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      *            the result
      */
     private void setFlags(final int w, final int res) {
-        setFlag(PF, PARITY[res & 0xff] > 0);
-        setFlag(ZF, res == 0);
-        setFlag(SF, (shift(res, 8 - BITS[w]) & SF) > 0);
+        flags.setFlags(w, res);
+
+//        setFlag(PF, PARITY[res & 0xff] > 0);
+//        setFlag(ZF, res == 0);
+//        setFlag(SF, (shift(res, 8 - BITS[w]) & SF) > 0);
     }
 
     /**
@@ -2024,7 +2036,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * assembly language programs to run on an 8086.
              */
             case LAHF: //  0x9f: // LAHF
-                ah = flags & 0xff;
+                ah = flags.getData() & 0xff;
                 clocks += 4;
                 break;
 
@@ -2038,7 +2050,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * 8080/8085 compatibility.
              */
             case SAHF: //  0x9e: // SAHF
-                flags = flags & 0xff00 | ah;
+                flags.setData(flags.getData() & 0xff00 | ah);  // flags = flags & 0xff00 | ah;
                 clocks += 4;
                 break;
 
@@ -2050,7 +2062,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * flags themselves are not affected.
              */
             case PUSHF: //  0x9c: // PUSHF
-                push(flags);
+                push(flags.getData());
                 clocks += 10;
                 break;
 
@@ -2068,7 +2080,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * the memory- image and then popping the flags.
              */
             case POPF: //  0x9d: // POPF
-                flags = pop();
+                flags.setData(pop());
                 clocks += 8;
                 break;
 
@@ -3853,7 +3865,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case IRET: //  0xcf: // IRET
                 ip = pop();
                 cs = pop();
-                flags = pop();
+                flags.setData(pop());   // flags = pop();
                 clocks += 24;
                 break;
 
