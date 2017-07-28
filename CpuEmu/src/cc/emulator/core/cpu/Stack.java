@@ -13,41 +13,51 @@ public abstract class Stack {
     MemoryAccessor memoryAccessor;
     AddressGenerator addressGenerator;
 
+    protected RegisteredMemoryLocator memoryLocator;
     public Stack() {
 //        sp = 0;
 //        ss = 0;
-        sp = createPointerIndexer(); // new PointerIndexer("SP",2);
-        ss = createSegmentRegister(); // new SegmentRegister("SS",2);
+        //sp = createPointerIndexer(); // new PointerIndexer("SP",2);
+        //ss = createSegmentRegister(); // new SegmentRegister("SS",2);
+        memoryLocator =  createMemoryLocator(); // new  RegisteredMemoryLocator(ss, sp);
     }
-    protected abstract PointerIndexer createPointerIndexer();
-    protected abstract SegmentRegister createSegmentRegister();
+
+    protected abstract RegisteredMemoryLocator createMemoryLocator();
+
+//    protected abstract PointerIndexer createPointerIndexer();
+//    protected abstract SegmentRegister createSegmentRegister();
 
     public int getSp() {
-        return sp.getData();
+        //return sp.getData();
+        return memoryLocator.getOffset();
     }
 
     public int getSs() {
-        return ss.getData();
+        //return ss.getData();
+        return memoryLocator.getBase();
     }
 
     public void setSs(int ss) {
-        this.ss.setData(ss);
+        //this.ss.setData(ss);
+        memoryLocator.setBase(ss);
     }
 
     public void setSp(int sp) {
-        this.sp.setData(sp);
+        //this.sp.setData(sp);
+        memoryLocator.setOffset(sp);
     }
 
     public void addSp(int delta) {
-        int v = sp.getData();
-        this.sp.setData(v+delta);
+        //int v = sp.getData();
+        //this.sp.setData(v+delta);
+        memoryLocator.incOffset(delta);
     }
 
     //protected int                sp;
     //protected int                ss;
 
-    protected SegmentRegister ss;
-    protected PointerIndexer sp;
+    //protected SegmentRegister ss;
+    //protected PointerIndexer sp;
 
     /**
      * Pushes a value to the top of the stack.
@@ -58,9 +68,14 @@ public abstract class Stack {
     public void push(final int val) {
         decSp();
 
-        int address = addressGenerator.getAddr(ss.getData(), sp.getData());
+        int address = getTopAddress();
         memoryAccessor.setMem(MemoryAccessor.BYTE2, address, val);
     }
+
+    private int getTopAddress() {
+        return addressGenerator.getAddr(memoryLocator.getBase(), memoryLocator.getOffset()); // addressGenerator.getAddr(ss.getData(), sp.getData());
+    }
+
 
     public void setMemoryAccessor(MemoryAccessor memoryAccessor) {
         this.memoryAccessor = memoryAccessor;
@@ -77,7 +92,7 @@ public abstract class Stack {
      * @return the value
      */
     public int pop() {
-        int address = addressGenerator.getAddr(ss.getData(), sp.getData());
+        int address = getTopAddress();      // addressGenerator.getAddr(ss.getData(), sp.getData());
         final int val = memoryAccessor.getMem(MemoryAccessor.BYTE2, address);
         //final int val = getMem(W, getAddr(ss, sp));
 

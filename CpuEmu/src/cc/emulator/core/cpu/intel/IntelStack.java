@@ -1,5 +1,7 @@
 package cc.emulator.core.cpu.intel;
 
+import cc.emulator.core.cpu.MemoryLocator;
+import cc.emulator.core.cpu.RegisteredMemoryLocator;
 import cc.emulator.core.cpu.Stack;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
@@ -10,7 +12,8 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  */
 public class IntelStack extends Stack {
     protected void decSp(){
-        sp.decrease();
+        memoryLocator.decOffset();
+        //sp.decrease();
 
         //sp = sp - 2 & 0xffff;
 
@@ -20,7 +23,9 @@ public class IntelStack extends Stack {
 
     }
     protected void incSp() {
-        sp.increase();
+        memoryLocator.incOffset();
+
+        //sp.increase();
 
         //sp = sp + 2 & 0xffff;
 
@@ -29,11 +34,15 @@ public class IntelStack extends Stack {
 //        sp.setData(v);
 
     }
-    protected PointerIndexer createPointerIndexer(){
-        return new PointerIndexer("SP",2);
+//    protected PointerIndexer createPointerIndexer(){
+//        return new PointerIndexer("SP",2);
+//
+//    }
+//    protected  SegmentRegister createSegmentRegister(){
+//        return new SegmentRegister("SS",2);
+//    }
 
-    }
-    protected  SegmentRegister createSegmentRegister(){
-        return new SegmentRegister("SS",2);
+    protected RegisteredMemoryLocator createMemoryLocator(){
+        return new  RegisteredMemoryLocator(new SegmentRegister("SS",2), new PointerIndexer("SP",2));
     }
 }

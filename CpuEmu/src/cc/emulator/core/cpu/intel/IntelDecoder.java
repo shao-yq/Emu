@@ -36,6 +36,26 @@ public class IntelDecoder implements Decodable {
 //            // No displacement
 //            ip = ip + 1 & 0xffff;
 
+        /**
+         * Register mode/Memory mode with displacement length
+         *  CODE        Explanation
+         *   00         Memory Mode, no displacement follows (except whe R/M=110, 16-bit displacement follows)
+         *   01         Memory Mode,  8-bit displacement follows
+         *   10         Memory Mode, 16-bit displacement follows
+         *   11         Register Mode (no displacement)
+         */
+
+        switch(instr.mod){
+            case 0b01:
+                // 8-bit displacement follows
+                instr.disp = queue[2];
+                break;
+            case 0b10:
+                // 16-bit displacement follows
+                instr.disp = queue[3] << 8 | queue[2];
+                break;
+        }
+
         return instr;
     }
 }
