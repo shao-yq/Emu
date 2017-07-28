@@ -57,4 +57,17 @@ public abstract class StatusRegister implements Register {
             clearFlag(flag);
     }
 
+    protected int                flags2;
+
+    @Override
+    public long getDataLong() {
+        return (flags2<<32)|flags;
+    }
+
+    @Override
+    public void setData(long data) {
+        flags2 = (int) ((data>>32)&0xffffffff);
+        flags = (int) (data&0xffffffff);
+    }
+
 }

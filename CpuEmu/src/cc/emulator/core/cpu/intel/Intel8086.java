@@ -4,10 +4,10 @@ import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
+import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +68,43 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     public Intel8086(MemoryManager mm){
         super(mm);
+
+    }
+
+    /**
+     * Resets the CPU to its default state.
+     */
+    public void reset() {
+        flags = new ProgramStatusWord();
+        flags.setData(0);
+
+        instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
+        instructionLocator.setBase(0xffff);     //  cs = 0xffff;
+
+        ds = 0x0000;
+        getStack().setSs(0x0000); // ss = 0x0000;
+        es = 0x0000;
+        for (int i = 0; i < 6; i++)
+            queue[i] = 0;
+        clocks = 0;
+    }
+
+    @Override
+    protected Register[] createRegisters(){
+        Register regs[] = new Register[16];
+        // Create general registers
+        ax = new GeneralRegister8086("AX", 2);
+        bx = new GeneralRegister8086("BX", 2);
+        cx = new GeneralRegister8086("CX", 2);
+        dx = new GeneralRegister8086("DX", 2);
+
+        int i=0;
+        regs[i++] = ax;
+        regs[i++] = bx;
+        regs[i++] = cx;
+        regs[i++] = dx;
+
+        return regs;
     }
 
     @Override
@@ -188,7 +225,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * AL - Byte Multiply, Byte Divide, Byte I/O, Translate, Decimal Arithmetic
      * AH - Byte Multiply, Byte Divide
      */
-    private int                ah, al;
+    //private int                ah, al;
+    GeneralRegister             ax;
 
     /**
      * CX (count)
@@ -198,7 +236,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * CL - Variable Shift and Rotate
      */
     private int                ch, cl;
-
+    GeneralRegister             cx;
     /**
      * DX (data)
      *
@@ -206,7 +244,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * DX - Word Multiply, Word Divide, Indirect I/O
      */
     private int                dh, dl;
-
+    GeneralRegister             dx;
     /**
      * BX (base)
      *
@@ -214,7 +252,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * BX - Translate
      */
     private int                bh, bl;
-
+    GeneralRegister             bx;
     /**
      * SP (stack pointer)
      *
@@ -660,6 +698,20 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return res;
     }
 
+    // Current instruction decoded
+    IntelInstruction instruction;
+
+    private void decode1() {
+        instruction = (IntelInstruction) decoder.decode(queue);
+        op = instruction.op;
+        d  = instruction.d;
+        w  = instruction.w;
+
+//        op = queue[0];
+//        d  = op >>> 1 & 0b1;
+//        w  = op       & 0b1;
+    }
+
     /**
      * Decodes the second byte of the instruction and increments IP accordingly.
      */
@@ -669,7 +721,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        reg = queue[1] >>> 3 & 0b111;
 //        rm  = queue[1]       & 0b111;
 
-        IntelInstruction instruction = (IntelInstruction) decoder.decode2(queue);
+        instruction = (IntelInstruction) decoder.decode2(queue);
         mod = instruction.mod;
         reg = instruction.reg;
         rm = instruction.rm;
@@ -987,7 +1039,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Byte data
             switch (reg) {
             case AL: //  0b000: // AL
-                return al;
+                return ax.getL();           //  al;
             case CL: //  0b001: // CL
                 return cl;
             case DL: //  0b010: // DL
@@ -995,7 +1047,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case BL: //  0b011: // BL
                 return bl;
             case AH: //  0b100: // AH
-                return ah;
+                return ax.getH();           //  ah;
             case CH: //  0b101: // CH
                 return ch;
             case DH: //  0b110: // DH
@@ -1007,7 +1059,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Word data
             switch (reg) {
             case AX: //  0b000: // AX
-                return ah << 8 | al;
+                return ax.getData();                //  ah << 8 | al;
             case CX: //  0b001: // CX
                 return ch << 8 | cl;
             case DX: //  0b010: // DX
@@ -1047,7 +1099,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int getRM(final int w, final int mod, final int rm) {
-        if (mod == REGISTER_TO_REGISTER_MODE)  // 0b11
+        if (mod == MOD_REGISTER_TO_REGISTER)  // 0b11
             // Register-to-register mode
             return getReg(w, rm);
         else
@@ -1078,6 +1130,174 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         }
         return 0;
     }
+
+
+    /**
+     * Sets the value at the specified address.
+     *
+     * @param w
+     *            word/byte operation
+     * @param addr
+     *            the address
+     * @param val
+     *            the new value
+     */
+    private void setMem(final int w, final int addr, final int val) {
+        // IBM BIOS and BASIC are ROM.
+        if (addr >= 0xf6000)
+            return;
+
+        // Put address value to Address Bus
+        // Put data to Data Bus
+        getMemoryAccessor().setMem(w, addr, val);
+        if (w == W) {
+            if ((addr & 0b1) == 0b1)
+                clocks += 4;
+        }
+
+//        memory[addr] = val & 0xff;
+//        if (w == W) {
+//            if ((addr & 0b1) == 0b1)
+//                clocks += 4;
+//            memory[addr + 1] = val >>> 8 & 0xff;
+//        }
+    }
+
+    /**
+     * Sets the value of the register.
+     *
+     * The REG (register) field identifies a register that is one of the
+     * instruction operands.
+     *
+     * @param w
+     *            word/byte operation
+     * @param reg
+     *            the register field
+     * @param val
+     *            the new value
+     */
+    private void setReg(final int w, final int reg, final int val) {
+        if (w == B)
+            // Byte data
+            switch (reg) {
+                case AL: //  0b000: // AL
+                    ax.setL(val & 0xff);      //  al = val & 0xff;
+                    break;
+                case CL: //  0b001: // CL
+                    cl = val & 0xff;
+                    break;
+                case DL: //  0b010: // DL
+                    dl = val & 0xff;
+                    break;
+                case BL: //  0b011: // BL
+                    bl = val & 0xff;
+                    break;
+                case AH: //  0b100: // AH
+                    ax.setH(val & 0xff);      //  ah = val & 0xff;
+                    break;
+                case CH: //  0b101: // CH
+                    ch = val & 0xff;
+                    break;
+                case DH: //  0b110: // DH
+                    dh = val & 0xff;
+                    break;
+                case BH: //  0b111: // BH
+                    bh = val & 0xff;
+                    break;
+            }
+        else
+            // Word data
+            switch (reg) {
+                case AX: //  0b000: // AX
+                    // al = val & 0xff;
+                    // ah = val >>> 8 & 0xff;
+                    ax.setData(val);
+                    break;
+                case CX: //  0b001: // CX
+                    cl = val & 0xff;
+                    ch = val >>> 8 & 0xff;
+                    break;
+                case DX: //  0b010: // DX
+                    dl = val & 0xff;
+                    dh = val >>> 8 & 0xff;
+                    break;
+                case BX: //  0b011: // BX
+                    bl = val & 0xff;
+                    bh = val >>> 8 & 0xff;
+                    break;
+                case SP: //  0b100: // SP
+                    getStack().setSp(val & 0xffff);     // sp = val & 0xffff;
+                    break;
+                case BP: //  0b101: // BP
+                    bp = val & 0xffff;
+                    break;
+                case SI: //  0b110: // SI
+                    si = val & 0xffff;
+                    break;
+                case DI: //  0b111: // DI
+                    di = val & 0xffff;
+                    break;
+            }
+    }
+
+    /**
+     * Sets the value of the register/memory.
+     *
+     * The MOD (mode) field indicates whether one of the operands is in memory
+     * or whether both operands are registers. The encoding of the R/M
+     * (register/memory) field depends on how the mode field is set.
+     *
+     * If MOD = 11 (register-to-register mode), then R/M identifies the second
+     * register operand.
+     * If MOD selects memory mode, then R/M indicates how the effective address
+     * of the memory operand is to be calculated.
+     *
+     * @param w
+     *            word/byte instruction
+     * @param mod
+     *            the mode field
+     * @param rm
+     *            the register/memory field
+     * @param val
+     *            the new value
+     */
+    private void setRM(final int w, final int mod, final int rm, final int val) {
+        if (mod == MOD_REGISTER_TO_REGISTER) // 0b11
+            // Register-to-register mode
+            setReg(w, rm, val);
+        else
+            // Memory mode
+            setMem(w, ea > 0 ? ea : getEA(mod, rm), val);
+    }
+
+    /**
+     * Sets the value of the segment register.
+     *
+     * The REG (register) field identifies a register that is one of the
+     * instruction operands.
+     *
+     * @param reg
+     *            the register field
+     * @param val
+     *            the new value
+     */
+    private void setSegReg(final int reg, final int val) {
+        switch (reg) {
+            case ES: //  0b00: // ES
+                es = val & 0xffff;
+                break;
+            case CS: //  0b01: // CS
+                instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
+                break;
+            case SS: //  0b10: // SS
+                getStack().setSs(val & 0xffff);     // ss = val & 0xffff;
+                break;
+            case DS: //  0b11: // DS
+                ds = val & 0xffff;
+                break;
+        }
+    }
+
 
     /**
      * Increments an operand and sets flags accordingly.
@@ -1203,24 +1423,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     }
 
     /**
-     * Resets the CPU to its default state.
-     */
-    public void reset() {
-        flags = new ProgramStatusWord();
-        flags.setData(0);
-
-        instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
-        instructionLocator.setBase(0xffff);     //  cs = 0xffff;
-
-        ds = 0x0000;
-        getStack().setSs(0x0000); // ss = 0x0000;
-        es = 0x0000;
-        for (int i = 0; i < 6; i++)
-            queue[i] = 0;
-        clocks = 0;
-    }
-
-    /**
      * Performs subtraction with borrow and sets flags accordingly.
      *
      * @param w
@@ -1241,171 +1443,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         flags.setFlags(w, res);
 
         return res;
-    }
-
-    /**
-     * Sets the value at the specified address.
-     *
-     * @param w
-     *            word/byte operation
-     * @param addr
-     *            the address
-     * @param val
-     *            the new value
-     */
-    private void setMem(final int w, final int addr, final int val) {
-        // IBM BIOS and BASIC are ROM.
-        if (addr >= 0xf6000)
-            return;
-
-        // Put address value to Address Bus
-        // Put data to Data Bus
-        getMemoryAccessor().setMem(w, addr, val);
-        if (w == W) {
-            if ((addr & 0b1) == 0b1)
-                clocks += 4;
-        }
-
-//        memory[addr] = val & 0xff;
-//        if (w == W) {
-//            if ((addr & 0b1) == 0b1)
-//                clocks += 4;
-//            memory[addr + 1] = val >>> 8 & 0xff;
-//        }
-    }
-
-    /**
-     * Sets the value of the register.
-     *
-     * The REG (register) field identifies a register that is one of the
-     * instruction operands.
-     *
-     * @param w
-     *            word/byte operation
-     * @param reg
-     *            the register field
-     * @param val
-     *            the new value
-     */
-    private void setReg(final int w, final int reg, final int val) {
-        if (w == B)
-            // Byte data
-            switch (reg) {
-            case AL: //  0b000: // AL
-                al = val & 0xff;
-                break;
-            case CL: //  0b001: // CL
-                cl = val & 0xff;
-                break;
-            case DL: //  0b010: // DL
-                dl = val & 0xff;
-                break;
-            case BL: //  0b011: // BL
-                bl = val & 0xff;
-                break;
-            case AH: //  0b100: // AH
-                ah = val & 0xff;
-                break;
-            case CH: //  0b101: // CH
-                ch = val & 0xff;
-                break;
-            case DH: //  0b110: // DH
-                dh = val & 0xff;
-                break;
-            case BH: //  0b111: // BH
-                bh = val & 0xff;
-                break;
-            }
-        else
-            // Word data
-            switch (reg) {
-            case AX: //  0b000: // AX
-                al = val & 0xff;
-                ah = val >>> 8 & 0xff;
-                break;
-            case CX: //  0b001: // CX
-                cl = val & 0xff;
-                ch = val >>> 8 & 0xff;
-                break;
-            case DX: //  0b010: // DX
-                dl = val & 0xff;
-                dh = val >>> 8 & 0xff;
-                break;
-            case BX: //  0b011: // BX
-                bl = val & 0xff;
-                bh = val >>> 8 & 0xff;
-                break;
-            case SP: //  0b100: // SP
-                getStack().setSp(val & 0xffff);     // sp = val & 0xffff;
-                break;
-            case BP: //  0b101: // BP
-                bp = val & 0xffff;
-                break;
-            case SI: //  0b110: // SI
-                si = val & 0xffff;
-                break;
-            case DI: //  0b111: // DI
-                di = val & 0xffff;
-                break;
-            }
-    }
-
-    /**
-     * Sets the value of the register/memory.
-     *
-     * The MOD (mode) field indicates whether one of the operands is in memory
-     * or whether both operands are registers. The encoding of the R/M
-     * (register/memory) field depends on how the mode field is set.
-     *
-     * If MOD = 11 (register-to-register mode), then R/M identifies the second
-     * register operand.
-     * If MOD selects memory mode, then R/M indicates how the effective address
-     * of the memory operand is to be calculated.
-     *
-     * @param w
-     *            word/byte instruction
-     * @param mod
-     *            the mode field
-     * @param rm
-     *            the register/memory field
-     * @param val
-     *            the new value
-     */
-    private void setRM(final int w, final int mod, final int rm, final int val) {
-        if (mod == REGISTER_TO_REGISTER_MODE) // 0b11
-            // Register-to-register mode
-            setReg(w, rm, val);
-        else
-            // Memory mode
-            setMem(w, ea > 0 ? ea : getEA(mod, rm), val);
-    }
-
-    /**
-     * Sets the value of the segment register.
-     *
-     * The REG (register) field identifies a register that is one of the
-     * instruction operands.
-     *
-     * @param reg
-     *            the register field
-     * @param val
-     *            the new value
-     */
-    private void setSegReg(final int reg, final int val) {
-        switch (reg) {
-        case ES: //  0b00: // ES
-            es = val & 0xffff;
-            break;
-        case CS: //  0b01: // CS
-            instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
-            break;
-        case SS: //  0b10: // SS
-            getStack().setSs(val & 0xffff);     // ss = val & 0xffff;
-            break;
-        case DS: //  0b11: // DS
-            ds = val & 0xffff;
-            break;
-        }
     }
 
     /**
@@ -1566,7 +1603,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOV_REG8_REG8__MEM8   : //   0x8a: // MOV REG8,REG8/MEM8
             case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
                 decode2();
-                if (d == 0b0) {
+                if (d == REGISTER_SRC) {     //  0b0
                     src = getReg(w, reg);
                     setRM(w, mod, rm, src);
                     clocks += mod == 0b11 ? 2 : 9;
@@ -1764,7 +1801,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * reverse.
              */
             case 0xd7: // XLAT SOURCE-TABLE
-                al = getMem(B, getAddr(os, getReg(W, BX) + al));
+                ax.setL(getMem(B, getAddr(os, getReg(W, BX) + ax.getL())));  // al = getMem(B, getAddr(os, getReg(W, BX) + al));
                 clocks += 11;
                 break;
 
@@ -1909,7 +1946,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * assembly language programs to run on an 8086.
              */
             case LAHF: //  0x9f: // LAHF
-                ah = flags.getData() & 0xff;
+                ax.setH(flags.getData() & 0xff);      //  ah = flags.getData() & 0xff;
                 clocks += 4;
                 break;
 
@@ -1923,7 +1960,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * 8080/8085 compatibility.
              */
             case SAHF: //  0x9e: // SAHF
-                flags.setData(flags.getData() & 0xff00 | ah);  // flags = flags & 0xff00 | ah;
+                flags.setData(flags.getData() & 0xff00 | ax.getH());  // flags = flags & 0xff00 | ah;
                 clocks += 4;
                 break;
 
@@ -2157,16 +2194,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * ZF is undefined following execution of AAA.
              */
             case AAA: //  0x37: // AAA
-                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    al += 6;
-                    ah = ah + 1 & 0xff;
+                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
+                    ax.incL(6);             //  al += 6;
+                    ax.incH(1);             //  ah = ah + 1 & 0xff;
                     flags.setFlag(ProgramStatusWord.CF, true);
                     flags.setFlag(ProgramStatusWord.AF, true);
                 } else {
                     flags.setFlag(ProgramStatusWord.CF, false);
                     flags.setFlag(ProgramStatusWord.AF, false);
                 }
-                al &= 0xf;
+                ax.setL(ax.getL() & 0xf);      // al &= 0xf;
                 clocks += 4;
                 break;
 
@@ -2182,22 +2219,22 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case DAA:  //  0x27:  // DAA
             {
-                final int oldAL = al;
+                final int oldAL = ax.getL();        //  al;
                 final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
                 flags.setFlag(ProgramStatusWord.CF, false);
-                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    al += 6;
-                    flags.setFlag(ProgramStatusWord.CF, oldCF || al < 0);
-                    al &= 0xff;
+                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
+                    ax.incL(6);                 //  al += 6;
+                    flags.setFlag(ProgramStatusWord.CF, oldCF || ax.getL() < 0);
+                    ax.setL(ax.getL() & 0xff);      // al &= 0xff;
                     flags.setFlag(ProgramStatusWord.AF, true);
                 } else
                     flags.setFlag(ProgramStatusWord.AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    al = al + 0x60 & 0xff;
+                    ax.setL(ax.getL() + 0x60 & 0xff);      // al = al + 0x60 & 0xff;
                     flags.setFlag(ProgramStatusWord.CF, true);
                 } else
                     flags.setFlag(ProgramStatusWord.CF, false);
-                flags.setFlags(B, al);
+                flags.setFlags(B, ax.getL());
                 clocks += 4;
                 break;
             }
@@ -2377,16 +2414,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * AAS.
              */
             case AAS: //  0x3f: // AAS
-                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    al -= 6;
-                    ah = ah - 1 & 0xff;
+                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
+                    ax.incL(-6);            //  al -= 6;
+                    ax.incH(-1);            //  ah = ah - 1 & 0xff;
                     flags.setFlag(ProgramStatusWord.CF, true);
                     flags.setFlag(ProgramStatusWord.AF, true);
                 } else {
                     flags.setFlag(ProgramStatusWord.CF, false);
                     flags.setFlag(ProgramStatusWord.AF, false);
                 }
-                al &= 0xf;
+                ax.setL(ax.getL()& 0xf);                //  al &= 0xf;
                 clocks += 4;
                 break;
 
@@ -2402,22 +2439,22 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case DAS: //  0x2f: // DAS
             {
-                final int oldAL = al;
+                final int oldAL = ax.getL();        //  al;
                 final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
                 flags.setFlag(ProgramStatusWord.CF, false);
-                if ((al & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    al -= 6;
-                    flags.setFlag(ProgramStatusWord.CF, oldCF || (al & 0xff) > 0);
-                    al &= 0xff;
+                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
+                    ax.incL(-6);                //  al -= 6;
+                    flags.setFlag(ProgramStatusWord.CF, oldCF || (ax.getL() & 0xff) > 0);
+                    ax.setL(ax.getL()&0xff);            //  al &= 0xff;
                     flags.setFlag(ProgramStatusWord.AF, true);
                 } else
                     flags.setFlag(ProgramStatusWord.AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    al = al - 0x60 & 0xff;
+                    ax.incL(-60);               //  al = al - 0x60 & 0xff;
                     flags.setFlag(ProgramStatusWord.CF, true);
                 } else
                     flags.setFlag(ProgramStatusWord.CF, false);
-                flags.setFlags(B, al);
+                flags.setFlags(B, ax.getL());
                 clocks += 4;
                 break;
             }
@@ -2474,8 +2511,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 if (src == 0)
                     callInt(0);
                 else {
-                    ah = al / src & 0xff;
-                    al = al % src & 0xff;
+                    ax.setH(ax.getL()/src&0xff);            //  ah = al / src & 0xff;
+                    ax.setL(ax.getL() % src & 0xff );       //  al = al % src & 0xff;
                     flags.setFlags(W, getReg(W, AX));
                     clocks += 83;
                 }
@@ -2543,9 +2580,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case AAD: //  0xd5: // AAD
                 src = getMem(B);
-                al = ah * src + al & 0xff;
-                ah = 0;
-                flags.setFlags(B, al);
+                ax.setL(ax.getH()*src + ax.getL()&0xff);        //  al = ah * src + al & 0xff;
+                ax.setH(0);                                     //  ah = 0;
+                flags.setFlags(B, ax.getL());
                 clocks += 60;
                 break;
 
@@ -2558,10 +2595,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * from a byte prior to performing byte division.
              */
             case CBW: //  0x98: // CBW
-                if ((al & 0x80) == 0x80)
-                    ah = 0xff;
+                if ((ax.getL() & 0x80) == 0x80)
+                    ax.setH(0xff);              //  ah = 0xff;
                 else
-                    ah = 0x00;
+                    ax.setH(0x00);              //  ah = 0x00;
                 clocks += 2;
                 break;
 
@@ -2574,7 +2611,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * dividend from a word prior to performing word division.
              */
             case CWD: //  0x99: // CWD
-                if ((ah & 0x80) == 0x80)
+                if ((ax.getH() & 0x80) == 0x80)
                     setReg(W, DX, 0xffff);
                 else
                     setReg(W, DX, 0x0000);
@@ -4196,10 +4233,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     break;
                 case MOD_MUL: //   0b100: // MUL
                     if (w == B) {
-                        dst = al;
+                        dst = ax.getH();                //  al;
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ah > 0) {
+                        if (ax.getH() > 0) {            // ah
                             flags.setFlag(ProgramStatusWord.CF, true);
                             flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
@@ -4225,11 +4262,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 case MOD_IMUL: //   0b101: // IMUL
                     if (w == B) {
                         src = signconv(B, src);
-                        dst = al;
+                        dst = ax.getL();                //  al;
                         dst = signconv(B, dst);
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ah > 0x00 && ah < 0xff) {
+                        if (ax.getH() > 0x00 && ax.getH() < 0xff) {     // ah
                             flags.setFlag(ProgramStatusWord.CF, true);
                             flags.setFlag(ProgramStatusWord.OF, true);
                         } else {
@@ -4239,7 +4276,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         clocks += mod == 0b11 ? (98 - 80) / 2 : (154 - 128) / 2;
                     } else {
                         src = signconv(W, src);
-                        dst = ah << 8 | al;
+                        dst = ax.getData();             //  ah << 8 | al;
                         dst = signconv(W, dst);
                         final long lres = (long) dst * (long) src & 0xffffffff;
                         setReg(W, AX, (int) lres);
@@ -4259,13 +4296,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     if (src == 0)
                         callInt(0);
                     else if (w == B) {
-                        dst = ah << 8 | al;
+                        dst = ax.getData();         //  ah << 8 | al;
                         res = dst / src & 0xffff;
                         if (res > 0xff)
                             callInt(0);
                         else {
-                            al = res & 0xff;
-                            ah = dst % src & 0xff;
+                            ax.setL(res & 0xff);                //  al = res & 0xff;
+                            ax.setH(dst % src & 0xff);          //  ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (90 - 80) / 2 : (96 - 86) / 2;
                     } else {
@@ -4292,8 +4329,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         if (res > 0x007f && res < 0xff81)
                             callInt(0);
                         else {
-                            al = res & 0xff;
-                            ah = dst % src & 0xff;
+                            ax.setL(res & 0xff);                //  al = res & 0xff;
+                            ax.setH(dst % src & 0xff);          //  ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (112 - 101) / 2 : (118 - 107) / 2;
                     } else {
@@ -4394,16 +4431,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return true;
     }
 
-    private void decode1() {
-        IntelInstruction instruction = (IntelInstruction) decoder.decode(queue);
-        op = instruction.op;
-        d  = instruction.d;
-        w  = instruction.w;
-
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
-    }
 
     protected  MemoryLocator createInstructionLocator(){
 //        cs = new SegmentRegister("CS", 2);

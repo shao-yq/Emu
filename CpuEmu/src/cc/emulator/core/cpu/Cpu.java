@@ -49,6 +49,8 @@ public abstract class Cpu {
     protected MemoryLocator instructionLocator;
     protected MemoryLocator dataLocator;
 
+    Register registers[];
+
 
     public Cpu(MemoryManager mm){
         this.memoryManager = mm;
@@ -63,7 +65,11 @@ public abstract class Cpu {
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
+
+        registers =  createRegisters();
     }
+
+    protected abstract Register[] createRegisters();
 
     protected abstract MemoryLocator createInstructionLocator();
 

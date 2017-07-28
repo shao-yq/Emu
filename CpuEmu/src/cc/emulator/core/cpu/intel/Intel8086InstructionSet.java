@@ -5,8 +5,18 @@ package cc.emulator.core.cpu.intel;
  * Date: 2017/7/25.
  */
 public interface Intel8086InstructionSet {
-    public final static int REGISTER_TO_REGISTER_MODE = 0b11;
-    
+
+    public final static int REGISTER_SRC = 0b0;
+    public final static int REGISTER_DST = 0b1;
+
+
+    public final static int MOD_MEMORY_DISP0            = 0b00;
+    public final static int MOD_MEMORY_DISP8            = 0b01;
+    public final static int MOD_MEMORY_DISP16           = 0b10;
+    public final static int MOD_REGISTER_TO_REGISTER   = 0b11;
+
+
+
     public final static int ES = 0b00; // ES
     public final static int CS = 0b01; // CS
     public final static int SS = 0b10; // SS

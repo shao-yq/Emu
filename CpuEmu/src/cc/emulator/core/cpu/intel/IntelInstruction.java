@@ -10,14 +10,17 @@ public class IntelInstruction implements cc.emulator.core.cpu.Instruction{
      *
      * |     BYTE 1     |     BYTE 2      |     BYTE 3    |     BYTE 4     |  BYTE 5  |  BYTE 6   |
      * | OPCODE | D | W | MOD | REG | R/M | LOW DISP/DATA | HIGH DISP/DATA | LOW DATA | HIGH DATA |
+     *
+     *   opcodeDW    MOREGR/M    LOW DISP    HIGHDISP    LOW DATA     HIGHDATA
      */
 
-    /** Operation (Instruction) code , 6 bits*/
+    /** Operation (Instruction) code , 6 bits: opcodeDW*/
     public int                op;
 
     /**
      * Direction is to register/Direction is from register. 1 bit
-     *
+     *  0   from register
+     *  1   to register
      */
     public int                d;
 
