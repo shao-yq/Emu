@@ -4,7 +4,10 @@ import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
+import cc.emulator.core.cpu.register.PointerIndexer;
+import cc.emulator.core.cpu.register.SegmentRegister;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +55,7 @@ import java.io.InputStream;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Intel8086 extends Cpu implements Intel8086Instruction {
+public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
 
     /** Lookup table used for clipping results. */
@@ -288,7 +291,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * The CS register points to the current code segment; instructions are
      * fetched from this segment.
      */
-    private int                cs;
+    //private int                cs;
 
     /**
      * DS (data segment)
@@ -304,7 +307,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * The SS register points to the current stack segment, stack operations
      * are performed on locations in this segment.
      */
-     //private int                ss;
+     private int                ss;
 
     /**
      * ES (extra segment)
@@ -334,7 +337,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * instruction pointer, but instructions cause it to change and to be saved
      * and restored from the stack.
      */
-    private int                ip;
+    //private int                ip;
 
     /**
      * Flags
@@ -627,10 +630,15 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         push(flags.getData());
         flags.setFlag(ProgramStatusWord.IF, false);
         flags.setFlag(ProgramStatusWord.TF, false);
-        push(cs);
-        push(ip);
-        ip = getMem(0b1, type * 4);
-        cs = getMem(0b1, type * 4 + 2);
+//        push(cs);
+//        push(ip);
+        stack.push(instructionLocator.getBase());
+        stack.push(instructionLocator.getOffset());
+
+//        ip = getMem(0b1, type * 4);
+//        cs = getMem(0b1, type * 4 + 2);
+        instructionLocator.setOffset(getMem(0b1, type * 4));
+        instructionLocator.setBase(getMem(0b1, type * 4 + 2));
     }
 
     /**
@@ -668,13 +676,14 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
 
         if (mod == 0b01)
             // 8-bit displacement follows
-            ip = ip + 2 & 0xffff;
+            instructionLocator.incOffset(2);    // ip = ip + 2 & 0xffff;
+
         else if (mod == 0b00 && rm == 0b110 || mod == 0b10)
             // 16-bit displacement follows
-            ip = ip + 3 & 0xffff;
+            instructionLocator.incOffset(3);    // ip = ip + 3 & 0xffff;
         else
             // No displacement
-            ip = ip + 1 & 0xffff;
+            instructionLocator.incOffset(1);    // ip = ip + 1 & 0xffff;
     }
 
     /**
@@ -905,13 +914,14 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
      * @return the value
      */
     private int getMem(final int w) {
-        final int addr = getAddr(cs, ip);
+        final int addr = getAddressGenerator().getAddr(
+                instructionLocator.getBase(), instructionLocator.getOffset()); // getAddr(cs, ip);
         int val = getMemoryAccessor().getMem(w,addr);
 
 //        int val = memory[addr];
 //        if (w == W)
 //            val |= memory[addr + 1] << 8;
-        ip = ip + 1 + w & 0xffff;
+        instructionLocator.incOffset(1 + w );     //  ip = ip + 1 + w & 0xffff;
 
         return val;
     }
@@ -1043,7 +1053,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         case ES: // 0b00: // ES
             return es;
         case CS: // 0b01: // CS
-            return cs;
+            return instructionLocator.getBase();    // cs;
         case SS: // 0b10: // SS
             return getStack().getSs();  // ss;
         case DS: // 0b11: // DS
@@ -1182,8 +1192,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
         flags = new ProgramStatusWord();
         flags.setData(0);
 
-        ip = 0x0000;
-        cs = 0xffff;
+        instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
+        instructionLocator.setBase(0xffff);     //  cs = 0xffff;
+
         ds = 0x0000;
         getStack().setSs(0x0000); // ss = 0x0000;
         es = 0x0000;
@@ -1369,7 +1380,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             es = val & 0xffff;
             break;
         case CS: //  0b01: // CS
-            cs = val & 0xffff;
+            instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
             break;
         case SS: //  0b10: // SS
             getStack().setSs(val & 0xffff);     // ss = val & 0xffff;
@@ -1430,7 +1441,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 clocks += 2;
                 break;
             case 0x2e: // CS: (segment override prefix)
-                os = cs;
+                os = instructionLocator.getBase();  //  cs;
                 clocks += 2;
                 break;
             case 0x36: // SS: (segment override prefix)
@@ -1451,22 +1462,22 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 clocks += 9;
                 break;
             default:
-                ip = ip - 1 & 0xffff;
+                instructionLocator.decOffset(1);    //  ip = ip - 1 & 0xffff;
                 break prefixes;
             }
         }
 
         // Fetch instruction from memory.
-        for (int i = 0; i < 6; ++i)
-            queue[i] = getMem(B, getAddr(cs, ip + i));
-
+        for (int i = 0; i < 6; ++i) {
+            queue[i] = getMem(B, getAddr(instructionLocator.getBase(), instructionLocator.getOffset() + i));    // getMem(B, getAddr(cs, ip + i));
+        }
         // Decode first byte.
         decode1();
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
 
-        ip = ip + 1 & 0xffff; // Increment IP.
+        instructionLocator.incOffset(1);    //  ip = ip + 1 & 0xffff; // Increment IP.
 
         // Only repeat string instructions.
         switch (op) {
@@ -3167,8 +3178,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case CALL_NEAR_PROC: //   0xe8: // CALL NEAR-PROC
                 dst = getMem(W);
                 dst = signconv(W, dst);
-                push(ip);
-                ip = ip + dst & 0xffff;
+                stack.push(instructionLocator.getOffset()); //                push(ip);
+                instructionLocator.incOffset(dst);          //                ip = ip + dst & 0xffff;
                 clocks += 19;
                 break;
 
@@ -3176,10 +3187,11 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case CALL_FAR_PROC: //   0x9a: // CALL FAR-PROC
                 dst = getMem(W);
                 src = getMem(W);
-                push(cs);
-                push(ip);
-                ip = dst;
-                cs = src;
+
+                stack.push(instructionLocator.getBase());   //                push(cs);
+                stack.push(instructionLocator.getOffset()); //                push(ip);
+                instructionLocator.setOffset(dst);          //                ip = dst;
+                instructionLocator.setBase(src);            //                cs = src;
                 clocks += 28;
                 break;
 
@@ -3201,31 +3213,31 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              */
             // Within Segment
             case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
-                ip = pop();
+                instructionLocator.setOffset(stack.pop());              //  ip = pop();
                 clocks += 8;
                 break;
 
             // Within Seg Adding Immed to SP
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
                 src = getMem(W);
-                ip = pop();
-                getStack().addSp(src);     // sp += src;
+                instructionLocator.setOffset(stack.pop());              //  ip = pop();
+                getStack().addSp(src);                                     // sp += src;
                 clocks += 12;
                 break;
 
             // Intersegment
             case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
-                ip = pop();
-                cs = pop();
+                instructionLocator.setOffset(stack.pop());              //  ip = pop();
+                instructionLocator.setBase(stack.pop());                //  cs = pop();
                 clocks += 18;
                 break;
 
             // Intersegment Adding Immediate to SP
             case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
                 src = getMem(W);
-                ip = pop();
-                cs = pop();
-                getStack().addSp(src);     // sp += src;
+                instructionLocator.setOffset(stack.pop());              //  ip = pop();
+                instructionLocator.setBase(stack.pop());                //  cs = pop();
+                getStack().addSp(src);                                    // sp += src;
                 clocks += 17;
                 break;
 
@@ -3267,7 +3279,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JMP_NEAR: //   0xe9: // JMP NEAR-LABEL
                 dst = getMem(W);
                 dst = signconv(W, dst);
-                ip = ip + dst & 0xffff;
+                instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                 clocks += 15;
                 break;
 
@@ -3275,7 +3287,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JMP_SHORT: //   0xeb: // JMP SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                ip = ip + dst & 0xffff;
+                instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                 clocks += 15;
                 break;
 
@@ -3283,8 +3295,8 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
             case JMP_FAR: //   0xea: // JMP FAR-LABEL
                 dst = getMem(W);
                 src = getMem(W);
-                ip = dst;
-                cs = src;
+                instructionLocator.setOffset(dst);                      //  ip = dst;
+                instructionLocator.setBase(src);                        //  cs = src;
                 clocks += 15;
                 break;
 
@@ -3315,7 +3327,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.OF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3330,7 +3342,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!flags.hasFlag(ProgramStatusWord.OF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3345,7 +3357,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.CF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3360,7 +3372,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!flags.hasFlag(ProgramStatusWord.CF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3375,7 +3387,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3390,7 +3402,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3405,7 +3417,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3420,7 +3432,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!(flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF))) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3435,7 +3447,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.SF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3450,7 +3462,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!flags.hasFlag(ProgramStatusWord.SF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3465,7 +3477,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.PF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3480,7 +3492,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!flags.hasFlag(ProgramStatusWord.PF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3495,7 +3507,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3510,7 +3522,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF))) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3525,7 +3537,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3540,7 +3552,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF))) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3569,7 +3581,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
                 if (src != 0) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 17;
                 } else
                     clocks += 5;
@@ -3590,7 +3602,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
                 if (src != 0 && flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 18;
                 } else
                     clocks += 6;
@@ -3611,7 +3623,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
                 if (src != 0 && !flags.hasFlag(ProgramStatusWord.ZF)) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 19;
                 } else
                     clocks += 5;
@@ -3629,7 +3641,7 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (getReg(W, CX) == 0) {
-                    ip = ip + dst & 0xffff;
+                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
                     clocks += 18;
                 } else
                     clocks += 6;
@@ -3708,9 +3720,9 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
              * activated by hardware or software.
              */
             case IRET: //  0xcf: // IRET
-                ip = pop();
-                cs = pop();
-                flags.setData(pop());   // flags = pop();
+                instructionLocator.setOffset(stack.pop());                //  ip = pop();
+                instructionLocator.setBase(stack.pop());                  //  cs = pop();
+                flags.setData(pop());                                       // flags = pop();
                 clocks += 24;
                 break;
 
@@ -4332,26 +4344,26 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
                     clocks += mod == 0b11 ? 3 : 15;
                     break;
                 case CALL_REG16__MEM16_INTRA: //   0b010: // CALL REG16/MEM16(intra)
-                    push(ip);
-                    ip = src;
+                    stack.push(instructionLocator.getOffset());                     //  push(ip);
+                    instructionLocator.setOffset(src);                              //  ip = src;
                     clocks += mod == 0b11 ? 16 : 21;
                     break;
                 case CALL_MEM16_INTERSEGMENT: // 0b011: // CALL MEM16(intersegment)
-                    push(cs);
-                    push(ip);
+                    stack.push(instructionLocator.getBase());                       //  push(cs);
+                    stack.push(instructionLocator.getOffset());                     //  push(ip);
                     dst = getEA(mod, rm);
-                    ip = getMem(W, dst);
-                    cs = getMem(W, dst + 2);
+                    instructionLocator.setOffset(getMem(W, dst));                   //  ip = getMem(W, dst);
+                    instructionLocator.setBase(getMem(W, dst + 2));           //  cs = getMem(W, dst + 2);
                     clocks += 37;
                     break;
                 case JMP_REG16__MEM16_INTRA: //  0b100: // JMP REG16/MEM16(intra)
-                    ip = src;
+                    instructionLocator.setOffset(src);                              //  ip = src;
                     clocks += mod == 0b11 ? 11 : 18;
                     break;
                 case JMP_MEM16_INTERSEGMENT: //  0b101: // JMP MEM16(intersegment)
                     dst = getEA(mod, rm);
-                    ip = getMem(W, dst);
-                    cs = getMem(W, dst + 2);
+                    instructionLocator.setOffset(getMem(W, dst));                   //  ip = getMem(W, dst);
+                    instructionLocator.setBase(getMem(W, dst + 2));           //  cs = getMem(W, dst + 2);
                     clocks += 24;
                     break;
                 case PUSH_MEM16: //   0b110: // PUSH MEM16
@@ -4374,5 +4386,13 @@ public class Intel8086 extends Cpu implements Intel8086Instruction {
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
+    }
+
+    protected  MemoryLocator createInstructionLocator(){
+//        cs = new SegmentRegister("CS", 2);
+//        ip = new PointerIndexer("IP",1);
+//
+        return new RegisteredMemoryLocator(new SegmentRegister("CS", 2), new PointerIndexer("IP",1));
+
     }
 }

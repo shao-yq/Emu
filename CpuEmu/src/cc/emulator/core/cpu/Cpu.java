@@ -34,9 +34,9 @@ public abstract class Cpu {
      */
     public abstract boolean tick();
 
-    Stack stack;
-    AddressGenerator addressGenerator;
-    MemoryAccessor memoryAccessor;
+    protected Stack stack;
+    protected AddressGenerator addressGenerator;
+    protected MemoryAccessor memoryAccessor;
 
     protected Decodable decoder;
 
@@ -45,6 +45,10 @@ public abstract class Cpu {
     }
 
     protected MemoryManager memoryManager;
+
+    protected MemoryLocator instructionLocator;
+    protected MemoryLocator dataLocator;
+
 
     public Cpu(MemoryManager mm){
         this.memoryManager = mm;
@@ -56,7 +60,12 @@ public abstract class Cpu {
         stack.setMemoryAccessor(memoryAccessor);
 
         decoder = createDecoder();
+
+        instructionLocator =  createInstructionLocator();
+        //dataLocator =  createDataLocator();
     }
+
+    protected abstract MemoryLocator createInstructionLocator();
 
     protected abstract Decodable createDecoder();
 

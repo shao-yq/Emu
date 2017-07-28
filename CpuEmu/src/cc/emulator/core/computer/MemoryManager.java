@@ -201,6 +201,20 @@ public class MemoryManager implements AddressBus{
         if(dataBus.getMode()== MemoryAccessor.READ) {
             int val = 0;
             switch (dataBus.getDataWidth()) {
+                case MemoryAccessor.BYTE8:
+//                    val |= memory[addr];
+//                    val |= memory[addr + 1] << 8;
+//                    val |= memory[addr + 2] << 16;
+//                    val |= memory[addr + 3] << 24;
+//                    dataBus.writeData(val);
+                    int val2 = memory[addr + 4];
+                    val2 |= memory[addr + 5] << 8;
+                    val2 |= memory[addr + 6] << 16;
+                    val2 |= memory[addr + 7] << 24;
+                    dataBus.writeData2(val2);
+//                    notifyDataReady(dataBus);
+//                    break;
+
                 case MemoryAccessor.BYTE4:
                     val |= memory[addr + 3] << 24;
                     val |= memory[addr + 2] << 16;
@@ -211,25 +225,8 @@ public class MemoryManager implements AddressBus{
                     dataBus.writeData(val);
 
                     notifyDataReady(dataBus);
-
-
                     break;
 
-                case MemoryAccessor.BYTE8:
-                    val |= memory[addr];
-                    val |= memory[addr + 1] << 8;
-                    val |= memory[addr + 2] << 16;
-                    val |= memory[addr + 3] << 24;
-
-                    int val2 = memory[addr + 4];
-                    val2 |= memory[addr + 5] << 8;
-                    val2 |= memory[addr + 6] << 16;
-                    val2 |= memory[addr + 7] << 24;
-                    dataBus.writeData(val);
-                    dataBus.writeData2(val2);
-                    // dataBus.receiveData(val | (val2 << 32));
-                    notifyDataReady(dataBus);
-                    break;
                 default:
                     break;
             }

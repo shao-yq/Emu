@@ -4,7 +4,7 @@ package cc.emulator.core.cpu.intel;
  * @author Shao Yongqing
  * Date: 2017/7/25.
  */
-public interface Intel8086Instruction {
+public interface Intel8086InstructionSet {
     public final static int REGISTER_TO_REGISTER_MODE = 0b11;
     
     public final static int ES = 0b00; // ES
