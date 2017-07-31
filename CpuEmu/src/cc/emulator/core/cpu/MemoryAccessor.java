@@ -11,11 +11,11 @@ public abstract class MemoryAccessor {
     AddressBus addressBus;
     DataBus dataBus;
 
-    DataRegister dataRegister;
+    DataTemporaryRegister dataTemporaryRegister;
 
 
-    public DataListener getDataRegister() {
-        return dataRegister;
+    public DataListener getDataTemporaryRegister() {
+        return dataTemporaryRegister;
     }
 
     /** Instruction operates on byte data. */
@@ -29,13 +29,13 @@ public abstract class MemoryAccessor {
     public static final int   WRITE    = 0b1;
 
     public MemoryAccessor(AddressBus addressBus, DataBus dataBus){
-        dataRegister = createDataRegister();
+        dataTemporaryRegister = createDataRegister();
         this.dataBus = dataBus;
         this.addressBus = addressBus;
     }
 
 
-    protected abstract DataRegister createDataRegister() ;
+    protected abstract DataTemporaryRegister createDataRegister() ;
 
     /**
      * Gets the value at the specified address.

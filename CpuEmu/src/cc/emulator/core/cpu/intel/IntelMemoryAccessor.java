@@ -2,7 +2,7 @@ package cc.emulator.core.cpu.intel;
 
 import cc.emulator.core.cpu.bus.AddressBus;
 import cc.emulator.core.cpu.bus.DataBus;
-import cc.emulator.core.cpu.DataRegister;
+import cc.emulator.core.cpu.DataTemporaryRegister;
 import cc.emulator.core.cpu.MemoryAccessor;
 
 /**
@@ -16,7 +16,7 @@ public class IntelMemoryAccessor extends MemoryAccessor {
     }
 
     @Override
-    protected DataRegister createDataRegister() {
-        return new DataRegister("DR", 2);
+    protected DataTemporaryRegister createDataRegister() {
+        return new DataTemporaryRegister("DR", 2);
     }
 }

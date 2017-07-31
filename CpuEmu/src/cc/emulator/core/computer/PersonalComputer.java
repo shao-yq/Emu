@@ -50,7 +50,7 @@ public abstract class PersonalComputer implements Computer {
         cpu.reset();
         //cpu.setMemory(memory.getMemoryBase());
 
-        memory.addDataListener(cpu.getMemoryAccessor().getDataRegister());
+        memory.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
 
         createPeripherals();
     }

@@ -4,7 +4,7 @@ import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
-import cc.emulator.core.cpu.register.GeneralRegister;
+import cc.emulator.core.cpu.register.DataRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
@@ -93,10 +93,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     protected Register[] createRegisters(){
         Register regs[] = new Register[16];
         // Create general registers
-        ax = new GeneralRegister8086("AX", 2);
-        bx = new GeneralRegister8086("BX", 2);
-        cx = new GeneralRegister8086("CX", 2);
-        dx = new GeneralRegister8086("DX", 2);
+        ax = new DataRegister8086("AX", 2);
+        bx = new DataRegister8086("BX", 2);
+        cx = new DataRegister8086("CX", 2);
+        dx = new DataRegister8086("DX", 2);
 
         int i=0;
         regs[i++] = ax;
@@ -226,7 +226,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * AH - Byte Multiply, Byte Divide
      */
     //private int                ah, al;
-    GeneralRegister             ax;
+    DataRegister ax;
 
     /**
      * CX (count)
@@ -236,7 +236,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * CL - Variable Shift and Rotate
      */
     private int                ch, cl;
-    GeneralRegister             cx;
+    DataRegister cx;
     /**
      * DX (data)
      *
@@ -244,7 +244,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * DX - Word Multiply, Word Divide, Indirect I/O
      */
     private int                dh, dl;
-    GeneralRegister             dx;
+    DataRegister dx;
     /**
      * BX (base)
      *
@@ -252,7 +252,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * BX - Translate
      */
     private int                bh, bl;
-    GeneralRegister             bx;
+    DataRegister bx;
     /**
      * SP (stack pointer)
      *
