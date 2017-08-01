@@ -1,4 +1,4 @@
-package cc.emulator.core.cpu.intel;
+package cc.emulator.arch.x86.intel;
 
 import cc.emulator.core.cpu.register.StatusRegister;
 

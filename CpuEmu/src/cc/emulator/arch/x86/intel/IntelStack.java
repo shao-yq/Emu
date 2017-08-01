@@ -1,6 +1,5 @@
-package cc.emulator.core.cpu.intel;
+package cc.emulator.arch.x86.intel;
 
-import cc.emulator.core.cpu.MemoryLocator;
 import cc.emulator.core.cpu.RegisteredMemoryLocator;
 import cc.emulator.core.cpu.Stack;
 import cc.emulator.core.cpu.register.PointerIndexer;

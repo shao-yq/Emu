@@ -1,7 +1,7 @@
 package fr.neatmonster.ibmpc;
 
 import cc.emulator.core.computer.Display;
-import cc.emulator.core.cpu.intel.Intel8086;
+import cc.emulator.arch.x86.intel.Intel8086;
 
 import java.awt.Color;
 import java.awt.Dimension;
