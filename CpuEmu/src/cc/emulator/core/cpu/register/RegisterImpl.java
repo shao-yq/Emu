@@ -8,8 +8,8 @@ import cc.emulator.core.cpu.Register;
  */
 public  abstract class RegisterImpl implements Register {
     protected int data, data2;
-    private String name;
-    private int dataWidth;
+    protected String name;
+    protected int dataWidth;
 
     public RegisterImpl(String name, int dataWidth) {
         this.name = name;

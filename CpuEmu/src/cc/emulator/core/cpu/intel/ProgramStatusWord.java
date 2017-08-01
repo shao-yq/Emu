@@ -8,6 +8,13 @@ import cc.emulator.core.cpu.register.StatusRegister;
  */
 public class ProgramStatusWord extends StatusRegister{
     /**
+     *
+     *       15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
+     *       x  x  x  x  OF DF IF TF SF ZF x  AF x  PF x  CF
+     *
+     */
+
+    /**
      * CF (carry flag)
      *
      * If an addition results in a carry out of the high-order bit of the

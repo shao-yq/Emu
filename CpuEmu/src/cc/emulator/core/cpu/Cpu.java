@@ -73,6 +73,8 @@ public abstract class Cpu {
 
     protected abstract MemoryLocator createInstructionLocator();
 
+//    protected abstract MemoryLocator createDataLocator();
+
     protected abstract Decodable createDecoder();
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);

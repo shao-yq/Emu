@@ -9,14 +9,14 @@ public class PointerIndexer extends GeneralRegister {
         super(name,dataWidth);
     }
     public void decrease(){
-        decrease(getDataWidth());
+        decrease(dataWidth);
     }
     public void decrease(int delta){
         data = data - delta;
         //data = data - delta & 0xffff;
     }
     public void increase(){
-        increase(getDataWidth());
+        increase(dataWidth);
     }
     public void increase(int delta){
         data = data + delta;

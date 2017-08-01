@@ -4,14 +4,14 @@ package cc.emulator.core.cpu.register;
  * @author Shao Yongqing
  * Date: 2017/7/31.
  */
-public class DataRegister extends GeneralRegister{
+public class DividableRegister extends GeneralRegister{
 
-    public DataRegister(String name, int dataWidth) {
+    public DividableRegister(String name, int dataWidth) {
         super(name, dataWidth);
     }
 
     public int getL(){
-        switch(getDataWidth()){
+        switch(dataWidth){
             case 2:
                 return data&0xFF;
             case 4:
@@ -25,7 +25,7 @@ public class DataRegister extends GeneralRegister{
     }
 
     public int getH(){
-        switch(getDataWidth()){
+        switch(dataWidth){
             case 2:
                 return (data>>8)&0xFF;
             case 4:
@@ -40,7 +40,7 @@ public class DataRegister extends GeneralRegister{
 
 
     public void setH(int v){
-        switch(getDataWidth()) {
+        switch(dataWidth) {
             case 2:
                 data = (data & 0xFF) | (v << 8);
                 break;
@@ -52,7 +52,7 @@ public class DataRegister extends GeneralRegister{
         }
     }
     public void setL(int v){
-        switch(getDataWidth()) {
+        switch(dataWidth) {
             case 2:
                 data = (data & 0xFF00) | v;
                 break;

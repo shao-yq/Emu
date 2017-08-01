@@ -4,7 +4,7 @@ import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
-import cc.emulator.core.cpu.register.DataRegister;
+import cc.emulator.core.cpu.register.DividableRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
@@ -82,7 +82,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         instructionLocator.setBase(0xffff);     //  cs = 0xffff;
 
         ds = 0x0000;
-        getStack().setSs(0x0000); // ss = 0x0000;
+        stack.setSs(0x0000); // ss = 0x0000;
         es = 0x0000;
         for (int i = 0; i < 6; i++)
             queue[i] = 0;
@@ -93,10 +93,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     protected Register[] createRegisters(){
         Register regs[] = new Register[16];
         // Create general registers
-        ax = new DataRegister8086("AX", 2);
-        bx = new DataRegister8086("BX", 2);
-        cx = new DataRegister8086("CX", 2);
-        dx = new DataRegister8086("DX", 2);
+        //ax = new DividableRegister8086("AX", 2);
+        ax = new Accumulator("AX");
+        bx = new Accumulator("BX");
+        cx = new Accumulator("CX");
+        dx = new Accumulator("DX");
 
         int i=0;
         regs[i++] = ax;
@@ -226,7 +227,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * AH - Byte Multiply, Byte Divide
      */
     //private int                ah, al;
-    DataRegister ax;
+    DividableRegister ax;
 
     /**
      * CX (count)
@@ -236,7 +237,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * CL - Variable Shift and Rotate
      */
     private int                ch, cl;
-    DataRegister cx;
+    DividableRegister cx;
     /**
      * DX (data)
      *
@@ -244,7 +245,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * DX - Word Multiply, Word Divide, Indirect I/O
      */
     private int                dh, dl;
-    DataRegister dx;
+    DividableRegister dx;
     /**
      * BX (base)
      *
@@ -252,7 +253,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * BX - Translate
      */
     private int                bh, bl;
-    DataRegister bx;
+    DividableRegister bx;
     /**
      * SP (stack pointer)
      *
@@ -345,7 +346,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * The SS register points to the current stack segment, stack operations
      * are performed on locations in this segment.
      */
-     private int                ss;
+     //private int                ss;
 
     /**
      * ES (extra segment)
@@ -963,6 +964,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return (os << 4) + (ea & 0xffff);
     }
 
+    private int getEA(IntelInstruction instruction) {
+        return getEA(instruction.mod,instruction.rm);
+    }
+
     /**
      * Gets the state of a flag.
      *
@@ -985,7 +990,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private int getMem(final int w) {
         final int addr = getAddressGenerator().getAddr(
                 instructionLocator.getBase(), instructionLocator.getOffset()); // getAddr(cs, ip);
-        int val = getMemoryAccessor().getMem(w,addr);
+        int val = memoryAccessor.getMem(w,addr);
 
 //        int val = memory[addr];
 //        if (w == W)
@@ -1005,7 +1010,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int getMem(final int w, final int addr) {
-        int val = getMemoryAccessor().getMem(w,addr);
+        int val = memoryAccessor.getMem(w,addr);
 
         if (w == W) {
             if ((addr & 0b1) == 0b1)
@@ -1067,7 +1072,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case BX: //  0b011: // BX
                 return bh << 8 | bl;
             case SP: //  0b100: // SP
-                return getStack().getSp();  // sp;
+                return stack.getSp();  // sp;
             case BP: //  0b101: // BP
                 return bp;
             case SI: //  0b110: // SI
@@ -1124,7 +1129,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         case CS: // 0b01: // CS
             return instructionLocator.getBase();    // cs;
         case SS: // 0b10: // SS
-            return getStack().getSs();  // ss;
+            return stack.getSs();  // ss;
         case DS: // 0b11: // DS
             return ds;
         }
@@ -1149,7 +1154,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
         // Put address value to Address Bus
         // Put data to Data Bus
-        getMemoryAccessor().setMem(w, addr, val);
+        memoryAccessor.setMem(w, addr, val);
         if (w == W) {
             if ((addr & 0b1) == 0b1)
                 clocks += 4;
@@ -1226,7 +1231,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     bh = val >>> 8 & 0xff;
                     break;
                 case SP: //  0b100: // SP
-                    getStack().setSp(val & 0xffff);     // sp = val & 0xffff;
+                    stack.setSp(val & 0xffff);     // sp = val & 0xffff;
                     break;
                 case BP: //  0b101: // BP
                     bp = val & 0xffff;
@@ -1290,7 +1295,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
                 break;
             case SS: //  0b10: // SS
-                getStack().setSs(val & 0xffff);     // ss = val & 0xffff;
+                stack.setSs(val & 0xffff);     // ss = val & 0xffff;
                 break;
             case DS: //  0b11: // DS
                 ds = val & 0xffff;
@@ -1368,7 +1373,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int pop() {
-        return getStack().pop();
+        return stack.pop();
 
 //        final int val = getMem(W, getAddr(ss, sp));
 //        sp = sp + 2 & 0xffff;
@@ -1416,7 +1421,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      *            the value
      */
     private void push(final int val) {
-        getStack().push(val);
+        stack.push(val);
 
 //        sp = sp - 2 & 0xffff;
 //        setMem(W, getAddr(ss, sp), val);
@@ -1499,7 +1504,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 clocks += 2;
                 break;
             case 0x36: // SS: (segment override prefix)
-                os = getStack().getSs();    // ss;
+                os = stack.getSs();    // ss;
                 clocks += 2;
                 break;
             case 0x3e: // DS: (segment override prefix)
@@ -3275,7 +3280,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
                 src = getMem(W);
                 instructionLocator.setOffset(stack.pop());              //  ip = pop();
-                getStack().addSp(src);                                     // sp += src;
+                stack.addSp(src);                                     // sp += src;
                 clocks += 12;
                 break;
 
@@ -3291,7 +3296,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 src = getMem(W);
                 instructionLocator.setOffset(stack.pop());              //  ip = pop();
                 instructionLocator.setBase(stack.pop());                //  cs = pop();
-                getStack().addSp(src);                                    // sp += src;
+                stack.addSp(src);                                    // sp += src;
                 clocks += 17;
                 break;
 
@@ -4439,4 +4444,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new RegisteredMemoryLocator(new SegmentRegister("CS", 2), new PointerIndexer("IP",1));
 
     }
+
+//    @Override
+//    protected MemoryLocator createDataLocator() {
+//        return new RegisteredMemoryLocator(new SegmentRegister("DS", 2), new PointerIndexer("BP",1));
+//    }
+
 }
