@@ -2,9 +2,7 @@ package cc.emulator.computer;
 
 import cc.emulator.core.*;
 import cc.emulator.core.Peripheral;
-import cc.emulator.core.computer.Display;
-import cc.emulator.core.computer.MemoryManager;
-import cc.emulator.core.computer.PersonalComputer;
+import cc.emulator.core.computer.*;
 import cc.emulator.core.cpu.Cpu;
 import cc.emulator.arch.x86.intel.Intel8086;
 
@@ -78,6 +76,46 @@ public class IBMPC5150 extends PersonalComputer {
      * this implementation and by doing so does not use the I/O space.
      */
     private  cc.emulator.core.Peripheral[] peripherals ;  // = new Peripheral[] { dma, pic, pit, ppi, crtc };
+
+    @Override
+    public MainBoard getMainBoard() {
+        return null;
+    }
+
+    @Override
+    public KeyBoard getKeyBoard() {
+        return null;
+    }
+
+    @Override
+    public VideoAdapter getVideoAdapter() {
+        return null;
+    }
+
+    @Override
+    public AudioAdapter getAudioAdapter() {
+        return null;
+    }
+
+    @Override
+    public NetworkAdapter getNetworkAdapter() {
+        return null;
+    }
+
+    @Override
+    public Display getDisplay() {
+        return null;
+    }
+
+    @Override
+    public Box getBox() {
+        return null;
+    }
+
+    @Override
+    public StorageDriver[] getStorageDrivers() {
+        return new StorageDriver[0];
+    }
 
     @Override
     public void reset() {

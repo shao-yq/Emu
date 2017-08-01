@@ -5,14 +5,14 @@ package cc.emulator.core.computer;
  * Date: 2017/7/25.
  */
 public interface Computer {
-//    MainBoard mainBoard;
-//    KeyBoard keyBoard;
-//    VideoAdapter videoAdapter;
-//    AudioAdapter audioAdapter;
-//    NetworkAdapter networkAdapter;
-//    Display display;
-//    Box box;
-//    StorageDriver storageDrivers[];
+    MainBoard getMainBoard();
+    KeyBoard getKeyBoard();
+    VideoAdapter getVideoAdapter();
+    AudioAdapter getAudioAdapter();
+    NetworkAdapter getNetworkAdapter();
+    Display getDisplay();
+    Box getBox();
+    StorageDriver[] getStorageDrivers();
     abstract void powerUp();
     abstract void powerDown();
     abstract void reset();
