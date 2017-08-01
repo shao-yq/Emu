@@ -1449,6 +1449,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
         return res;
     }
+    void fillInstructionQueue(){
+        // Fetch instruction from memory.
+        int seg = instructionLocator.getBase();
+        int ip = instructionLocator.getOffset();
+        for (int i = 0; i < 6; ++i) {
+            int addr = getAddr(seg,  ip+ i);
+            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
+        }
+    }
 
     /**
      * Performs subtraction and sets flags accordingly.
@@ -1526,10 +1535,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             }
         }
 
-        // Fetch instruction from memory.
-        for (int i = 0; i < 6; ++i) {
-            queue[i] = getMem(B, getAddr(instructionLocator.getBase(), instructionLocator.getOffset() + i));    // getMem(B, getAddr(cs, ip + i));
-        }
+        fillInstructionQueue();
+
         // Decode first byte.
         decode1();
 //        op = queue[0];
