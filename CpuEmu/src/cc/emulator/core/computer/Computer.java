@@ -5,7 +5,15 @@ package cc.emulator.core.computer;
  * Date: 2017/7/25.
  */
 public interface Computer {
-    void powerUp();
-    void powerDown();
-    void reset();
+//    MainBoard mainBoard;
+//    KeyBoard keyBoard;
+//    VideoAdapter videoAdapter;
+//    AudioAdapter audioAdapter;
+//    NetworkAdapter networkAdapter;
+//    Display display;
+//    Box box;
+//    StorageDriver storageDrivers[];
+    abstract void powerUp();
+    abstract void powerDown();
+    abstract void reset();
 }
