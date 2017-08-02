@@ -1,12 +1,14 @@
 package cc.emulator.arch.x86.intel;
 
+import cc.emulator.arch.x86.intel.Intel8086InstructionSet;
+import cc.emulator.core.Peripheral;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
-import cc.emulator.core.Peripheral;
 import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.core.cpu.register.DividableRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
+import fr.neatmonster.ibmpc.*;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -56,11 +58,128 @@ import java.io.InputStream;
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
 public class Intel8086 extends Cpu implements Intel8086InstructionSet {
+    /**
+     * CF (carry flag)
+     *
+     * If an addition results in a carry out of the high-order bit of the
+     * result, then CF is set; otherwise CF is cleared. If a subtraction
+     * results in a borrow into the high-order bit of the result, then CF is
+     * set; otherwise CF is cleared. Note that a signed carry is indicated by
+     * CF ≠ OF. CF can be used to detect an unsigned overflow. Two
+     * instructions, ADC (add with carry) and SBB (subtract with borrow),
+     * incorporate the carry flag in their operations and can be used to
+     * perform multibyte (e.g., 32-bit, 64-bit) addition and subtraction.
+     */
+    private static final int   CF     = 1 << 0;
+
+    /**
+     * PF (parity flag)
+     *
+     * If the low-order eight bits of an arithmetic or logical operation is
+     * zero contain an even number of 1-bits, then the parity flag is set,
+     * otherwise it is cleared. PF is provided for 8080/8085 compatibility; it
+     * can also be used to check ASCII characters for correct parity.
+     */
+    private static final int   PF     = 1 << 2;
+
+    /**
+     * AF (auxiliary carry flag)
+     *
+     * If an addition results in a carry out of the low-order half-byte of the
+     * result, then AF is set; otherwise AF is cleared. If a subtraction
+     * results in a borrow into the low-order half-byte of the result, then AF
+     * is set; otherwise AF is cleared. The auxiliary carry flag is provided
+     * for the decimal adjust instructions and ordinarily is not used for any
+     * other purpose.
+     */
+    private static final int   AF     = 1 << 4;
+
+    /**
+     * ZF (zero flag)
+     *
+     * If the result of an arithmetic or logical operation is zero, then ZF is
+     * set; otherwise ZF is cleared. A conditional jump instruction can be used
+     * to alter the flow of the program if the result is or is not zero.
+     */
+    private static final int   ZF     = 1 << 6;
+
+    /**
+     * SF (sign flag)
+     *
+     * Arithmetic and logical instructions set the sign flag equal to the
+     * high-order bit (bit 7 or 15) of the result. For signed binary numbers,
+     * the sign flag will be 0 for positive results and 1 for negative results
+     * (so long as overflow does not occur). A conditional jump instruction can
+     * be used following addition or subtraction to alter the flow of the
+     * program depending on the sign of the result. Programs performing
+     * unsigned operations typically ignore SF since the high-order bit of the
+     * result is interpreted as a digit rather than a sign.
+     */
+    private static final int   SF     = 1 << 7;
+
+    /**
+     * TF (trap flag)
+     *
+     * Settings TF puts the processor into single-step mode for debugging. In
+     * this mode, the CPU automatically generates an internal interrupt after
+     * each instruction, allowing a program to be inspected as it executes
+     * instruction by instruction.
+     */
+    private static final int   TF     = 1 << 8;
+
+    /**
+     * IF (interrupt-enable flag)
+     *
+     * Setting IF allows the CPU to recognize external (maskable) interrupt
+     * requests. Clearing IF disables these interrupts. IF has no affect on
+     * either non-maskable external or internally generated interrupts.
+     */
+    private static final int   IF     = 1 << 9;
+
+    /**
+     * DF (direction flag)
+     *
+     * Setting DF causes string instructions to auto-decrement; that is, to
+     * process strings from the high addresses to low addresses, or from "right
+     * to left". Clearing DF causes string instructions to auto-increment, or
+     * to process strings from "left to right."
+     */
+    private static final int   DF     = 1 << 10;
+
+    /**
+     * OF (overflow flag)
+     *
+     * If the result of an operation is too large a positive number, or too
+     * small a negative number to fit in the destination operand (excluding the
+     * sign bit), then OF is set; otherwise OF is cleared. OF thus indicates
+     * signed arithmetic overflow; it can be tested with a conditional jump or
+     * the INFO (interrupt on overflow) instruction. OF may be ignored when
+     * performing unsigned arithmetic.
+     */
+    private static final int   OF     = 1 << 11;
 
 
     /** Lookup table used for clipping results. */
     private static final int[] MASK   = new int[] { 0xff, 0xffff };
-
+    /** Lookup table used for setting the parity flag. */
+    private static final int[] PARITY = {
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+        1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1
+    };
     /** Lookup table used for setting the sign and overflow flags. */
     private static final int[] BITS   = new int[] { 8, 16 };
     /** Lookup table used for setting the overflow flag. */
@@ -68,25 +187,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     public Intel8086(MemoryManager mm){
         super(mm);
-
-    }
-
-    /**
-     * Resets the CPU to its default state.
-     */
-    public void reset() {
-        flags = new ProgramStatusWord();
-        flags.setData(0);
-
-        instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
-        instructionLocator.setBase(0xffff);     //  cs = 0xffff;
-
-        ds = 0x0000;
-        stack.setSs(0x0000); // ss = 0x0000;
-        es = 0x0000;
-        for (int i = 0; i < 6; i++)
-            queue[i] = 0;
-        clocks = 0;
     }
 
     @Override
@@ -107,6 +207,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
         return regs;
     }
+
 
     @Override
     protected Decodable createDecoder() {
@@ -131,8 +232,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     protected AddressGenerator createAddressGenerator() {
         return new IntelAddressGenerator();
     }
-
-
 
     /**
      * Entry point. For now it executes a little test program.
@@ -226,9 +325,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * AL - Byte Multiply, Byte Divide, Byte I/O, Translate, Decimal Arithmetic
      * AH - Byte Multiply, Byte Divide
      */
-    //private int                ah, al;
+    private int                ah, al;
     DividableRegister ax;
-
     /**
      * CX (count)
      *
@@ -278,7 +376,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * erase them. The top of the stack changes only as the result of updating
      * the stack pointer.
      */
-    //private int                sp;
+    private int                sp;
 
     /**
      * BP (base pointer)
@@ -330,7 +428,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * The CS register points to the current code segment; instructions are
      * fetched from this segment.
      */
-    //private int                cs;
+    private int                cs;
 
     /**
      * DS (data segment)
@@ -346,7 +444,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * The SS register points to the current stack segment, stack operations
      * are performed on locations in this segment.
      */
-     //private int                ss;
+     private int                ss;
 
     /**
      * ES (extra segment)
@@ -376,7 +474,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * instruction pointer, but instructions cause it to change and to be saved
      * and restored from the stack.
      */
-    //private int                ip;
+    private int                ip;
 
     /**
      * Flags
@@ -387,8 +485,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * depending of the state of these flags, that is, on the result of a prior
      * operation. Different instructions affect the status flags differently.
      */
-    //private int                flags;
-    ProgramStatusWord         flags;
+    private int                flags;
+    //ProgramStatusWord         flags;
 
     /**
      * Queue
@@ -550,8 +648,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     //public void setMemory(int[]mem){
         //this.memory = mem;
     //}
-
-
     /*
      * Typical 8086 Machine Instruction Format
      *
@@ -589,13 +685,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the result
      */
     private int adc(final int w, final int dst, final int src) {
-        final int carry = flags.hasFlag(ProgramStatusWord.CF)? 1 : 0;    // (flags & CF) == CF ? 1 : 0;
+        final int carry = (flags & CF) == CF ? 1 : 0;
         final int res = dst + src + carry & MASK[w];
 
-        flags.setFlag(ProgramStatusWord.CF, carry == 1 ? res <= dst : res < dst);
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
-        flags.setFlags(w, res);
+        setFlag(CF, carry == 1 ? res <= dst : res < dst);
+        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        setFlags(w, res);
 
         return res;
     }
@@ -614,10 +710,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private int add(final int w, final int dst, final int src) {
         final int res = dst + src & MASK[w];
 
-        flags.setFlag(ProgramStatusWord.CF, res < dst);
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
-        flags.setFlags(w, res);
+        setFlag(CF, res < dst);
+        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        setFlags(w, res);
 
         return res;
     }
@@ -666,18 +762,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             }
             return;
         }*/
-        push(flags.getData());
-        flags.setFlag(ProgramStatusWord.IF, false);
-        flags.setFlag(ProgramStatusWord.TF, false);
-//        push(cs);
-//        push(ip);
-        stack.push(instructionLocator.getBase());
-        stack.push(instructionLocator.getOffset());
-
-//        ip = getMem(0b1, type * 4);
-//        cs = getMem(0b1, type * 4 + 2);
-        instructionLocator.setOffset(getMem(0b1, type * 4));
-        instructionLocator.setBase(getMem(0b1, type * 4 + 2));
+        push(flags);
+        setFlag(IF, false);
+        setFlag(TF, false);
+        push(cs);
+        push(ip);
+        ip = getMem(0b1, type * 4);
+        cs = getMem(0b1, type * 4 + 2);
     }
 
     /**
@@ -692,51 +783,30 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private int dec(final int w, final int dst) {
         final int res = dst - 1 & MASK[w];
 
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ 1) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, res == SIGN[w] - 1);
-        flags.setFlags(w, res);
+        setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
+        setFlag(OF, res == SIGN[w] - 1);
+        setFlags(w, res);
 
         return res;
-    }
-
-    // Current instruction decoded
-    IntelInstruction instruction;
-
-    private void decode1() {
-        instruction = (IntelInstruction) decoder.decode(queue);
-        op = instruction.op;
-        d  = instruction.d;
-        w  = instruction.w;
-
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
     }
 
     /**
      * Decodes the second byte of the instruction and increments IP accordingly.
      */
-    private void decode2() {
-
-//        mod = queue[1] >>> 6 & 0b11;
-//        reg = queue[1] >>> 3 & 0b111;
-//        rm  = queue[1]       & 0b111;
-
-        instruction = (IntelInstruction) decoder.decode2(queue);
-        mod = instruction.mod;
-        reg = instruction.reg;
-        rm = instruction.rm;
+    private void decode() {
+        mod = queue[1] >>> 6 & 0b11;
+        reg = queue[1] >>> 3 & 0b111;
+        rm  = queue[1]       & 0b111;
 
         if (mod == 0b01)
             // 8-bit displacement follows
-            instructionLocator.incOffset(2);    // ip = ip + 2 & 0xffff;
-
+            ip = ip + 2 & 0xffff;
         else if (mod == 0b00 && rm == 0b110 || mod == 0b10)
             // 16-bit displacement follows
-            instructionLocator.incOffset(3);    // ip = ip + 3 & 0xffff;
+            ip = ip + 3 & 0xffff;
         else
             // No displacement
-            instructionLocator.incOffset(1);    // ip = ip + 1 & 0xffff;
+            ip = ip + 1 & 0xffff;
     }
 
     /**
@@ -976,8 +1046,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return true if set, false if cleared
      */
     private boolean getFlag(final int flag) {
-        return flags.hasFlag(flag);
-//        return (flags & flag) > 0;
+        return (flags & flag) > 0;
     }
 
     /**
@@ -988,14 +1057,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int getMem(final int w) {
-        final int addr = getAddressGenerator().getAddr(
-                instructionLocator.getBase(), instructionLocator.getOffset()); // getAddr(cs, ip);
-        int val = memoryAccessor.getMem(w,addr);
+        final int addr = getAddr(cs, ip);
+        int val = getMemoryAccessor().getMem(w,addr);
 
 //        int val = memory[addr];
 //        if (w == W)
 //            val |= memory[addr + 1] << 8;
-        instructionLocator.incOffset(1 + w );     //  ip = ip + 1 + w & 0xffff;
+        ip = ip + 1 + w & 0xffff;
 
         return val;
     }
@@ -1010,7 +1078,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int getMem(final int w, final int addr) {
-        int val = memoryAccessor.getMem(w,addr);
+        int val = getMemoryAccessor().getMem(w,addr);
 
         if (w == W) {
             if ((addr & 0b1) == 0b1)
@@ -1043,41 +1111,41 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         if (w == B)
             // Byte data
             switch (reg) {
-            case AL: //  0b000: // AL
-                return ax.getL();           //  al;
-            case CL: //  0b001: // CL
+            case 0b000: // AL
+                return al;
+            case 0b001: // CL
                 return cl;
-            case DL: //  0b010: // DL
+            case 0b010: // DL
                 return dl;
-            case BL: //  0b011: // BL
+            case 0b011: // BL
                 return bl;
-            case AH: //  0b100: // AH
-                return ax.getH();           //  ah;
-            case CH: //  0b101: // CH
+            case 0b100: // AH
+                return ah;
+            case 0b101: // CH
                 return ch;
-            case DH: //  0b110: // DH
+            case 0b110: // DH
                 return dh;
-            case BH: //  0b111: // BH
+            case 0b111: // BH
                 return bh;
             }
         else
             // Word data
             switch (reg) {
             case AX: //  0b000: // AX
-                return ax.getData();                //  ah << 8 | al;
+                return ah << 8 | al;
             case CX: //  0b001: // CX
                 return ch << 8 | cl;
             case DX: //  0b010: // DX
                 return dh << 8 | dl;
             case BX: //  0b011: // BX
                 return bh << 8 | bl;
-            case SP: //  0b100: // SP
-                return stack.getSp();  // sp;
-            case BP: //  0b101: // BP
+            case 0b100: // SP
+                return sp;
+            case 0b101: // BP
                 return bp;
-            case SI: //  0b110: // SI
+            case 0b110: // SI
                 return si;
-            case DI: //  0b111: // DI
+            case 0b111: // DI
                 return di;
             }
         return 0;
@@ -1104,7 +1172,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return the value
      */
     private int getRM(final int w, final int mod, final int rm) {
-        if (mod == MOD_REGISTER_TO_REGISTER)  // 0b11
+        if (mod == 0b11)
             // Register-to-register mode
             return getReg(w, rm);
         else
@@ -1127,15 +1195,213 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         case ES: // 0b00: // ES
             return es;
         case CS: // 0b01: // CS
-            return instructionLocator.getBase();    // cs;
+            return cs;
         case SS: // 0b10: // SS
-            return stack.getSs();  // ss;
+            return ss;
         case DS: // 0b11: // DS
             return ds;
         }
         return 0;
     }
 
+    /**
+     * Increments an operand and sets flags accordingly.
+     *
+     * @param w
+     *            word/byte operation
+     * @param dst
+     *            the operand
+     * @return the result
+     */
+    private int inc(final int w, final int dst) {
+        final int res = dst + 1 & MASK[w];
+
+        setFlag(AF, ((res ^ dst ^ 1) & AF) > 0);
+        setFlag(OF, res == SIGN[w]);
+        setFlags(w, res);
+
+        return res;
+    }
+
+    /**
+     * Loads a binary file into memory at the specified address.
+     *
+     * @param addr
+     *            the address
+     * @param path
+     *            the file path
+     * @throws IOException
+     */
+    public void load(final int addr, final String path) throws IOException {
+        final InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        final byte[] bin = new byte[is.available()];
+        DataInputStream dis = null;
+        try {
+            dis = new DataInputStream(is);
+            dis.readFully(bin);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (dis != null)
+                dis.close();
+            is.close();
+        }
+
+        int memory[] = memoryManager.getMemoryBase();
+
+        for (int i = 0; i < bin.length; i++)
+            memory[addr + i] = bin[i] & 0xff;
+    }
+
+    /**
+     * Sets flags according to the result of a logical operation.
+     *
+     * @param w
+     *            word/byte operation
+     * @param res
+     *            the result
+     */
+    private void logic(final int w, final int res) {
+        setFlag(CF, false);
+        setFlag(OF, false);
+        setFlags(w, res);
+    }
+
+    /**
+     * Pops a value at the top of the stack.
+     *
+     * @return the value
+     */
+    private int pop() {
+        //return getStack().pop();
+
+        final int val = getMem(W, getAddr(ss, sp));
+        sp = sp + 2 & 0xffff;
+        return val;
+    }
+
+    /**
+     * Reads input from the specified port.
+     *
+     * @param w
+     *            word/byte operation
+     * @param port
+     *            the port
+     * @return the value
+     */
+    private int portIn(final int w, final int port) {
+        for (final Peripheral peripheral : peripherals)
+            if (peripheral.isConnected(port))
+                return peripheral.portIn(w, port);
+        return 0;
+    }
+
+    /**
+     * Write output to the specified port.
+     *
+     * @param w
+     *            word/byte operation
+     * @param port
+     *            the port
+     * @param val
+     *            the value
+     */
+    private void portOut(final int w, final int port, final int val) {
+        for (final Peripheral peripheral : peripherals)
+            if (peripheral.isConnected(port)) {
+                peripheral.portOut(w, port, val);
+                return;
+            }
+    }
+
+    /**
+     * Pushes a value to the top of the stack.
+     *
+     * @param val
+     *            the value
+     */
+    private void push(final int val) {
+       // getStack().push(val);
+
+        sp = sp - 2 & 0xffff;
+        setMem(W, getAddr(ss, sp), val);
+    }
+
+    /**
+     * Resets the CPU to its default state.
+     */
+    public void reset() {
+        flags = 0;
+        ip = 0x0000;
+        cs = 0xffff;
+        ds = 0x0000;
+        ss = 0x0000;
+        es = 0x0000;
+        for (int i = 0; i < 6; i++)
+            queue[i] = 0;
+        clocks = 0;
+    }
+
+    /**
+     * Performs subtraction with borrow and sets flags accordingly.
+     *
+     * @param w
+     *            word/byte operation
+     * @param dst
+     *            the first operand
+     * @param src
+     *            the second operand
+     * @return the result
+     */
+    private int sbb(final int w, final int dst, final int src) {
+        final int carry = (flags & CF) == CF ? 1 : 0;
+        final int res = dst - src - carry & MASK[w];
+
+        setFlag(CF, carry > 0 ? dst <= src : dst < src);
+        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        setFlags(w, res);
+
+        return res;
+    }
+    void fillInstructionQueue(){
+        // Fetch instruction from memory.
+        int seg = instructionLocator.getBase();
+        int ip = instructionLocator.getOffset();
+        for (int i = 0; i < 6; ++i) {
+            int addr = getAddr(seg,  ip+ i);
+            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
+        }
+    }
+
+    /**
+     * Sets or clears a flag.
+     *
+     * @param flag
+     *            the flag to affect
+     * @param set
+     *            true to set, false to clear
+     */
+    private void setFlag(final int flag, final boolean set) {
+        if (set)
+            flags |= flag;
+        else
+            flags &= ~flag;
+    }
+
+    /**
+     * Sets the parity, zero and sign flags.
+     *
+     * @param w
+     *            word/byte operation
+     * @param res
+     *            the result
+     */
+    private void setFlags(final int w, final int res) {
+        setFlag(PF, PARITY[res & 0xff] > 0);
+        setFlag(ZF, res == 0);
+        setFlag(SF, (shift(res, 8 - BITS[w]) & SF) > 0);
+    }
 
     /**
      * Sets the value at the specified address.
@@ -1154,7 +1420,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
         // Put address value to Address Bus
         // Put data to Data Bus
-        memoryAccessor.setMem(w, addr, val);
+        getMemoryAccessor().setMem(w, addr, val);
         if (w == W) {
             if ((addr & 0b1) == 0b1)
                 clocks += 4;
@@ -1185,63 +1451,62 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         if (w == B)
             // Byte data
             switch (reg) {
-                case AL: //  0b000: // AL
-                    ax.setL(val & 0xff);      //  al = val & 0xff;
-                    break;
-                case CL: //  0b001: // CL
-                    cl = val & 0xff;
-                    break;
-                case DL: //  0b010: // DL
-                    dl = val & 0xff;
-                    break;
-                case BL: //  0b011: // BL
-                    bl = val & 0xff;
-                    break;
-                case AH: //  0b100: // AH
-                    ax.setH(val & 0xff);      //  ah = val & 0xff;
-                    break;
-                case CH: //  0b101: // CH
-                    ch = val & 0xff;
-                    break;
-                case DH: //  0b110: // DH
-                    dh = val & 0xff;
-                    break;
-                case BH: //  0b111: // BH
-                    bh = val & 0xff;
-                    break;
+            case AL: //  0b000: // AL
+                al = val & 0xff;
+                break;
+            case CL: //  0b001: // CL
+                cl = val & 0xff;
+                break;
+            case DL: //  0b010: // DL
+                dl = val & 0xff;
+                break;
+            case BL: //  0b011: // BL
+                bl = val & 0xff;
+                break;
+            case AH: //  0b100: // AH
+                ah = val & 0xff;
+                break;
+            case CH: //  0b101: // CH
+                ch = val & 0xff;
+                break;
+            case DH: //  0b110: // DH
+                dh = val & 0xff;
+                break;
+            case BH: //  0b111: // BH
+                bh = val & 0xff;
+                break;
             }
         else
             // Word data
             switch (reg) {
-                case AX: //  0b000: // AX
-                    // al = val & 0xff;
-                    // ah = val >>> 8 & 0xff;
-                    ax.setData(val);
-                    break;
-                case CX: //  0b001: // CX
-                    cl = val & 0xff;
-                    ch = val >>> 8 & 0xff;
-                    break;
-                case DX: //  0b010: // DX
-                    dl = val & 0xff;
-                    dh = val >>> 8 & 0xff;
-                    break;
-                case BX: //  0b011: // BX
-                    bl = val & 0xff;
-                    bh = val >>> 8 & 0xff;
-                    break;
-                case SP: //  0b100: // SP
-                    stack.setSp(val & 0xffff);     // sp = val & 0xffff;
-                    break;
-                case BP: //  0b101: // BP
-                    bp = val & 0xffff;
-                    break;
-                case SI: //  0b110: // SI
-                    si = val & 0xffff;
-                    break;
-                case DI: //  0b111: // DI
-                    di = val & 0xffff;
-                    break;
+            case AX: //  0b000: // AX
+                al = val & 0xff;
+                ah = val >>> 8 & 0xff;
+                break;
+            case CX: //  0b001: // CX
+                cl = val & 0xff;
+                ch = val >>> 8 & 0xff;
+                break;
+            case DX: //  0b010: // DX
+                dl = val & 0xff;
+                dh = val >>> 8 & 0xff;
+                break;
+            case BX: //  0b011: // BX
+                bl = val & 0xff;
+                bh = val >>> 8 & 0xff;
+                break;
+            case SP: //  0b100: // SP
+                sp = val & 0xffff;
+                break;
+            case BP: //  0b101: // BP
+                bp = val & 0xffff;
+                break;
+            case SI: //  0b110: // SI
+                si = val & 0xffff;
+                break;
+            case DI: //  0b111: // DI
+                di = val & 0xffff;
+                break;
             }
     }
 
@@ -1288,174 +1553,18 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      */
     private void setSegReg(final int reg, final int val) {
         switch (reg) {
-            case ES: //  0b00: // ES
-                es = val & 0xffff;
-                break;
-            case CS: //  0b01: // CS
-                instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
-                break;
-            case SS: //  0b10: // SS
-                stack.setSs(val & 0xffff);     // ss = val & 0xffff;
-                break;
-            case DS: //  0b11: // DS
-                ds = val & 0xffff;
-                break;
-        }
-    }
-
-
-    /**
-     * Increments an operand and sets flags accordingly.
-     *
-     * @param w
-     *            word/byte operation
-     * @param dst
-     *            the operand
-     * @return the result
-     */
-    private int inc(final int w, final int dst) {
-        final int res = dst + 1 & MASK[w];
-
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ 1) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, res == SIGN[w]);
-        flags.setFlags(w, res);
-
-        return res;
-    }
-
-    /**
-     * Loads a binary file into memory at the specified address.
-     *
-     * @param addr
-     *            the address
-     * @param path
-     *            the file path
-     * @throws IOException
-     */
-    public void load(final int addr, final String path) throws IOException {
-        final InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-        final byte[] bin = new byte[is.available()];
-        DataInputStream dis = null;
-        try {
-            dis = new DataInputStream(is);
-            dis.readFully(bin);
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (dis != null)
-                dis.close();
-            is.close();
-        }
-
-        int memory[] = memoryManager.getMemoryBase();
-
-        for (int i = 0; i < bin.length; i++)
-            memory[addr + i] = bin[i] & 0xff;
-    }
-
-    /**
-     * Sets flags according to the result of a logical operation.
-     *
-     * @param w
-     *            word/byte operation
-     * @param res
-     *            the result
-     */
-    private void logic(final int w, final int res) {
-        flags.setFlag(ProgramStatusWord.CF, false);
-        flags.setFlag(ProgramStatusWord.OF, false);
-        flags.setFlags(w, res);
-    }
-
-    /**
-     * Pops a value at the top of the stack.
-     *
-     * @return the value
-     */
-    private int pop() {
-        return stack.pop();
-
-//        final int val = getMem(W, getAddr(ss, sp));
-//        sp = sp + 2 & 0xffff;
-//        return val;
-    }
-
-    /**
-     * Reads input from the specified port.
-     *
-     * @param w
-     *            word/byte operation
-     * @param port
-     *            the port
-     * @return the value
-     */
-    private int portIn(final int w, final int port) {
-        for (final Peripheral peripheral : peripherals)
-            if (peripheral.isConnected(port))
-                return peripheral.portIn(w, port);
-        return 0;
-    }
-
-    /**
-     * Write output to the specified port.
-     *
-     * @param w
-     *            word/byte operation
-     * @param port
-     *            the port
-     * @param val
-     *            the value
-     */
-    private void portOut(final int w, final int port, final int val) {
-        for (final Peripheral peripheral : peripherals)
-            if (peripheral.isConnected(port)) {
-                peripheral.portOut(w, port, val);
-                return;
-            }
-    }
-
-    /**
-     * Pushes a value to the top of the stack.
-     *
-     * @param val
-     *            the value
-     */
-    private void push(final int val) {
-        stack.push(val);
-
-//        sp = sp - 2 & 0xffff;
-//        setMem(W, getAddr(ss, sp), val);
-    }
-
-    /**
-     * Performs subtraction with borrow and sets flags accordingly.
-     *
-     * @param w
-     *            word/byte operation
-     * @param dst
-     *            the first operand
-     * @param src
-     *            the second operand
-     * @return the result
-     */
-    private int sbb(final int w, final int dst, final int src) {
-        final int carry = flags.hasFlag(ProgramStatusWord.CF)?1:0;  // flags & CF) == CF ? 1 : 0;
-        final int res = dst - src - carry & MASK[w];
-
-        flags.setFlag(ProgramStatusWord.CF, carry > 0 ? dst <= src : dst < src);
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
-        flags.setFlags(w, res);
-
-        return res;
-    }
-    void fillInstructionQueue(){
-        // Fetch instruction from memory.
-        int seg = instructionLocator.getBase();
-        int ip = instructionLocator.getOffset();
-        for (int i = 0; i < 6; ++i) {
-            int addr = getAddr(seg,  ip+ i);
-            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
+        case ES: //  0b00: // ES
+            es = val & 0xffff;
+            break;
+        case CS: //  0b01: // CS
+            cs = val & 0xffff;
+            break;
+        case SS: //  0b10: // SS
+            ss = val & 0xffff;
+            break;
+        case DS: //  0b11: // DS
+            ds = val & 0xffff;
+            break;
         }
     }
 
@@ -1473,10 +1582,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private int sub(final int w, final int dst, final int src) {
         final int res = dst - src & MASK[w];
 
-        flags.setFlag(ProgramStatusWord.CF, dst < src);
-        flags.setFlag(ProgramStatusWord.AF, ((res ^ dst ^ src) & ProgramStatusWord.AF) > 0);
-        flags.setFlag(ProgramStatusWord.OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & ProgramStatusWord.OF) > 0);
-        flags.setFlags(w, res);
+        setFlag(CF, dst < src);
+        setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
+        setFlag(OF, (shift((dst ^ src) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
+        setFlags(w, res);
 
         return res;
     }
@@ -1488,13 +1597,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      */
     public boolean tick() {
         // Single-step mode.
-        if (flags.hasFlag(ProgramStatusWord.TF)) {
+        if (getFlag(TF)) {
             callInt(1);
             clocks += 50;
         }
 
         // External maskable interrupts.
-        if (flags.hasFlag(ProgramStatusWord.IF) && pic.hasInt()) {
+        if (getFlag(IF) && pic.hasInt()) {
             callInt(pic.nextInt());
             clocks += 61;
         }
@@ -1509,11 +1618,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 clocks += 2;
                 break;
             case 0x2e: // CS: (segment override prefix)
-                os = instructionLocator.getBase();  //  cs;
+                os = cs;
                 clocks += 2;
                 break;
             case 0x36: // SS: (segment override prefix)
-                os = stack.getSs();    // ss;
+                os = ss;
                 clocks += 2;
                 break;
             case 0x3e: // DS: (segment override prefix)
@@ -1530,20 +1639,20 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 clocks += 9;
                 break;
             default:
-                instructionLocator.decOffset(1);    //  ip = ip - 1 & 0xffff;
+                ip = ip - 1 & 0xffff;
                 break prefixes;
             }
         }
 
-        fillInstructionQueue();
+        // Fetch instruction from memory.
+        for (int i = 0; i < 6; ++i)
+            queue[i] = getMem(B, getAddr(cs, ip + i));
 
         // Decode first byte.
-        decode1();
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
-
-        instructionLocator.incOffset(1);    //  ip = ip + 1 & 0xffff; // Increment IP.
+        op = queue[0];
+        d  = op >>> 1 & 0b1;
+        w  = op       & 0b1;
+        ip = ip + 1 & 0xffff; // Increment IP.
 
         // Only repeat string instructions.
         switch (op) {
@@ -1614,8 +1723,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
             case MOV_REG8_REG8__MEM8   : //   0x8a: // MOV REG8,REG8/MEM8
             case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
-                decode2();
-                if (d == REGISTER_SRC) {     //  0b0
+                decode();
+                if (d == 0b0) {
                     src = getReg(w, reg);
                     setRM(w, mod, rm, src);
                     clocks += mod == 0b11 ? 2 : 9;
@@ -1629,7 +1738,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Immediate to Register/Memory
             case MOV_REG8__MEM8_IMMED8   : // 0xc6: // MOV REG8/MEM8,IMMED8
             case MOV_REG16__MEM16_IMMED16: // 0xc7: // MOV REG16/MEM16,IMMED16
-                decode2();
+                decode();
                 switch (reg) {
                 case 0b000:
                     src = getMem(w);
@@ -1681,7 +1790,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory to/from Segment Register
             case MOV_REG16_MEM16__SEGREG: //  0x8c: // MOV REG16/MEM16,SEGREG
             case MOV_SEGREG_REG16__MEM16: //  0x8e: // MOV SEGREG,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     src = getSegReg(reg);
                     setRM(W, mod, rm, src);
@@ -1773,7 +1882,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory with Register
             case XCHG_REG8_REG8__MEM8   : // 0x86: // XCHG REG8,REG8/MEM8
             case XCHG_REG16_REG16__MEM16: // 0x87: // XCHG REG16,REG16/MEM16
-                decode2();
+                decode();
                 dst = getReg(w, reg);
                 src = getRM(w, mod, rm);
                 setReg(w, reg, src);
@@ -1813,7 +1922,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * reverse.
              */
             case 0xd7: // XLAT SOURCE-TABLE
-                ax.setL(getMem(B, getAddr(os, getReg(W, BX) + ax.getL())));  // al = getMem(B, getAddr(os, getReg(W, BX) + al));
+                al = getMem(B, getAddr(os, getReg(W, BX) + al));
                 clocks += 11;
                 break;
 
@@ -1895,7 +2004,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * XLAT instruction).
              */
             case LEA_REG16_MEM16: //  0x8d: // LEA REG16,MEM16
-                decode2();
+                decode();
                 src = getEA(mod, rm) - (os << 4);
                 setReg(w, reg, src);
                 clocks += 2;
@@ -1916,7 +2025,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * segment and that SI contains the offset of the string).
              */
             case LDS_REG16_MEM32: //  0xc5: // LDS REG16,MEM32
-                decode2();
+                decode();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 ds = getMem(W, src + 2);
@@ -1938,7 +2047,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * the offset of the string).
              */
             case LES_REG16_MEM32: //  0xc4: // LES REG16,MEM32
-                decode2();
+                decode();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 es = getMem(W, src + 2);
@@ -1958,7 +2067,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * assembly language programs to run on an 8086.
              */
             case LAHF: //  0x9f: // LAHF
-                ax.setH(flags.getData() & 0xff);      //  ah = flags.getData() & 0xff;
+                ah = flags & 0xff;
                 clocks += 4;
                 break;
 
@@ -1972,7 +2081,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * 8080/8085 compatibility.
              */
             case SAHF: //  0x9e: // SAHF
-                flags.setData(flags.getData() & 0xff00 | ax.getH());  // flags = flags & 0xff00 | ah;
+                flags = flags & 0xff00 | ah;
                 clocks += 4;
                 break;
 
@@ -1984,7 +2093,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * flags themselves are not affected.
              */
             case PUSHF: //  0x9c: // PUSHF
-                push(flags.getData());
+                push(flags);
                 clocks += 10;
                 break;
 
@@ -2002,7 +2111,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * the memory- image and then popping the flags.
              */
             case POPF: //  0x9d: // POPF
-                flags.setData(pop());
+                flags = pop();
                 clocks += 8;
                 break;
 
@@ -2103,7 +2212,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ADD_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
             case ADD_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
             case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2146,7 +2255,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ADC_REG16__MEM16_REG16: //  0x11: // ADC REG16/MEM16,REG16
             case ADC_REG8_REG8__MEM8   : //  0x12: // ADC REG8,REG8/MEM8
             case ADC_REG16_REG16__MEM16: //  0x13: // ADC REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2206,16 +2315,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * ZF is undefined following execution of AAA.
              */
             case AAA: //  0x37: // AAA
-                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    ax.incL(6);             //  al += 6;
-                    ax.incH(1);             //  ah = ah + 1 & 0xff;
-                    flags.setFlag(ProgramStatusWord.CF, true);
-                    flags.setFlag(ProgramStatusWord.AF, true);
+                if ((al & 0xf) > 9 || getFlag(AF)) {
+                    al += 6;
+                    ah = ah + 1 & 0xff;
+                    setFlag(CF, true);
+                    setFlag(AF, true);
                 } else {
-                    flags.setFlag(ProgramStatusWord.CF, false);
-                    flags.setFlag(ProgramStatusWord.AF, false);
+                    setFlag(CF, false);
+                    setFlag(AF, false);
                 }
-                ax.setL(ax.getL() & 0xf);      // al &= 0xf;
+                al &= 0xf;
                 clocks += 4;
                 break;
 
@@ -2231,22 +2340,22 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case DAA:  //  0x27:  // DAA
             {
-                final int oldAL = ax.getL();        //  al;
-                final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
-                flags.setFlag(ProgramStatusWord.CF, false);
-                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    ax.incL(6);                 //  al += 6;
-                    flags.setFlag(ProgramStatusWord.CF, oldCF || ax.getL() < 0);
-                    ax.setL(ax.getL() & 0xff);      // al &= 0xff;
-                    flags.setFlag(ProgramStatusWord.AF, true);
+                final int oldAL = al;
+                final boolean oldCF = getFlag(CF);
+                setFlag(CF, false);
+                if ((al & 0xf) > 9 || getFlag(AF)) {
+                    al += 6;
+                    setFlag(CF, oldCF || al < 0);
+                    al &= 0xff;
+                    setFlag(AF, true);
                 } else
-                    flags.setFlag(ProgramStatusWord.AF, false);
+                    setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    ax.setL(ax.getL() + 0x60 & 0xff);      // al = al + 0x60 & 0xff;
-                    flags.setFlag(ProgramStatusWord.CF, true);
+                    al = al + 0x60 & 0xff;
+                    setFlag(CF, true);
                 } else
-                    flags.setFlag(ProgramStatusWord.CF, false);
-                flags.setFlags(B, ax.getL());
+                    setFlag(CF, false);
+                setFlags(B, al);
                 clocks += 4;
                 break;
             }
@@ -2267,7 +2376,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SUB_REG16__MEM16_REG16: //   0x29: // SUB REG16/MEM16,REG16
             case SUB_REG8_REG8__MEM8   : //   0x2a: // SUB REG8,REG8/MEM8
             case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2311,7 +2420,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SBB_REG16__MEM16_REG16: //   0x19: // SBB REG16/MEM16,REG16
             case SBB_REG8_REG8__MEM8   : //   0x1a: // SBB REG8,REG8/MEM8
             case SBB_REG16_REG16__MEM16: //   0x1b: // SBB REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2393,7 +2502,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case CMP_REG16__MEM16_REG16: //  0x39: // CMP REG16/MEM16,REG16
             case CMP_REG8_REG8__MEM8   : //  0x3a: // CMP REG8,REG8/MEM8
             case CMP_REG16_REG16__MEM16: //  0x3b: // CMP REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2426,16 +2535,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * AAS.
              */
             case AAS: //  0x3f: // AAS
-                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    ax.incL(-6);            //  al -= 6;
-                    ax.incH(-1);            //  ah = ah - 1 & 0xff;
-                    flags.setFlag(ProgramStatusWord.CF, true);
-                    flags.setFlag(ProgramStatusWord.AF, true);
+                if ((al & 0xf) > 9 || getFlag(AF)) {
+                    al -= 6;
+                    ah = ah - 1 & 0xff;
+                    setFlag(CF, true);
+                    setFlag(AF, true);
                 } else {
-                    flags.setFlag(ProgramStatusWord.CF, false);
-                    flags.setFlag(ProgramStatusWord.AF, false);
+                    setFlag(CF, false);
+                    setFlag(AF, false);
                 }
-                ax.setL(ax.getL()& 0xf);                //  al &= 0xf;
+                al &= 0xf;
                 clocks += 4;
                 break;
 
@@ -2451,22 +2560,22 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case DAS: //  0x2f: // DAS
             {
-                final int oldAL = ax.getL();        //  al;
-                final boolean oldCF = flags.hasFlag(ProgramStatusWord.CF);
-                flags.setFlag(ProgramStatusWord.CF, false);
-                if ((ax.getL() & 0xf) > 9 || flags.hasFlag(ProgramStatusWord.AF)) {
-                    ax.incL(-6);                //  al -= 6;
-                    flags.setFlag(ProgramStatusWord.CF, oldCF || (ax.getL() & 0xff) > 0);
-                    ax.setL(ax.getL()&0xff);            //  al &= 0xff;
-                    flags.setFlag(ProgramStatusWord.AF, true);
+                final int oldAL = al;
+                final boolean oldCF = getFlag(CF);
+                setFlag(CF, false);
+                if ((al & 0xf) > 9 || getFlag(AF)) {
+                    al -= 6;
+                    setFlag(CF, oldCF || (al & 0xff) > 0);
+                    al &= 0xff;
+                    setFlag(AF, true);
                 } else
-                    flags.setFlag(ProgramStatusWord.AF, false);
+                    setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    ax.incL(-60);               //  al = al - 0x60 & 0xff;
-                    flags.setFlag(ProgramStatusWord.CF, true);
+                    al = al - 0x60 & 0xff;
+                    setFlag(CF, true);
                 } else
-                    flags.setFlag(ProgramStatusWord.CF, false);
-                flags.setFlags(B, ax.getL());
+                    setFlag(CF, false);
+                setFlags(B, al);
                 clocks += 4;
                 break;
             }
@@ -2523,9 +2632,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 if (src == 0)
                     callInt(0);
                 else {
-                    ax.setH(ax.getL()/src&0xff);            //  ah = al / src & 0xff;
-                    ax.setL(ax.getL() % src & 0xff );       //  al = al % src & 0xff;
-                    flags.setFlags(W, getReg(W, AX));
+                    ah = al / src & 0xff;
+                    al = al % src & 0xff;
+                    setFlags(W, getReg(W, AX));
                     clocks += 83;
                 }
                 break;
@@ -2592,9 +2701,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case AAD: //  0xd5: // AAD
                 src = getMem(B);
-                ax.setL(ax.getH()*src + ax.getL()&0xff);        //  al = ah * src + al & 0xff;
-                ax.setH(0);                                     //  ah = 0;
-                flags.setFlags(B, ax.getL());
+                al = ah * src + al & 0xff;
+                ah = 0;
+                setFlags(B, al);
                 clocks += 60;
                 break;
 
@@ -2607,10 +2716,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * from a byte prior to performing byte division.
              */
             case CBW: //  0x98: // CBW
-                if ((ax.getL() & 0x80) == 0x80)
-                    ax.setH(0xff);              //  ah = 0xff;
+                if ((al & 0x80) == 0x80)
+                    ah = 0xff;
                 else
-                    ax.setH(0x00);              //  ah = 0x00;
+                    ah = 0x00;
                 clocks += 2;
                 break;
 
@@ -2623,7 +2732,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * dividend from a word prior to performing word division.
              */
             case CWD: //  0x99: // CWD
-                if ((ax.getH() & 0x80) == 0x80)
+                if ((ah & 0x80) == 0x80)
                     setReg(W, DX, 0xffff);
                 else
                     setReg(W, DX, 0x0000);
@@ -2679,7 +2788,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
             case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
             case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2722,7 +2831,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
             case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
             case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2766,7 +2875,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
             case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
             case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
-                decode2();
+                decode();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2808,7 +2917,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory and Register
             case TEST_REG8__MEM8_REG8   : //   0x84: // TEST REG8/MEM8,REG8
             case TEST_REG16__MEM16_REG16: //   0x85: // TEST REG16/MEM16,REG16
-                decode2();
+                decode();
                 dst = getRM(w, mod, rm);
                 src = getReg(w, reg);
                 logic(w, dst & src);
@@ -3050,8 +3159,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOVS_DEST16_SRC16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setMem(w, getAddr(es, di), src);
-                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 17;
                 break;
 
@@ -3078,9 +3187,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 dst = getMem(w, getAddr(es, di));
                 src = getMem(w, getAddr(os, si));
                 sub(w, src, dst);
-                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
-                if (rep == 1 && !flags.hasFlag(ProgramStatusWord.ZF) || rep == 2 && flags.hasFlag(ProgramStatusWord.ZF))
+                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
                 clocks += 22;
                 break;
@@ -3108,8 +3217,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 dst = getMem(w, getAddr(es, di));
                 src = getReg(w, AX);
                 sub(w, src, dst);
-                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
-                if (rep == 1 && !flags.hasFlag(ProgramStatusWord.ZF) || rep == 2 && flags.hasFlag(ProgramStatusWord.ZF))
+                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
                 clocks += 15;
                 break;
@@ -3130,7 +3239,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case LODS_SRC16: //  0xad: // LODS SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setReg(w, AX, src);
-                si = si + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 13;
                 break;
 
@@ -3147,7 +3256,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case STOS_DEST16: //   0xab: // STOS DEST-STR16
                 src = getReg(w, AX);
                 setMem(w, getAddr(es, di), src);
-                di = di + (flags.hasFlag(ProgramStatusWord.DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += 10;
                 break;
 
@@ -3244,8 +3353,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case CALL_NEAR_PROC: //   0xe8: // CALL NEAR-PROC
                 dst = getMem(W);
                 dst = signconv(W, dst);
-                stack.push(instructionLocator.getOffset()); //                push(ip);
-                instructionLocator.incOffset(dst);          //                ip = ip + dst & 0xffff;
+                push(ip);
+                ip = ip + dst & 0xffff;
                 clocks += 19;
                 break;
 
@@ -3253,11 +3362,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case CALL_FAR_PROC: //   0x9a: // CALL FAR-PROC
                 dst = getMem(W);
                 src = getMem(W);
-
-                stack.push(instructionLocator.getBase());   //                push(cs);
-                stack.push(instructionLocator.getOffset()); //                push(ip);
-                instructionLocator.setOffset(dst);          //                ip = dst;
-                instructionLocator.setBase(src);            //                cs = src;
+                push(cs);
+                push(ip);
+                ip = dst;
+                cs = src;
                 clocks += 28;
                 break;
 
@@ -3279,31 +3387,31 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             // Within Segment
             case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
-                instructionLocator.setOffset(stack.pop());              //  ip = pop();
+                ip = pop();
                 clocks += 8;
                 break;
 
             // Within Seg Adding Immed to SP
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
                 src = getMem(W);
-                instructionLocator.setOffset(stack.pop());              //  ip = pop();
-                stack.addSp(src);                                     // sp += src;
+                ip = pop();
+                sp += src;
                 clocks += 12;
                 break;
 
             // Intersegment
             case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
-                instructionLocator.setOffset(stack.pop());              //  ip = pop();
-                instructionLocator.setBase(stack.pop());                //  cs = pop();
+                ip = pop();
+                cs = pop();
                 clocks += 18;
                 break;
 
             // Intersegment Adding Immediate to SP
             case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
                 src = getMem(W);
-                instructionLocator.setOffset(stack.pop());              //  ip = pop();
-                instructionLocator.setBase(stack.pop());                //  cs = pop();
-                stack.addSp(src);                                    // sp += src;
+                ip = pop();
+                cs = pop();
+                sp += src;
                 clocks += 17;
                 break;
 
@@ -3345,7 +3453,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JMP_NEAR: //   0xe9: // JMP NEAR-LABEL
                 dst = getMem(W);
                 dst = signconv(W, dst);
-                instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                ip = ip + dst & 0xffff;
                 clocks += 15;
                 break;
 
@@ -3353,7 +3461,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JMP_SHORT: //   0xeb: // JMP SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                ip = ip + dst & 0xffff;
                 clocks += 15;
                 break;
 
@@ -3361,8 +3469,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JMP_FAR: //   0xea: // JMP FAR-LABEL
                 dst = getMem(W);
                 src = getMem(W);
-                instructionLocator.setOffset(dst);                      //  ip = dst;
-                instructionLocator.setBase(src);                        //  cs = src;
+                ip = dst;
+                cs = src;
                 clocks += 15;
                 break;
 
@@ -3392,8 +3500,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JO_SHORT: //   0x70: // JO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.OF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(OF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3407,8 +3515,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNO_SHORT: //  0x71: // JNO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!flags.hasFlag(ProgramStatusWord.OF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!getFlag(OF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3422,8 +3530,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JB__JNAE__JC_SHORT: //   0x72: // JB/JNAE/JC SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.CF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(CF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3437,8 +3545,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNB__JAE__JNC_SHORT: //  0x73: // JNB/JAE/JNC SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!flags.hasFlag(ProgramStatusWord.CF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!getFlag(CF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3452,8 +3560,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JE__JZ_SHORT: //  0x74: // JE/JZ SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3467,8 +3575,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNE__JNZ_SHORT: //  0x75: // JNE/JNZ SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3482,8 +3590,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JBE__JNA_SHORT: //   0x76: // JBE/JNA SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(CF) | getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3497,8 +3605,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNBE__JA_SHORT: //   0x77: // JNBE/JA SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(flags.hasFlag(ProgramStatusWord.CF) | flags.hasFlag(ProgramStatusWord.ZF))) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!(getFlag(CF) | getFlag(ZF))) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3512,8 +3620,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JS_SHORT: //   0x78: // JS SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.SF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(SF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3527,8 +3635,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNS_SHORT: //  0x79: // JNS SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!flags.hasFlag(ProgramStatusWord.SF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!getFlag(SF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3542,8 +3650,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JP__JPE_SHORT: //  0x7a: // JP/JPE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.PF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(PF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3557,8 +3665,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!flags.hasFlag(ProgramStatusWord.PF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!getFlag(PF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3572,8 +3680,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(SF) ^ getFlag(OF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3587,8 +3695,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF))) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!(getFlag(SF) ^ getFlag(OF))) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3602,8 +3710,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (getFlag(SF) ^ getFlag(OF) | getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3617,8 +3725,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case JNLE__JG_SHORT: //  0x7f: // JNLE/JG SHORT-LABEL
                 dst = getMem(B);
                 dst = signconv(B, dst);
-                if (!(flags.hasFlag(ProgramStatusWord.SF) ^ flags.hasFlag(ProgramStatusWord.OF) | flags.hasFlag(ProgramStatusWord.ZF))) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (!(getFlag(SF) ^ getFlag(OF) | getFlag(ZF))) {
+                    ip = ip + dst & 0xffff;
                     clocks += 16;
                 } else
                     clocks += 4;
@@ -3647,7 +3755,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
                 if (src != 0) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                    ip = ip + dst & 0xffff;
                     clocks += 17;
                 } else
                     clocks += 5;
@@ -3667,8 +3775,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
-                if (src != 0 && flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (src != 0 && getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 18;
                 } else
                     clocks += 6;
@@ -3688,8 +3796,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
-                if (src != 0 && !flags.hasFlag(ProgramStatusWord.ZF)) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                if (src != 0 && !getFlag(ZF)) {
+                    ip = ip + dst & 0xffff;
                     clocks += 19;
                 } else
                     clocks += 5;
@@ -3707,7 +3815,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 dst = getMem(B);
                 dst = signconv(B, dst);
                 if (getReg(W, CX) == 0) {
-                    instructionLocator.incOffset(dst);                      //  ip = ip + dst & 0xffff;
+                    ip = ip + dst & 0xffff;
                     clocks += 18;
                 } else
                     clocks += 6;
@@ -3769,7 +3877,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * interrupt procedure if overflow occurs.
              */
             case INTO: //  0xce: // INTO
-                if (flags.hasFlag(ProgramStatusWord.OF)) {
+                if (getFlag(OF)) {
                     callInt(4);
                     clocks += 53;
                 } else
@@ -3786,9 +3894,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * activated by hardware or software.
              */
             case IRET: //  0xcf: // IRET
-                instructionLocator.setOffset(stack.pop());                //  ip = pop();
-                instructionLocator.setBase(stack.pop());                  //  cs = pop();
-                flags.setData(pop());                                       // flags = pop();
+                ip = pop();
+                cs = pop();
+                flags = pop();
                 clocks += 24;
                 break;
 
@@ -3813,7 +3921,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * the RCL and RCR instructions.
              */
             case CLC: //  0xf8: // CLC
-                flags.setFlag(ProgramStatusWord.CF, false);
+                setFlag(CF, false);
                 clocks += 2;
                 break;
 
@@ -3824,7 +3932,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * and affects no other flags.
              */
             case CMC: //  0xf5: // CMC
-                flags.setFlag(ProgramStatusWord.CF, !flags.hasFlag(ProgramStatusWord.CF));
+                setFlag(CF, !getFlag(CF));
                 clocks += 2;
                 break;
 
@@ -3834,7 +3942,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * STC (Set Carry flag) sets CF to 1 and affects no other flags.
              */
             case STC: //   0xf9: // STC
-                flags.setFlag(ProgramStatusWord.CF, true);
+                setFlag(CF, true);
                 clocks += 2;
                 break;
 
@@ -3846,7 +3954,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * CLD does not affect any other flags.
              */
             case CLD: //   0xfc: // CLD
-                flags.setFlag(ProgramStatusWord.DF, false);
+                setFlag(DF, false);
                 clocks += 2;
                 break;
 
@@ -3858,7 +3966,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * STD does not affect any other flags.
              */
             case STD : //  0xfd: // STD
-                flags.setFlag(ProgramStatusWord.DF, true);
+                setFlag(DF, true);
                 clocks += 2;
                 break;
 
@@ -3873,7 +3981,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * software interrupt. CLI does not affect any other flags.
              */
             case CLI : //  0xfa: // CLI
-                flags.setFlag(ProgramStatusWord.IF, false);
+                setFlag(IF, false);
                 clocks += 2;
                 break;
 
@@ -3887,7 +3995,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * does not affect any other flags.
              */
             case STI : //  0xfb: // STI
-                flags.setFlag(ProgramStatusWord.IF, true);
+                setFlag(IF, true);
                 clocks += 2;
                 break;
 
@@ -3941,7 +4049,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ESC_5_SOURCE: //   0xdd: // ESC 5,SOURCE
             case ESC_6_SOURCE: //   0xde: // ESC 6,SOURCE
             case ESC_7_SOURCE: //   0xdf: // ESC 7,SOURCE
-                decode2();
+                decode();
                 clocks += mod == 0b11 ? 2 : 8;
                 break;
 
@@ -4005,7 +4113,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SBB REG16/MEM16,IMMED8
                 // SUB REG16/MEM16,IMMED8
                 // CMP REG16/MEM16,IMMED8
-                decode2();
+                decode();
                 dst = getRM(w, mod, rm);
                 src = getMem(B);
                 if (op == 0x81)
@@ -4065,7 +4173,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * GROUP 1A
              */
             case POP_REG16__MEM16: //  0x8f: // POP REG16/MEM16
-                decode2();
+                decode();
                 switch (reg) {
                 case MOD_POP: //  0b000: // POP
                     src = pop();
@@ -4111,7 +4219,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SHR REG16/MEM16,CL
                 // SAR REG16/MEM16,CL
             {
-                decode2();
+                decode();
                 dst = getRM(w, mod, rm);
                 src = op == 0xd0 || op == 0xd1 ? 1 : cl;
                 boolean tempCF;
@@ -4123,9 +4231,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         dst |= tempCF ? 0b1 : 0b0;
                         dst &= MASK[w];
                     }
-                    flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
+                    setFlag(CF, (dst & 0b1) == 0b1);
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
+                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     break;
                 case MOD_ROR: //   0b001: // ROR
                     for (int cnt = 0; cnt < src; ++cnt) {
@@ -4134,68 +4242,68 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         dst |= (tempCF ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
                     }
-                    flags.setFlag(ProgramStatusWord.CF, msb(w, dst));
+                    setFlag(CF, msb(w, dst));
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ msb(w, dst << 1));
+                        setFlag(OF, msb(w, dst) ^ msb(w, dst << 1));
                     break;
                 case MOD_RCL: //   0b010: // RCL
                     for (int cnt = 0; cnt < src; ++cnt) {
                         tempCF = msb(w, dst);
                         dst <<= 1;
-                        dst |= flags.hasFlag(ProgramStatusWord.CF) ? 0b1 : 0b0;
+                        dst |= getFlag(CF) ? 0b1 : 0b0;
                         dst &= MASK[w];
-                        flags.setFlag(ProgramStatusWord.CF, tempCF);
+                        setFlag(CF, tempCF);
                     }
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
+                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     break;
                 case MOD_RCR: //   0b011: // RCR
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, msb(w, dst) ^ flags.hasFlag(ProgramStatusWord.CF));
+                        setFlag(OF, msb(w, dst) ^ getFlag(CF));
                     for (int cnt = 0; cnt < src; ++cnt) {
                         tempCF = (dst & 0b1) == 0b1;
                         dst >>>= 1;
-                        dst |= (flags.hasFlag(ProgramStatusWord.CF) ? 1 : 0) * SIGN[w];
+                        dst |= (getFlag(CF) ? 1 : 0) * SIGN[w];
                         dst &= MASK[w];
-                        flags.setFlag(ProgramStatusWord.CF, tempCF);
+                        setFlag(CF, tempCF);
                     }
                     break;
                 case MOD_SAL__SHL: //   0b100: // SAL/SHL
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(ProgramStatusWord.CF, (dst & SIGN[w]) == SIGN[w]);
+                        setFlag(CF, (dst & SIGN[w]) == SIGN[w]);
                         dst <<= 1;
                         dst &= MASK[w];
                     }
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, (dst & SIGN[w]) == SIGN[w] ^ flags.hasFlag(ProgramStatusWord.CF));
+                        setFlag(OF, (dst & SIGN[w]) == SIGN[w] ^ getFlag(CF));
                     if (src > 0)
-                        flags.setFlags(w, dst);
+                        setFlags(w, dst);
                     break;
                 case MOD_SHR: //   0b101: // SHR
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, (dst & SIGN[w]) == SIGN[w]);
+                        setFlag(OF, (dst & SIGN[w]) == SIGN[w]);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
+                        setFlag(CF, (dst & 0b1) == 0b1);
                         dst >>>= 1;
                         dst &= MASK[w];
                     }
                     if (src > 0)
-                        flags.setFlags(w, dst);
+                        setFlags(w, dst);
                     break;
                 case MOD_SAR: //   0b111: // SAR
                     // Determine overflow.
                     if (src == 1)
-                        flags.setFlag(ProgramStatusWord.OF, false);
+                        setFlag(OF, false);
                     for (int cnt = 0; cnt < src; ++cnt) {
-                        flags.setFlag(ProgramStatusWord.CF, (dst & 0b1) == 0b1);
+                        setFlag(CF, (dst & 0b1) == 0b1);
                         dst = signconv(w, dst);
                         dst >>= 1;
                         dst &= MASK[w];
                     }
                     if (src > 0)
-                        flags.setFlags(w, dst);
+                        setFlags(w, dst);
                     break;
                 }
                 setRM(w, mod, rm, dst);
@@ -4225,7 +4333,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // IMUL REG16/MEM16
                 // DIV REG16/MEM16
                 // IDIV REG16/MEM16
-                decode2();
+                decode();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case MOD_TEST: //   0b000: // TEST
@@ -4239,21 +4347,21 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     break;
                 case MOD_NEG: //   0b011: // NEG
                     dst = sub(w, 0, src);
-                    flags.setFlag(ProgramStatusWord.CF, dst > 0);
+                    setFlag(CF, dst > 0);
                     setRM(w, mod, rm, dst);
                     clocks += mod == 0b11 ? 3 : 16;
                     break;
                 case MOD_MUL: //   0b100: // MUL
                     if (w == B) {
-                        dst = ax.getH();                //  al;
+                        dst = al;
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ax.getH() > 0) {            // ah
-                            flags.setFlag(ProgramStatusWord.CF, true);
-                            flags.setFlag(ProgramStatusWord.OF, true);
+                        if (ah > 0) {
+                            setFlag(CF, true);
+                            setFlag(OF, true);
                         } else {
-                            flags.setFlag(ProgramStatusWord.CF, false);
-                            flags.setFlag(ProgramStatusWord.OF, false);
+                            setFlag(CF, false);
+                            setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (77 - 70) / 2 : (83 - 76) / 2;
                     } else {
@@ -4262,11 +4370,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         setReg(W, AX, (int) lres);
                         setReg(W, DX, (int) (lres >>> 16));
                         if (getReg(W, DX) > 0) {
-                            flags.setFlag(ProgramStatusWord.CF, true);
-                            flags.setFlag(ProgramStatusWord.OF, true);
+                            setFlag(CF, true);
+                            setFlag(OF, true);
                         } else {
-                            flags.setFlag(ProgramStatusWord.CF, false);
-                            flags.setFlag(ProgramStatusWord.OF, false);
+                            setFlag(CF, false);
+                            setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (133 - 118) / 2 : (139 - 124) / 2;
                     }
@@ -4274,32 +4382,32 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 case MOD_IMUL: //   0b101: // IMUL
                     if (w == B) {
                         src = signconv(B, src);
-                        dst = ax.getL();                //  al;
+                        dst = al;
                         dst = signconv(B, dst);
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ax.getH() > 0x00 && ax.getH() < 0xff) {     // ah
-                            flags.setFlag(ProgramStatusWord.CF, true);
-                            flags.setFlag(ProgramStatusWord.OF, true);
+                        if (ah > 0x00 && ah < 0xff) {
+                            setFlag(CF, true);
+                            setFlag(OF, true);
                         } else {
-                            flags.setFlag(ProgramStatusWord.CF, false);
-                            flags.setFlag(ProgramStatusWord.OF, false);
+                            setFlag(CF, false);
+                            setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (98 - 80) / 2 : (154 - 128) / 2;
                     } else {
                         src = signconv(W, src);
-                        dst = ax.getData();             //  ah << 8 | al;
+                        dst = ah << 8 | al;
                         dst = signconv(W, dst);
                         final long lres = (long) dst * (long) src & 0xffffffff;
                         setReg(W, AX, (int) lres);
                         setReg(W, DX, (int) (lres >>> 16));
                         final int dx = getReg(W, DX);
                         if (dx > 0x0000 && dx < 0xffff) {
-                            flags.setFlag(ProgramStatusWord.CF, true);
-                            flags.setFlag(ProgramStatusWord.OF, true);
+                            setFlag(CF, true);
+                            setFlag(OF, true);
                         } else {
-                            flags.setFlag(ProgramStatusWord.CF, false);
-                            flags.setFlag(ProgramStatusWord.OF, false);
+                            setFlag(CF, false);
+                            setFlag(OF, false);
                         }
                         clocks += mod == 0b11 ? (104 - 86) / 2 : (160 - 134) / 2;
                     }
@@ -4308,13 +4416,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     if (src == 0)
                         callInt(0);
                     else if (w == B) {
-                        dst = ax.getData();         //  ah << 8 | al;
+                        dst = ah << 8 | al;
                         res = dst / src & 0xffff;
                         if (res > 0xff)
                             callInt(0);
                         else {
-                            ax.setL(res & 0xff);                //  al = res & 0xff;
-                            ax.setH(dst % src & 0xff);          //  ah = dst % src & 0xff;
+                            al = res & 0xff;
+                            ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (90 - 80) / 2 : (96 - 86) / 2;
                     } else {
@@ -4341,8 +4449,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         if (res > 0x007f && res < 0xff81)
                             callInt(0);
                         else {
-                            ax.setL(res & 0xff);                //  al = res & 0xff;
-                            ax.setH(dst % src & 0xff);          //  ah = dst % src & 0xff;
+                            al = res & 0xff;
+                            ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (112 - 101) / 2 : (118 - 107) / 2;
                     } else {
@@ -4370,7 +4478,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case 0xfe:
                 // INC REG8/MEM8
                 // DEC REG8/MEM8
-                decode2();
+                decode();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG8__MEM8: //   0b000: // INC REG8/MEM8
@@ -4396,7 +4504,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // JMP REG16/MEM16 (intra)
                 // JMP MEM16 (intersegment)
                 // PUSH REG16/MEM16
-                decode2();
+                decode();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG16__MEM16: //   0b000: // INC REG16/MEM16
@@ -4410,26 +4518,26 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     clocks += mod == 0b11 ? 3 : 15;
                     break;
                 case CALL_REG16__MEM16_INTRA: //   0b010: // CALL REG16/MEM16(intra)
-                    stack.push(instructionLocator.getOffset());                     //  push(ip);
-                    instructionLocator.setOffset(src);                              //  ip = src;
+                    push(ip);
+                    ip = src;
                     clocks += mod == 0b11 ? 16 : 21;
                     break;
                 case CALL_MEM16_INTERSEGMENT: // 0b011: // CALL MEM16(intersegment)
-                    stack.push(instructionLocator.getBase());                       //  push(cs);
-                    stack.push(instructionLocator.getOffset());                     //  push(ip);
+                    push(cs);
+                    push(ip);
                     dst = getEA(mod, rm);
-                    instructionLocator.setOffset(getMem(W, dst));                   //  ip = getMem(W, dst);
-                    instructionLocator.setBase(getMem(W, dst + 2));           //  cs = getMem(W, dst + 2);
+                    ip = getMem(W, dst);
+                    cs = getMem(W, dst + 2);
                     clocks += 37;
                     break;
                 case JMP_REG16__MEM16_INTRA: //  0b100: // JMP REG16/MEM16(intra)
-                    instructionLocator.setOffset(src);                              //  ip = src;
+                    ip = src;
                     clocks += mod == 0b11 ? 11 : 18;
                     break;
                 case JMP_MEM16_INTERSEGMENT: //  0b101: // JMP MEM16(intersegment)
                     dst = getEA(mod, rm);
-                    instructionLocator.setOffset(getMem(W, dst));                   //  ip = getMem(W, dst);
-                    instructionLocator.setBase(getMem(W, dst + 2));           //  cs = getMem(W, dst + 2);
+                    ip = getMem(W, dst);
+                    cs = getMem(W, dst + 2);
                     clocks += 24;
                     break;
                 case PUSH_MEM16: //   0b110: // PUSH MEM16
@@ -4443,13 +4551,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return true;
     }
 
-
-    protected  MemoryLocator createInstructionLocator(){
-//        cs = new SegmentRegister("CS", 2);
-//        ip = new PointerIndexer("IP",1);
-//
+    @Override
+    protected MemoryLocator createInstructionLocator() {
         return new RegisteredMemoryLocator(new SegmentRegister("CS", 2), new PointerIndexer("IP",1));
-
     }
 
 //    @Override
