@@ -19,9 +19,7 @@ public abstract class PersonalComputer implements Computer {
 
     protected String configFile;
     protected Properties properties;
-
-    protected Cpu cpu;
-    protected MemoryManager memory;
+    protected MainBoard mainBoard;
 
     public PersonalComputer(String configFile) {
         this.configFile = configFile;
@@ -32,8 +30,6 @@ public abstract class PersonalComputer implements Computer {
         properties.load(is);
         is.close();
     }
-    protected abstract Cpu createCpu(MemoryManager mm);
-    protected abstract MemoryManager createMemoryManager();
 
     @Override
     public void reset() {
@@ -44,16 +40,14 @@ public abstract class PersonalComputer implements Computer {
             e.printStackTrace();
         }
 
-        memory =  createMemoryManager();
-        memory.reset();
-        cpu =  createCpu(memory);
-        cpu.reset();
-        //cpu.setMemory(memory.getMemoryBase());
-
-        memory.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
+        mainBoard =  createMainBoard();
+        mainBoard.reset();
 
         createPeripherals();
     }
+
+    protected abstract MainBoard createMainBoard();
+
     protected DirectMemoryAccess dma ;
     protected ProgrammableInterruptController pic;
     protected ProgrammableIntervalTimer pit;
@@ -83,16 +77,16 @@ public abstract class PersonalComputer implements Computer {
     protected abstract DirectMemoryAccess createDmaController();
 
     private void start() {
-        cpu.run();
+        mainBoard.run();
     }
 
 
     protected void loadBios(int base, String biosResource) throws Exception{
-        memory.load(base, biosResource);
+        mainBoard.load(base, biosResource);
     }
 
     private void loadBootloader(int base, String res) throws Exception{
-        memory.load(base, res);
+        mainBoard.loadBootloader(base, res);
     }
 
     @Override

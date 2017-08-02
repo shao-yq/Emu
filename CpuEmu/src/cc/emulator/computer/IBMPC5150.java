@@ -67,7 +67,7 @@ public class IBMPC5150 extends PersonalComputer {
     @SuppressWarnings("unused")
     //protected   Display display;//         = new IBMCGA(this, ppi, crtc);
     protected Display createDisplay(){
-        return new IBMCGA((Intel8086) cpu, (Intel8255) ppi, (Motorola6845) crtc);
+        return new IBMCGA((Intel8086) getMainBoard().getCpu(), (Intel8255) ppi, (Motorola6845) crtc);
     }
     /**
      * An array containing all peripherals.
@@ -79,7 +79,7 @@ public class IBMPC5150 extends PersonalComputer {
 
     @Override
     public MainBoard getMainBoard() {
-        return null;
+        return mainBoard;
     }
 
     @Override
@@ -120,11 +120,16 @@ public class IBMPC5150 extends PersonalComputer {
     @Override
     public void reset() {
         super.reset();
-
+        Cpu cpu = getMainBoard().getCpu();
         peripherals = new Peripheral[] { dma, pic, pit, ppi, crtc };
         cpu.setPeripherals(peripherals);
         cpu.setPic(pic);
         cpu.setPit(pit);
+    }
+
+    @Override
+    protected MainBoard createMainBoard() {
+        return new PC5150MainBoard();
     }
 
     public IBMPC5150(String configFile) {
@@ -133,14 +138,5 @@ public class IBMPC5150 extends PersonalComputer {
     }
 
 
-    protected Cpu createCpu(MemoryManager mm){
-        Intel8086 cpu = new Intel8086(mm);
-
-        return cpu;
-    }
-
-    protected MemoryManager createMemoryManager(){
-        return new  MemoryManager();
-    }
 
 }

@@ -1,4 +1,4 @@
 package cc.emulator.core.computer;
 
-public interface StorageDriver {
+public interface USB {
 }
