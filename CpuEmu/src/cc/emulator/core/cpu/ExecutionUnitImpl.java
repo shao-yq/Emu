@@ -10,10 +10,10 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
     StatusRegister statusRegister;
 
     public ExecutionUnitImpl(){
-        alu=createALU();
         decoder=createDecoder();
         generalRegisters=createGeneralRegisters();
         statusRegister=createStatusRegister();
+        alu=createALU(statusRegister);
     }
 
     @Override
@@ -32,7 +32,7 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
 
     protected abstract InstructionDecoder createDecoder();
 
-    protected abstract ArithmeticLogicUnit createALU() ;
+    protected abstract ArithmeticLogicUnit createALU(StatusRegister flags) ;
 
     @Override
     public ArithmeticLogicUnit getALU() {

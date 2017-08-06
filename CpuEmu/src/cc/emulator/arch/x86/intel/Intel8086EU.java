@@ -99,7 +99,7 @@ public class Intel8086EU extends ExecutionUnitImpl {
     }
 
     @Override
-    protected ArithmeticLogicUnit createALU() {
-        return new Intel8086ALU();
+    protected ArithmeticLogicUnit createALU(StatusRegister flags) {
+        return new Intel8086ALU((ProgramStatusWord) flags);
     }
 }
