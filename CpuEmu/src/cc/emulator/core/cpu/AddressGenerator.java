@@ -24,4 +24,6 @@ public interface AddressGenerator {
      * @return the value
      */
     public int getAddr(final int off);
+
+    void reset();
 }

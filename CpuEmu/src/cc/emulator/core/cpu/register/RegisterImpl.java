@@ -45,4 +45,10 @@ public  abstract class RegisterImpl implements Register {
         return dataWidth;
     }
 
+    @Override
+    public void reset() {
+        data = 0;
+        data2 = 0;
+    }
+
 }

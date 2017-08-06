@@ -20,4 +20,9 @@ public class IntelAddressGenerator implements AddressGenerator {
         return getAddr( seg,  off);
     }
 
+    @Override
+    public void reset() {
+        seg=0;
+    }
+
 }

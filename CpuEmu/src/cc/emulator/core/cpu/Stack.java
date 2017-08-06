@@ -14,15 +14,15 @@ public abstract class Stack {
     AddressGenerator addressGenerator;
 
     protected RegisteredMemoryLocator memoryLocator;
-    public Stack() {
+    public Stack(SegmentRegister ss,PointerIndexer sp) {
 //        sp = 0;
 //        ss = 0;
         //sp = createPointerIndexer(); // new PointerIndexer("SP",2);
         //ss = createSegmentRegister(); // new SegmentRegister("SS",2);
-        memoryLocator =  createMemoryLocator(); // new  RegisteredMemoryLocator(ss, sp);
+        memoryLocator =  createMemoryLocator(ss,sp); // new  RegisteredMemoryLocator(ss, sp);
     }
 
-    protected abstract RegisteredMemoryLocator createMemoryLocator();
+    protected abstract RegisteredMemoryLocator createMemoryLocator(SegmentRegister ss,PointerIndexer sp);
 
 //    protected abstract PointerIndexer createPointerIndexer();
 //    protected abstract SegmentRegister createSegmentRegister();

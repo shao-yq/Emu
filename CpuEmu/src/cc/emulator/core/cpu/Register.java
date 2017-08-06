@@ -13,4 +13,6 @@ public interface Register {
     void setData(long data);
 
     int getDataWidth();
+
+    void reset();
 }

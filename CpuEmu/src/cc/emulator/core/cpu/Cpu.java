@@ -14,6 +14,20 @@ public abstract class Cpu {
 
     protected Peripheral[] peripherals;
 
+    protected ExecutionUnit executionUnit;
+    protected BusInterfaceUnit busInterfaceUnit;
+
+    public ExecutionUnit getExecutionUnit() {
+        return executionUnit;
+    }
+
+    public abstract ExecutionUnit createEU();
+    public abstract BusInterfaceUnit createBIU();
+
+    public BusInterfaceUnit getBusInterfaceUnit() {
+        return busInterfaceUnit;
+    }
+
     /**
      * Execute all instructions.
      */
@@ -38,7 +52,7 @@ public abstract class Cpu {
     protected AddressGenerator addressGenerator;
     protected MemoryAccessor memoryAccessor;
 
-    protected Decodable decoder;
+    protected InstructionDecoder decoder;
 
     public MemoryManager getMemoryManager() {
         return memoryManager;
@@ -53,15 +67,19 @@ public abstract class Cpu {
 
 
     public Cpu(MemoryManager mm){
+        executionUnit = createEU();
+        busInterfaceUnit = createBIU();
+
+        ////////////
         this.memoryManager = mm;
-        addressGenerator =  createAddressGenerator();
+        addressGenerator =  busInterfaceUnit.getAddressGenerator();
         memoryAccessor =  createMemoryAccessor(mm);
 
         stack = createStack();
         stack.setAddressGenerator(addressGenerator);
         stack.setMemoryAccessor(memoryAccessor);
 
-        decoder = createDecoder();
+        decoder = executionUnit.getDecoder();
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
@@ -75,7 +93,7 @@ public abstract class Cpu {
 
 //    protected abstract MemoryLocator createDataLocator();
 
-    protected abstract Decodable createDecoder();
+    protected abstract InstructionDecoder createDecoder();
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 

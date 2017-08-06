@@ -1,15 +1,16 @@
 package cc.emulator.arch.x86.intel;
 
-import cc.emulator.core.cpu.Decodable;
+import cc.emulator.core.cpu.InstructionDecoder;
 import cc.emulator.core.cpu.Instruction;
+import cc.emulator.core.cpu.InstructionQueue;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/27.
  */
-public class IntelDecoder implements Decodable {
+public class IntelDecoder implements InstructionDecoder {
     IntelInstruction instr;
-    @Override
+
     public Instruction decode(int[] queue) {
         instr = new IntelInstruction();
         instr.op = queue[0];
@@ -20,7 +21,7 @@ public class IntelDecoder implements Decodable {
 
         return instr;
     }
-    @Override
+
     public Instruction decode2(int[] queue) {
         instr.mod = queue[1] >>> 6 & 0b11;
         instr.reg = queue[1] >>> 3 & 0b111;
@@ -57,5 +58,20 @@ public class IntelDecoder implements Decodable {
         }
 
         return instr;
+    }
+
+    @Override
+    public Instruction decode(InstructionQueue queue) {
+        return decode(queue.getQueue());
+    }
+
+    @Override
+    public Instruction decode2(InstructionQueue queue) {
+        return decode2(queue.getQueue());
+    }
+
+    @Override
+    public void reset() {
+
     }
 }

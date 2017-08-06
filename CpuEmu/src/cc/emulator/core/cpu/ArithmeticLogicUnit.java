@@ -5,4 +5,5 @@ package cc.emulator.core.cpu;
  * Date: 2017/7/27.
  */
 public interface ArithmeticLogicUnit {
+    void reset();
 }

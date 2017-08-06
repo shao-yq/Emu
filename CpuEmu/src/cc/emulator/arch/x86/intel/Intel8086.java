@@ -6,6 +6,7 @@ import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.core.cpu.register.DividableRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
+import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
 import java.io.DataInputStream;
@@ -110,7 +111,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
 
     @Override
-    protected Decodable createDecoder() {
+    protected InstructionDecoder createDecoder() {
         return new IntelDecoder();
     }
 
@@ -125,7 +126,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     protected Stack createStack() {
-        return new IntelStack();
+        return new IntelStack(busInterfaceUnit.getSegmentRegister("SS"),busInterfaceUnit.getPointerIndexer("SP"));
     }
 
     @Override
@@ -418,7 +419,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * fetch already in progress is completed before executing the EU's bus
      * request).
      */
-    private final int[]        queue       = new int[6];
+    //private final int[]        queue       = new int[6];
 
     /**
      * Memory
@@ -695,7 +696,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     IntelInstruction instruction;
 
     private void decode1() {
-        instruction = (IntelInstruction) decoder.decode(queue);
+        instruction = (IntelInstruction) decoder.decode(busInterfaceUnit.getInstructionQueue());
         op = instruction.op;
         d  = instruction.d;
         w  = instruction.w;
@@ -714,7 +715,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        reg = queue[1] >>> 3 & 0b111;
 //        rm  = queue[1]       & 0b111;
 
-        instruction = (IntelInstruction) decoder.decode2(queue);
+        instruction = (IntelInstruction) decoder.decode2(busInterfaceUnit.getInstructionQueue());
         mod = instruction.mod;
         reg = instruction.reg;
         rm = instruction.rm;
@@ -901,6 +902,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      */
     private int getEA(final int mod, final int rm) {
         int disp = 0;
+        int queue[]=busInterfaceUnit.getInstructionQueue().getQueue();
         if (mod == 0b01) {
             // 8-bit displacement follows
             clocks += 4;
@@ -1249,12 +1251,25 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        setMem(W, getAddr(stack.getSs(), stack.getSp()), val);
     }
 
+    @Override
+    public ExecutionUnit createEU() {
+        return new Intel8086EU();
+    }
+
+    @Override
+    public BusInterfaceUnit createBIU() {
+        return new Intel8086BIU();
+    }
+
     /**
      * Resets the CPU to its default state.
      */
     public void reset() {
         flags = new ProgramStatusWord();
         flags.setData(0);
+
+        executionUnit.reset();
+        busInterfaceUnit.reset();
 
         instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
         instructionLocator.setBase(0xffff);     //  cs = 0xffff;
@@ -1264,8 +1279,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         ds = 0x0000;
         stack.setSs(0x0000); // ss = 0x0000;
         es = 0x0000;
-        for (int i = 0; i < 6; i++)
-            queue[i] = 0;
+        //for (int i = 0; i < 6; i++)
+        //    queue[i] = 0;
+        //instructionQueue.reset();
         clocks = 0;
     }
 
@@ -1292,14 +1308,17 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return res;
     }
     void fillInstructionQueue(){
-        // Fetch instruction from memory.
-        int seg = instructionLocator.getBase();
-        int ip = instructionLocator.getOffset();
 
-        for (int i = 0; i < 6; ++i) {
-            int addr = getAddr(seg,  ip+ i);
-            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
-        }
+        busInterfaceUnit.fillInstructionQueue(getMemoryAccessor(),instructionLocator);
+
+//        // Fetch instruction from memory.
+//        int seg = instructionLocator.getBase();
+//        int ip = instructionLocator.getOffset();
+//
+//        for (int i = 0; i < 6; ++i) {
+//            int addr = getAddr(seg,  ip+ i);
+//            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
+//        }
     }
 
     /**
@@ -4481,7 +4500,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     protected MemoryLocator createInstructionLocator() {
-        return new RegisteredMemoryLocator(new SegmentRegister("CS", 2), new PointerIndexer("IP",1));
+        SegmentRegister cs = busInterfaceUnit.getSegmentRegister("CS");
+        ProgramCounter pc = busInterfaceUnit.getProgramCounter();
+        return new RegisteredMemoryLocator(cs,pc);
     }
 
 //    @Override

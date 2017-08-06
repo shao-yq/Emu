@@ -70,4 +70,10 @@ public abstract class StatusRegister implements Register {
         flags = (int) (data&0xffffffff);
     }
 
+    @Override
+    public void reset() {
+        flags=0;
+        flags2=0;
+    }
+
 }

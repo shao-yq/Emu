@@ -10,6 +10,10 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  * Date: 2017/7/26.
  */
 public class IntelStack extends Stack {
+    public IntelStack(SegmentRegister ss, PointerIndexer sp) {
+        super(ss, sp);
+    }
+
     protected void decSp(){
         memoryLocator.decOffset();
         //sp.decrease();
@@ -41,7 +45,7 @@ public class IntelStack extends Stack {
 //        return new SegmentRegister("SS",2);
 //    }
 
-    protected RegisteredMemoryLocator createMemoryLocator(){
-        return new  RegisteredMemoryLocator(new SegmentRegister("SS",2), new PointerIndexer("SP",2));
+    protected RegisteredMemoryLocator createMemoryLocator(SegmentRegister ss,PointerIndexer sp){
+        return new  RegisteredMemoryLocator(ss, sp);
     }
 }
