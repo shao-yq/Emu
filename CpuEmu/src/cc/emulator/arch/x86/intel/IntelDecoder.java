@@ -47,6 +47,11 @@ public class IntelDecoder implements InstructionDecoder {
          */
 
         switch(instr.mod){
+            case 0b00:
+                if(instr.rm == 0b110){
+                    instr.data = queue[3] << 8 | queue[2];
+                }
+                break;
             case 0b01:
                 // 8-bit displacement follows
                 instr.disp = queue[2];

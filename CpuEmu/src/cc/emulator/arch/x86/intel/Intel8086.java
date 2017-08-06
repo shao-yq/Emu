@@ -90,24 +90,24 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         super(mm);
     }
 
-    @Override
-    protected Register[] createRegisters(){
-        Register regs[] = new Register[16];
-        // Create general registers
-        //ax = new DividableRegister8086("AX", 2);
-        ax = new Accumulator("AX");
-        bx = new Accumulator("BX");
-        cx = new Accumulator("CX");
-        dx = new Accumulator("DX");
-
-        int i=0;
-        regs[i++] = ax;
-        regs[i++] = bx;
-        regs[i++] = cx;
-        regs[i++] = dx;
-
-        return regs;
-    }
+//    @Override
+//    protected Register[] createRegisters(){
+//        Register regs[] = new Register[16];
+//        // Create general registers
+//        //ax = new DividableRegister8086("AX", 2);
+//        ax = new Accumulator("AX");
+//        bx = new Accumulator("BX");
+//        cx = new Accumulator("CX");
+//        dx = new Accumulator("DX");
+//
+//        int i=0;
+//        regs[i++] = ax;
+//        regs[i++] = bx;
+//        regs[i++] = cx;
+//        regs[i++] = dx;
+//
+//        return regs;
+//    }
 
 
     @Override
@@ -386,169 +386,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * depending of the state of these flags, that is, on the result of a prior
      * operation. Different instructions affect the status flags differently.
      */
-    //private int                flags;
     ProgramStatusWord         flags;
 
-    /**
-     * Queue
-     *
-     * During periods when the EU is busy executing instructions, the BUI
-     * "looks ahead" and fetches more instructions from memory. The
-     * instructions are stored in an internal RAM array called the instruction
-     * stream queue. The 8086 queue can store up to six instruction bytes. This
-     * queue size allow the BIU to keep the EU supplied with prefetched
-     * instructions under most conditions without monopolizing the system bus.
-     * The 8086 BIU fetches another instruction byte whenever two bytes in its
-     * queue are empty and there is no active request for bus access from the
-     * EU. It normally obtains two instruction bytes per fetch; if a program
-     * transfer forces fetching for an odd address, the 8086 BIU automatically
-     * reads one byte for the odd address and then resumes fetching two-byte
-     * word from the subsequent even addresses.
-     *
-     * Under most circumstances the queue contain at least one byte of
-     * instruction stream and EU does not have to wait for instructions to be
-     * fetched. The instructions in the queue are those stored in the memory
-     * locations immediately adjacent to and higher than the instruction
-     * currently being executed. That is, they are the next logical
-     * instructions so long as execution proceeds serially. If the EU executes
-     * an instruction that transfers control to another location, the BIU
-     * resets the queue, fetches the instruction from the new address, passes
-     * it immediately to the EU, and then begin refilling the queue from the
-     * new location. In addition, the BIU suspends instruction fetching
-     * whenever the EU requests a memory or I/O read or write (except that a
-     * fetch already in progress is completed before executing the EU's bus
-     * request).
-     */
-    //private final int[]        queue       = new int[6];
-
-    /**
-     * Memory
-     *
-     * The 8086 can accommodate up to 1,048,576 bytes of memory in both minimum
-     * and maximum mode. This section describes how memory is functionally
-     * organized and used.
-     *
-     * Storage Organization
-     *
-     * From a storage point of view, the 8086 memory space is organized as an
-     * array of 8-bit bytes. Instructions, byte data and word data may be
-     * freely stored at any byte address without regard for alignment thereby
-     * saving memory space by allowing code to be densely packed in memory.
-     * Odd-addressed (unaligned) word variables, however, do not take advantage
-     * of the 8086's ability to transfer 16-bits at a time. Instruction
-     * alignment does not materially affect the performance of the processor.
-     *
-     * Following Intel convention, word data always is stored with the most-
-     * significant byte in the higher memory location. Most of the time this
-     * storage convention is "invisible" to anyone working with the processors;
-     * exceptions may occur when monitoring the system bus or when reading
-     * memory dumps.
-     *
-     * A special class of data is stored as doublewords; i.e., two consecutive
-     * words. These are called pointers and are used to address data and code
-     * that are outside the currently-addressable segments. The lower-addressed
-     * word of a pointer contains an offset value, and the higher-addressed
-     * word contains a segment base address. Each word is stored conventionally
-     * with the higher-addressed byte containing the most significant eight
-     * bits of the word.
-     *
-     * Segmentation
-     *
-     * 8086 programs "view" the megabyte of memory space as a group of segments
-     * that are defined by the application. A segment is a logical unit of
-     * memory that may be up to 64k bytes long. Each segment is made up of
-     * contiguous memory locations and is an independent, separately-
-     * addressable unit. Every segment is assigned (by software) a base
-     * address, which is its starting location in the memory space. All
-     * segments begin on 16-byte memory boundaries. There are no other
-     * restrictions on segment locations; segments may be adjacent, disjoint,
-     * partially overlapped, or fully overlapped. A physical memory location
-     * may be mapped into (contained in) one or more logical segments.
-     *
-     * The segment registers point to (contain the vase address values of) the
-     * four currently addressable segments. Programs obtain access to code and
-     * data in other segments by changing the segment registers to point to the
-     * desired segments.
-     *
-     * Every application will define and use segments differently. The
-     * currently addressable segments provide a generous work space: 64k bytes
-     * for code, a 64k byte stack and 128k bytes of data storage. Many
-     * applications can be written to simply initialize the segments registers
-     * and then forget them. Larger applications should be designed with
-     * careful consideration given to segment definition.
-     *
-     * The segmented structure of the 8086 memory space supports modular
-     * software design by discouraging huge, monolithic programs. The segments
-     * also can be used to advantage in many programming situations. Take, for
-     * example, the case of an editor for several on-line terminals. A 64k text
-     * buffer (probably an extra segment) could be assigned to each terminal. A
-     * single program could maintain all the buffers by simply changing
-     * register ES to point to the buffer of the terminal requesting service.
-     *
-     * Physical Address Generation
-     *
-     * It is useful to think of every memory location as having two kinds of
-     * addresses, physical and logical. A physical address is the 20-bit value
-     * that uniquely identifies each byte location in the megabyte memory
-     * space. Physical addresses may range from 0H through FFFFFH. All
-     * exchanges between the CPU and memory components use this physical
-     * address.
-     *
-     * Programs deal with logical, rather than physical addresses and allow
-     * code to be developed without prior knowledge of where the code is to be
-     * located in memory and facilitate dynamic management of memory resources.
-     * A logical address consists of a segment base value and an offset value.
-     * For any given memory location, the segment base value locate the first
-     * byte of the containing segment and the offset value is the distance, in
-     * bytes, of the target location from the beginning of the segment. Segment
-     * base and offset values are unsigned 16-bit quantities; the lowest-
-     * addressed byte in a segment has an offset of 0. Many different logical
-     * addresses can map to the same physical location.
-     *
-     * Whenever the BIU accesses memory--to fetch an instruction or to obtain
-     * or store a variable--it generates a physical address from a logical
-     * address. This is done by shifting the segment base value four bit
-     * positions and adding the offset. Note that this addition process
-     * provides for modulo 64k addressing (addresses wrap around from the end
-     * of a segment to the beginning of the same segment).
-     *
-     * The BIU obtains the logical address of a memory location from different
-     * sources depending on the type of reference that is being made.
-     * Instructions always are fetched from the current code segment; IP
-     * contains the offset of the target instruction from the beginning of the
-     * segment. Stack instructions always operate on the current stack segment;
-     * SP contains the offset of the top of the stack. Most variables (memory
-     * operands) are assumed to reside in the current data segment, although a
-     * program can instruct the BIU to access a variable in one of the other
-     * currently addressable segments. The offset of a memory variable is
-     * calculated by the EU. This calculation is based on the addressing mode
-     * specified in the instruction, the result is called the operand's
-     * effective address (EA).
-     *
-     * In most cases, the BIU's segment assumptions are a convenience to
-     * programmers. It is possible, however, for a programmer to explicitly
-     * direct the BIU to access a variable in any of the currently addressable
-     * segments (the only exception is the destination operand of a string
-     * instruction which must be in the extra segment). This is done by
-     * preceding an instruction with a segment override prefix. This one-byte
-     * machine instruction tells the BIU which segment register to use to
-     * access a variable referenced in the following instruction.
-     *
-     * Dedicated and Reserved Memory Locations
-     *
-     * Two areas in extreme low and high memory are dedicated to specific
-     * processor functions or are reserved by Intel Corporation for use by
-     * Intel hardware and software products. The locations are: 0H through 7FH
-     * (128 bytes) and FFFF0H through FFFFFH (16 bytes). These areas are used
-     * for interrupt and system reset processing; 8086 application systems
-     * should not use these areas for any other purpose. Doing so may make
-     * these systems incompatible with future Intel products.
-     */
-    //protected final int[]      memory      = new int[0x100000];
-    //public int[]      memory      = new int[0x100000];
-    //public void setMemory(int[]mem){
-        //this.memory = mem;
-    //}
     /*
      * Typical 8086 Machine Instruction Format
      *
@@ -587,14 +426,14 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      */
     private int adc(final int w, final int dst, final int src) {
         final int carry = (flags.hasFlag(CF)) ? 1 : 0;
-        final int res = dst + src + carry & MASK[w];
+        final int result = dst + src + carry & MASK[w];
 
-        flags.setFlag(CF, carry == 1 ? res <= dst : res < dst);
-        flags.setFlag(AF, ((res ^ dst ^ src) & AF) > 0);
-        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ res), 12 - BITS[w]) & OF) > 0);
-        flags.setFlags(w, res);
+        flags.setFlag(CF, carry == 1 ? result <= dst : result < dst);
+        flags.setFlag(AF, ((result ^ dst ^ src) & AF) > 0);
+        flags.setFlag(OF, (shift((dst ^ src ^ -1) & (dst ^ result), 12 - BITS[w]) & OF) > 0);
+        flags.setFlags(w, result);
 
-        return res;
+        return result;
     }
 
     /**
@@ -902,15 +741,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      */
     private int getEA(final int mod, final int rm) {
         int disp = 0;
-        int queue[]=busInterfaceUnit.getInstructionQueue().getQueue();
+        //int queue[]=busInterfaceUnit.getInstructionQueue().getQueue();
         if (mod == 0b01) {
             // 8-bit displacement follows
             clocks += 4;
-            disp = queue[2];
+            disp = instruction.disp;        //  queue[2];
         } else if (mod == 0b10) {
             // 16-bit displacement follows
             clocks += 4;
-            disp = queue[3] << 8 | queue[2];
+            disp = instruction.disp;        // queue[3] << 8 | queue[2];
         }
 
         int ea = 0;
@@ -943,7 +782,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             if (mod == 0b00) {
                 // Direct address
                 clocks += 6;
-                ea = queue[3] << 8 | queue[2];
+                ea = instruction.data;          //queue[3] << 8 | queue[2];
             } else {
                 // EA = (BP) + DISP
                 clocks += 5;
@@ -1265,7 +1104,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * Resets the CPU to its default state.
      */
     public void reset() {
-        flags = new ProgramStatusWord();
+        flags = (ProgramStatusWord) executionUnit.getStatusRegister();
+        //flags = new ProgramStatusWord();
         flags.setData(0);
 
         executionUnit.reset();
