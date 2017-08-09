@@ -1,9 +1,9 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
 import cc.emulator.core.cpu.InstructionQueue;
 import cc.emulator.core.cpu.MemoryLocator;
 
-public class Intel8086InstructionQueue implements InstructionQueue {
+public class InstructionQueue8086 implements InstructionQueue {
     /**
      * Queue
      *

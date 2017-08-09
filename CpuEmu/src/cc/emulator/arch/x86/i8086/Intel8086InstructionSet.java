@@ -1,4 +1,4 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
 /**
  * @author Shao Yongqing

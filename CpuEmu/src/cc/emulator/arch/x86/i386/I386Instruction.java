@@ -1,10 +1,10 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i386;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/8/9.
  */
-public class Intelx86Instruction {
+public class I386Instruction {
     /**
      *      80386 Instruction Format
      *

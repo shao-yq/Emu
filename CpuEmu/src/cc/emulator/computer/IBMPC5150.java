@@ -4,7 +4,7 @@ import cc.emulator.core.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.computer.*;
 import cc.emulator.core.cpu.Cpu;
-import cc.emulator.arch.x86.intel.Intel8086;
+import cc.emulator.arch.x86.i8086.Intel8086;
 
 import fr.neatmonster.ibmpc.*;
 

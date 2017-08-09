@@ -1,11 +1,12 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.intel.ProgramStatusWord;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.register.DividableRegister;
 import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.core.cpu.register.StatusRegister;
 
-public class Intel8086EU extends ExecutionUnitImpl {
+public class EU8086 extends ExecutionUnitImpl {
         /*
      * General Registers
      *
@@ -65,7 +66,7 @@ public class Intel8086EU extends ExecutionUnitImpl {
     private int                bh, bl;
     DividableRegister bx;
 
-    public Intel8086EU() {
+    public EU8086() {
         super();
     }
 
@@ -79,10 +80,10 @@ public class Intel8086EU extends ExecutionUnitImpl {
         GeneralRegister regs[] = new GeneralRegister[4];
         // Create general registers
         //ax = new DividableRegister8086("AX", 2);
-        ax = new Accumulator("AX");
-        bx = new Accumulator("BX");
-        cx = new Accumulator("CX");
-        dx = new Accumulator("DX");
+        ax = new DividableRegister8086("AX",2);
+        bx = new DividableRegister8086("BX",2);
+        cx = new DividableRegister8086("CX",2);
+        dx = new DividableRegister8086("DX",2);
 
         int i=0;
         regs[i++] = ax;
@@ -95,11 +96,11 @@ public class Intel8086EU extends ExecutionUnitImpl {
 
     @Override
     protected InstructionDecoder createDecoder() {
-        return new Intel8086Decoder();
+        return new Decoder8086();
     }
 
     @Override
     protected ArithmeticLogicUnit createALU(StatusRegister flags) {
-        return new Intel8086ALU((ProgramStatusWord) flags);
+        return new ALU8086((ProgramStatusWord) flags);
     }
 }

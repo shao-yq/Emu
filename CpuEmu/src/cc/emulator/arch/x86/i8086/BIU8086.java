@@ -1,13 +1,14 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.intel.IntelAddressGenerator;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
-import static cc.emulator.arch.x86.intel.Intel8086InstructionSet.B;
+import static cc.emulator.arch.x86.i8086.Intel8086InstructionSet.B;
 
-public class Intel8086BIU extends BusInterfaceUnitImpl {
+public class BIU8086 extends BusInterfaceUnitImpl {
 
     @Override
     protected ProgramCounter createProgramCounter() {
@@ -55,7 +56,7 @@ public class Intel8086BIU extends BusInterfaceUnitImpl {
 
     @Override
     public InstructionQueue createInstructionQueue() {
-        return new Intel8086InstructionQueue();
+        return new InstructionQueue8086();
     }
 
     @Override

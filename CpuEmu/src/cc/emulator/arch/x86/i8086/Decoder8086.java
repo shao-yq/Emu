@@ -1,16 +1,17 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.intel.IntelDecoder;
+import cc.emulator.arch.x86.intel.IntelInstruction;
 import cc.emulator.core.cpu.Instruction;
-import cc.emulator.core.cpu.InstructionQueue;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/8/9.
  */
-public class Intel8086Decoder extends IntelDecoder{
+public class Decoder8086 extends IntelDecoder {
     @Override
     protected IntelInstruction newInstruction() {
-        return new Intel8086Instruction();
+        return new Instruction8086();
     }
 
 

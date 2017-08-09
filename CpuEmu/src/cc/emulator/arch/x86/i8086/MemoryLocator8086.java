@@ -1,4 +1,4 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
 import cc.emulator.core.cpu.RegisteredMemoryLocator;
 import cc.emulator.core.cpu.register.PointerIndexer;
@@ -8,8 +8,8 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  * @author Shao Yongqing
  * Date: 2017/7/28.
  */
-public class Intel8086Locator extends RegisteredMemoryLocator {
-    public Intel8086Locator(SegmentRegister segmentRegister, PointerIndexer pointerIndexer) {
+public class MemoryLocator8086 extends RegisteredMemoryLocator {
+    public MemoryLocator8086(SegmentRegister segmentRegister, PointerIndexer pointerIndexer) {
         super(segmentRegister, pointerIndexer);
     }
 }

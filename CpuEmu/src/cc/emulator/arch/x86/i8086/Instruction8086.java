@@ -1,10 +1,12 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
+
+import cc.emulator.arch.x86.intel.IntelInstruction;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/8/9.
  */
-public class Intel8086Instruction extends IntelInstruction {
+public class Instruction8086 extends IntelInstruction {
 
     /*
      * Typical 8086 Machine IntelInstruction Format

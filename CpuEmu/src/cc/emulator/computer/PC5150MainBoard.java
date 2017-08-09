@@ -1,8 +1,7 @@
 package cc.emulator.computer;
 
-import cc.emulator.arch.x86.intel.Intel8086;
+import cc.emulator.arch.x86.i8086.Intel8086;
 import cc.emulator.core.computer.AbstractMainBoard;
-import cc.emulator.core.computer.MainBoard;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.Cpu;
 

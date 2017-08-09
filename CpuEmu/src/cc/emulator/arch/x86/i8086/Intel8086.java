@@ -1,11 +1,11 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.intel.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.computer.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.core.cpu.register.DividableRegister;
-import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
@@ -85,7 +85,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private static final int[] BITS   = new int[] { 8, 16 };
     /** Lookup table used for setting the overflow flag. */
     private static final int[] SIGN   = new int[] { 0x80, 0x8000 };
-    private Intel8086ALU alu;
+    private ALU8086 alu;
 
     public Intel8086(MemoryManager mm){
         super(mm);
@@ -448,10 +448,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
 
     // Current instruction decoded
-    Intel8086Instruction instruction;
+    Instruction8086 instruction;
 
     private void decode1() {
-        instruction = (Intel8086Instruction) decoder.decode(busInterfaceUnit.getInstructionQueue());
+        instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
         op = instruction.op;
         d  = instruction.d;
         w  = instruction.w;
@@ -470,7 +470,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        reg = queue[1] >>> 3 & 0b111;
 //        rm  = queue[1]       & 0b111;
 
-        instruction = (Intel8086Instruction) decoder.decode2(busInterfaceUnit.getInstructionQueue());
+        instruction = (Instruction8086) decoder.decode2(busInterfaceUnit.getInstructionQueue());
         mod = instruction.mod;
         reg = instruction.reg;
         rm = instruction.rm;
@@ -988,12 +988,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     public ExecutionUnit createEU() {
-        return new Intel8086EU();
+        return new EU8086();
     }
 
     @Override
     public BusInterfaceUnit createBIU() {
-        return new Intel8086BIU();
+        return new BIU8086();
     }
 
     /**
@@ -1007,7 +1007,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         executionUnit.reset();
         busInterfaceUnit.reset();
 
-        alu= (Intel8086ALU) executionUnit.getALU();
+        alu= (ALU8086) executionUnit.getALU();
 
         instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
         instructionLocator.setBase(0xffff);     //  cs = 0xffff;

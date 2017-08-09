@@ -1,5 +1,6 @@
-package cc.emulator.arch.x86.intel;
+package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.intel.ProgramStatusWord;
 import cc.emulator.core.cpu.ArithmeticLogicUnit;
 
 import static cc.emulator.arch.x86.intel.ProgramStatusWord.AF;
@@ -7,7 +8,7 @@ import static cc.emulator.arch.x86.intel.ProgramStatusWord.CF;
 import static cc.emulator.arch.x86.intel.ProgramStatusWord.OF;
 
 
-public class Intel8086ALU implements ArithmeticLogicUnit {
+public class ALU8086 implements ArithmeticLogicUnit {
 
     /** Lookup table used for clipping results. */
     private static final int[] MASK   = new int[] { 0xff, 0xffff };
@@ -78,7 +79,7 @@ public class Intel8086ALU implements ArithmeticLogicUnit {
 
 
     ProgramStatusWord flags;
-    public Intel8086ALU(ProgramStatusWord flags){
+    public ALU8086(ProgramStatusWord flags){
         this.flags = flags;
     }
     @Override
