@@ -91,31 +91,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         super(mm);
     }
 
-//    @Override
-//    protected Register[] createRegisters(){
-//        Register regs[] = new Register[16];
-//        // Create general registers
-//        //ax = new DividableRegister8086("AX", 2);
-//        ax = new Accumulator("AX");
-//        bx = new Accumulator("BX");
-//        cx = new Accumulator("CX");
-//        dx = new Accumulator("DX");
-//
-//        int i=0;
-//        regs[i++] = ax;
-//        regs[i++] = bx;
-//        regs[i++] = cx;
-//        regs[i++] = dx;
-//
-//        return regs;
-//    }
-
-
-    @Override
-    protected InstructionDecoder createDecoder() {
-        return new IntelDecoder();
-    }
-
     @Override
     protected MemoryAccessor createMemoryAccessor(MemoryManager mm) {
         return new IntelMemoryAccessor(mm, createDataBus());
@@ -473,10 +448,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
 
     // Current instruction decoded
-    IntelInstruction instruction;
+    Intel8086Instruction instruction;
 
     private void decode1() {
-        instruction = (IntelInstruction) decoder.decode(busInterfaceUnit.getInstructionQueue());
+        instruction = (Intel8086Instruction) decoder.decode(busInterfaceUnit.getInstructionQueue());
         op = instruction.op;
         d  = instruction.d;
         w  = instruction.w;
@@ -495,7 +470,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        reg = queue[1] >>> 3 & 0b111;
 //        rm  = queue[1]       & 0b111;
 
-        instruction = (IntelInstruction) decoder.decode2(busInterfaceUnit.getInstructionQueue());
+        instruction = (Intel8086Instruction) decoder.decode2(busInterfaceUnit.getInstructionQueue());
         mod = instruction.mod;
         reg = instruction.reg;
         rm = instruction.rm;

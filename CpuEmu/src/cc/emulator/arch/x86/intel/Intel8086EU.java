@@ -95,7 +95,7 @@ public class Intel8086EU extends ExecutionUnitImpl {
 
     @Override
     protected InstructionDecoder createDecoder() {
-        return new IntelDecoder();
+        return new Intel8086Decoder();
     }
 
     @Override

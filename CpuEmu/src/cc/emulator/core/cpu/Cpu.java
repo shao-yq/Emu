@@ -63,8 +63,6 @@ public abstract class Cpu {
     protected MemoryLocator instructionLocator;
     protected MemoryLocator dataLocator;
 
-    //Register registers[];
-
 
     public Cpu(MemoryManager mm){
         executionUnit = createEU();
@@ -83,17 +81,10 @@ public abstract class Cpu {
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
-
-        //registers =  createRegisters();
     }
-
-    //protected abstract Register[] createRegisters();
 
     protected abstract MemoryLocator createInstructionLocator();
 
-//    protected abstract MemoryLocator createDataLocator();
-
-    protected abstract InstructionDecoder createDecoder();
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 
