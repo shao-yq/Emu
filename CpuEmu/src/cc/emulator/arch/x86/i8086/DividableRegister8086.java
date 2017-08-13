@@ -7,8 +7,11 @@ import cc.emulator.core.cpu.register.DividableRegister;
  * Date: 2017/7/28.
  */
 public class DividableRegister8086 extends DividableRegister {
-    public DividableRegister8086(String name, int dataWidth) {
+    protected DividableRegister8086(String name,int dataWidth) {
         super(name, dataWidth);
+    }
+    public DividableRegister8086(String name) {
+        this(name, 2);
     }
 
     @Override
