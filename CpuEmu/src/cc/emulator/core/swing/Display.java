@@ -1,5 +1,7 @@
 package cc.emulator.core.swing;
 
+import cc.emulator.core.FontInfo;
+
 import javax.swing.JPanel;
 import java.awt.Graphics;
 
@@ -69,6 +71,10 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
         return screenColumn;
     }
 
+    public FontInfo getFontInfo() {
+        return fontInfo;
+    }
+
     int screenRow = 25;
     @Override
     public int getScreenRow(){
@@ -82,10 +88,10 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
 
     FontInfo fontInfo = new FontInfo(7, 12, "My");
     public int getFontWidth(){
-        return fontInfo.width;
+        return fontInfo.getWidth();
     }
     public int getFontHeight(){
-        return fontInfo.height;
+        return fontInfo.getHeight();
     }
 
     protected abstract void drawCursor(Graphics g, int curLoc, int curAttr, int x, int y, int character, int attribute);
@@ -93,14 +99,3 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
     protected abstract void drawChar(Graphics g, int x, int y, int character, int attribute);
 }
 
-class FontInfo {
-    int width;
-    int height;
-    String name;
-
-    public FontInfo(int w, int h, String name) {
-        this.width = w;
-        this.height = h;
-        this.name = name;
-    }
-}

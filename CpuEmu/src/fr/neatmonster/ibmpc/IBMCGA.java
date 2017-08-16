@@ -2,6 +2,7 @@ package fr.neatmonster.ibmpc;
 
 import cc.emulator.core.swing.Display;
 import cc.emulator.arch.x86.i8086.Intel8086;
+import cc.emulator.core.FontInfo;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -178,14 +179,8 @@ public class IBMCGA extends Display implements KeyListener {
         this.cpu = cpu;
         this.ppi = ppi;
         this.crtc = crtc;
-        setPreferredSize(new Dimension(560, 300));
-        try {
-            // Use CP437 TrueType font.
-            setFont(Font.createFont(Font.TRUETYPE_FONT, getClass()
-                    .getClassLoader().getResourceAsStream("cp437.ttf")).deriveFont(12f));
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        initDisplayParameters();
+
         setBackground(Color.black);
         setForeground(Color.white);
         final JFrame frame = new JFrame();
@@ -203,6 +198,25 @@ public class IBMCGA extends Display implements KeyListener {
         }, 0, 1000 / 60); // Refresh at a 60 FPS rate.
     }
 
+
+    void initDisplayParameters(){
+        setScreenColumn(80);
+        setScreenRow(25);
+        setVideoBase(0xb8000);
+        setFontInfo(new FontInfo(10,18,"cp437.ttf"));
+
+        int screenWidth = getScreenColumn()*getFontWidth();
+        int screenHeight = getScreenRow()*getFontHeight();
+
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
+        try {
+            // Use CP437 TrueType font.
+            setFont(Font.createFont(Font.TRUETYPE_FONT, getClass()
+                    .getClassLoader().getResourceAsStream(getFontInfo().getName())).deriveFont((float)getFontHeight()));
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Returns the scan code associated to the specified key code.
      *
@@ -428,7 +442,7 @@ public class IBMCGA extends Display implements KeyListener {
     protected void drawCursor(Graphics g, int curLoc, int curAttr, int x, int y, int character, int attribute) {
         if (x + y * getScreenColumn() == curLoc && (curAttr & 0b1) == 0b0
                 && System.currentTimeMillis() % 1000 < 500)
-            g.drawString("_", x * 7, y * 12 + 9);
+            g.drawString("_", x * getFontWidth(), y * getFontHeight() + 9);
         //else
         //    g.drawString("" + mapping[character], x * 7, y * 12 + 9);
     }
