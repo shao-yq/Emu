@@ -1,6 +1,6 @@
 package fr.neatmonster.ibmpc;
 
-import cc.emulator.core.computer.Display;
+import cc.emulator.core.swing.Display;
 import cc.emulator.arch.x86.i8086.Intel8086;
 
 import java.awt.Color;
@@ -13,7 +13,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /**
  * IBM Color/Graphics Monitor Adapter
@@ -94,7 +93,7 @@ import javax.swing.JPanel;
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
 @SuppressWarnings("serial")
-public class IBMCGA extends JPanel implements KeyListener, Display {
+public class IBMCGA extends Display implements KeyListener {
     /**
      * Lookup table for conversions from CP437 to Unicode code points.
      */
@@ -418,34 +417,44 @@ public class IBMCGA extends JPanel implements KeyListener, Display {
     @Override
     public void keyTyped(final KeyEvent e) {}
 
-    /**
-     * (non-Javadoc)
-     *
-     * @see javax.swing.JComponent#paintComponent(Graphics)
-     */
-    @Override
-    protected void paintComponent(final Graphics g) {
-        super.paintComponent(g);
-        final int curAttr = crtc.getRegister(0xa) >> 4;
-        final int curLoc = crtc.getRegister(0xf) | crtc.getRegister(0xe) << 8;
-        int memory[] = cpu.getMemoryManager().getMemoryBase();
 
-        for (int y = 0; y < 25; ++y)
-            for (int x = 0; x < 80; ++x) {
-//                final int character = cpu.memory[0xb8000 + 2 * (x + y * 80)];
-//                final int attribute = cpu.memory[0xb8000 + 2 * (x + y * 80) + 1];
-                final int character = memory[0xb8000 + 2 * (x + y * 80)];
-                final int attribute = memory[0xb8000 + 2 * (x + y * 80) + 1];
-                // Draw background first.
-                g.setColor(colors[attribute >>> 4 & 0b111]);
-                g.fillRect(x * 7, y * 12, 7, 12);
-                // Then write foreground.
-                g.setColor(colors[attribute & 0b1111]);
-                if (x + y * 80 == curLoc && (curAttr & 0b1) == 0b0
-                        && System.currentTimeMillis() % 1000 < 500)
-                    g.drawString("_", x * 7, y * 12 + 9);
-                else
-                    g.drawString("" + mapping[character], x * 7, y * 12 + 9);
-            }
+    @Override
+    public int[] getMemoryBase() {
+        return cpu.getMemoryManager().getMemoryBase();
+    }
+
+
+    @Override
+    protected void drawCursor(Graphics g, int curLoc, int curAttr, int x, int y, int character, int attribute) {
+        if (x + y * getScreenColumn() == curLoc && (curAttr & 0b1) == 0b0
+                && System.currentTimeMillis() % 1000 < 500)
+            g.drawString("_", x * 7, y * 12 + 9);
+        //else
+        //    g.drawString("" + mapping[character], x * 7, y * 12 + 9);
+    }
+
+    @Override
+    protected void drawChar(Graphics g, int x, int y, int character, int attribute) {
+        int fontWidth = getFontWidth();
+        int fontHeight = getFontHeight();
+
+        // Draw background first.
+        g.setColor(colors[attribute >>> 4 & 0b111]);
+        g.fillRect(x * fontWidth, y * fontHeight, fontWidth, fontHeight);
+        // Then write foreground.
+        g.setColor(colors[attribute & 0b1111]);
+        // And the character
+        g.drawString("" + mapping[character], x * fontWidth, y * fontHeight + 9);
+    }
+
+    @Override
+    public int getCursorAttribute() {
+        return crtc.getRegister(0xa) >> 4;
+    }
+    @Override
+    public int getCursorLocation() {
+        return crtc.getRegister(0xf) | crtc.getRegister(0xe) << 8;
     }
 }
+
+
