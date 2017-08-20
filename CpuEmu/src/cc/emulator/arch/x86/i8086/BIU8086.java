@@ -80,7 +80,7 @@ public class BIU8086 extends BusInterfaceUnitImpl {
     }
 
     @Override
-    public void fillInstructionQueue(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator) {
+    public void fetchInstructions(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator) {
         // Fetch instruction from memory.
         int seg = instructionLocator.getBase();
         int ip = instructionLocator.getOffset();
@@ -93,4 +93,12 @@ public class BIU8086 extends BusInterfaceUnitImpl {
             //queue[i] = memoryAccessor.getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
         }
     }
+
+//    private void fetchInstructions() {
+//        //Calculate the Instruction's Address.
+//        getAddressGenerator().getAddr(ins)
+//        //Call Instruction Queue to fetch instruction at the Location.
+//
+//    }
+
 }

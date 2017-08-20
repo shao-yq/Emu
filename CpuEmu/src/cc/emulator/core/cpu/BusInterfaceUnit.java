@@ -21,5 +21,5 @@ public interface BusInterfaceUnit {
 
     void reset();
 
-    void fillInstructionQueue(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator);
+    void fetchInstructions(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator);
 }

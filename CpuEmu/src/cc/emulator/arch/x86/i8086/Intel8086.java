@@ -1024,18 +1024,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     }
 
 
-    void fillInstructionQueue(){
+    void fetchInstructions(){
 
-        busInterfaceUnit.fillInstructionQueue(getMemoryAccessor(),instructionLocator);
-
-//        // Fetch instruction from memory.
-//        int seg = instructionLocator.getBase();
-//        int ip = instructionLocator.getOffset();
-//
-//        for (int i = 0; i < 6; ++i) {
-//            int addr = getAddr(seg,  ip+ i);
-//            queue[i] = getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
-//        }
+        busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator);
     }
 
     /**
@@ -1288,8 +1279,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             }
         }
 
-        fillInstructionQueue();
+        fetchInstructions();
 
+        //decode();
         // Decode first byte.
         decode1();
 //        op = queue[0];
@@ -1297,6 +1289,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        w  = op       & 0b1;
         instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
 
+        execute(instruction);
         // Only repeat string instructions.
         switch (op) {
         case MOVS_STR8_STR8  : //  0xa4: // MOVS
@@ -4193,6 +4186,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             }
         } while (rep > 0);
         return true;
+    }
+
+    private void decode() {
+        decode1();
+//        if(instruction.op==)
+//        decode2();
+    }
+
+    private void execute(Instruction8086 instruction) {
+
     }
 
     @Override
