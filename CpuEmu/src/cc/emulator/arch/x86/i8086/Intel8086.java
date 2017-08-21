@@ -1408,7 +1408,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 w = instruction.w;              //  op >>> 3 & 0b1;
                 reg = instruction.reg;          //  op       & 0b111;
                 src = instruction.getImmediate();// getMem(w);
-                //src = getMem(w);
                 setReg(w, reg, src);
                 clocks += instruction.getClocks();  //  4;
                 break;
@@ -1418,7 +1417,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOV_AX_MEM16: //   0xa1: // MOV AX,MEM16
             case MOV_MEM8_AL : //   0xa2: // MOV MEM8,AL
             case MOV_MEM16_AX: //   0xa3: // MOV MEM16,AX
-                dst = getMem(W);
+                dst = instruction.getAddress();     //  getMem(W);
                 if (d == 0b0) {
                     src = getMem(w, getAddr(os, dst));
                     setReg(w, AX, src);

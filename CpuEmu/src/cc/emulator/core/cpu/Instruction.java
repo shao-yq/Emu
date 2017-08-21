@@ -31,4 +31,5 @@ public interface Instruction {
      */
     int getLength();
 
+    int getAddress();
 }

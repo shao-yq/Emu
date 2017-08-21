@@ -53,4 +53,16 @@ public  class Instruction8086 extends IntelInstruction {
     public int getLength(){
         return length;
     }
+
+    @Override
+    public int getAddress() {
+        return address;
+    }
+
+    protected void setAddress(int address) {
+        this.address = address;
+    }
+
+    int address;
+
 }

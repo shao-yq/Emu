@@ -11,6 +11,8 @@ import static cc.emulator.arch.x86.i8086.Intel8086InstructionSet.*;
 public class MemoryToFromAccumulator extends Instruction8086 {
     public MemoryToFromAccumulator(int raw[]){
         super(raw);
+        setAddress(raw[2]<<8|raw[1]);
+        setLength(3);
     }
 
     public static boolean hasOpcode(int raw) {
