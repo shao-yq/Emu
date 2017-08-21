@@ -21,4 +21,14 @@ public interface Instruction {
     //int getOperand3();
     //int getOperand4();
 
+    int getClocks();
+
+    int getImmediate();
+
+    /**
+     * Instruction length in bytes;
+     * @return Instruction length in bytes;
+     */
+    int getLength();
+
 }

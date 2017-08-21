@@ -4,7 +4,7 @@ package cc.emulator.arch.x86.intel;
  * @author Shao Yongqing
  * Date: 2017/7/27.
  */
-public class IntelInstruction implements cc.emulator.core.cpu.Instruction{
+public abstract class IntelInstruction implements cc.emulator.core.cpu.Instruction{
 
     /** Operation (Instruction) code , 6 bits: opcodeDW*/
     public int                op;
@@ -83,4 +83,5 @@ public class IntelInstruction implements cc.emulator.core.cpu.Instruction{
     public int getOperand(int index) {
         return 0;
     }
+
 }

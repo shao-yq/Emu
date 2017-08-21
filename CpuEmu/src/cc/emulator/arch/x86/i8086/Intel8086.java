@@ -456,6 +456,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         d  = instruction.d;
         w  = instruction.w;
 
+        instructionLocator.incOffset(instruction.getLength());
+
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
@@ -1287,9 +1289,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
-        instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
+        //instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
+
+        //instructionLocator.incOffset(instruction.getLength());
 
         execute(instruction);
+
         // Only repeat string instructions.
         switch (op) {
         case MOVS_STR8_STR8  : //  0xa4: // MOVS
@@ -1400,11 +1405,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOV_BP_IMMED16: //  0xbd: // MOV BP,IMMED16
             case MOV_SI_IMMED16: //  0xbe: // MOV SI,IMMED16
             case MOV_DI_IMMED16: //  0xbf: // MOV DI,IMMED16
-                w   = op >>> 3 & 0b1;
-                reg = op       & 0b111;
-                src = getMem(w);
+                w = instruction.w;              //  op >>> 3 & 0b1;
+                reg = instruction.reg;          //  op       & 0b111;
+                src = instruction.getImmediate();// getMem(w);
+                //src = getMem(w);
                 setReg(w, reg, src);
-                clocks += 4;
+                clocks += instruction.getClocks();  //  4;
                 break;
 
             // Memory to/from Accumulator
@@ -1420,7 +1426,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     src = getReg(w, AX);
                     setMem(w, getAddr(os, dst), src);
                 }
-                clocks += 10;
+                clocks += instruction.getClocks();      //  10;
                 break;
 
             // Register/Memory to/from Segment Register

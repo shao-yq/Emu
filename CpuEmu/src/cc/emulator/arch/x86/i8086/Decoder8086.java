@@ -1,5 +1,7 @@
 package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.i8086.instruction.ImmediateToRegister;
+import cc.emulator.arch.x86.i8086.instruction.MemoryToFromAccumulator;
 import cc.emulator.arch.x86.intel.IntelDecoder;
 import cc.emulator.arch.x86.intel.IntelInstruction;
 import cc.emulator.core.cpu.Instruction;
@@ -10,16 +12,30 @@ import cc.emulator.core.cpu.Instruction;
  */
 public class Decoder8086 extends IntelDecoder {
     @Override
-    protected IntelInstruction newInstruction() {
-        return new Instruction8086();
+    protected IntelInstruction newInstruction(int raw[]) {
+        IntelInstruction intelInstruction=null;
+        if(ImmediateToRegister.hasOpcode(raw[0])){
+            intelInstruction =  new ImmediateToRegister(raw);
+        }
+        return  intelInstruction;
     }
 
 
     public Instruction decode(int[] queue) {
-        instr = newInstruction();    // new IntelInstruction();
-        instr.op = queue[0];
-        instr.d  = instr.op >>> 1 & 0b1;
-        instr.w  = instr.op       & 0b1;
+        instr = null;
+        if(ImmediateToRegister.hasOpcode(queue[0])){
+            instr =  new ImmediateToRegister(queue);
+        } else if(MemoryToFromAccumulator.hasOpcode(queue[0])){
+            instr = new MemoryToFromAccumulator(queue);
+        }
+
+        if(instr==null){
+            // if none of above instruction applied, try the universal instruction
+            instr =  new Instruction8086(queue);
+//            instr.op = queue[0];
+//            instr.d = instr.op >>> 1 & 0b1;
+//            instr.w = instr.op & 0b1;
+        }
 
         //ip = ip + 1 & 0xffff; // Increment IP.
 
