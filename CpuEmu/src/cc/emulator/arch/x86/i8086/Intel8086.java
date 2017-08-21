@@ -456,6 +456,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         d  = instruction.d;
         w  = instruction.w;
 
+        // Maybe meaningless for some instructions
+        mod = instruction.mod;
+        reg = instruction.reg;
+        rm = instruction.rm;
+
         instructionLocator.incOffset(instruction.getLength());
 
 //        op = queue[0];
@@ -1364,7 +1369,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
             case MOV_REG8_REG8__MEM8   : //   0x8a: // MOV REG8,REG8/MEM8
             case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     src = getReg(w, reg);
                     setRM(w, mod, rm, src);

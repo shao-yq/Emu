@@ -18,15 +18,64 @@ public  class Instruction8086 extends IntelInstruction {
 
     public Instruction8086(int[] raw) {
         // Decode First byte
-        op = raw[0];
+        this(raw,1);
+    }
+    protected Instruction8086(int[] raw, int cnt) {
+        switch(cnt){
+            case 2:
+                decodeByte1(raw[1]);
+
+            case 1:
+                decodeByte0(raw[0]);
+                break;
+        }
+
+        setLength(cnt);
+
+        //if(cnt>1)
+        //    decodeDispData(raw);
+    }
+
+    public void decodeByte0(int raw){
+        op = raw;
         d = op >>> 1 & 0b1;
         w = op & 0b1;
+    }
 
-        setLength(1);
+    public void decodeByte1(int raw){
+        mod = raw >>> 6 & 0b11;
+        reg = raw >>> 3 & 0b111;
+        rm  = raw       & 0b111;
+
+    }
+
+    public void decodeDispData(int queue[]) {
+        switch(mod){
+            case 0b00:
+                if(rm == 0b110){
+                    data = queue[3] << 8 | queue[2];
+                    incLength(2);
+                }
+                break;
+            case 0b01:
+                // 8-bit displacement follows
+                disp = queue[2];
+                incLength(1);
+                break;
+            case 0b10:
+                // 16-bit displacement follows
+                disp = queue[3] << 8 | queue[2];
+                incLength(2);
+                break;
+        }
     }
 
     protected void setLength(int len) {
         length = len;
+    }
+
+    protected void incLength(int delta){
+        length += delta;
     }
 
 

@@ -2,6 +2,7 @@ package cc.emulator.arch.x86.i8086;
 
 import cc.emulator.arch.x86.i8086.instruction.ImmediateToRegister;
 import cc.emulator.arch.x86.i8086.instruction.MemoryToFromAccumulator;
+import cc.emulator.arch.x86.i8086.instruction.RegMemFromToReg;
 import cc.emulator.arch.x86.intel.IntelDecoder;
 import cc.emulator.arch.x86.intel.IntelInstruction;
 import cc.emulator.core.cpu.Instruction;
@@ -27,6 +28,8 @@ public class Decoder8086 extends IntelDecoder {
             instr =  new ImmediateToRegister(queue);
         } else if(MemoryToFromAccumulator.hasOpcode(queue[0])){
             instr = new MemoryToFromAccumulator(queue);
+        } else if(RegMemFromToReg.hasOpcode(queue[0])){
+            instr = new RegMemFromToReg(queue);
         }
 
         if(instr==null){
