@@ -705,7 +705,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             if (mod == 0b00) {
                 // Direct address
                 clocks += 6;
-                ea = instruction.data;          //queue[3] << 8 | queue[2];
+                ea = instruction.disp;          //queue[3] << 8 | queue[2];
             } else {
                 // EA = (BP) + DISP
                 clocks += 5;
@@ -1373,24 +1373,25 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 if (d == 0b0) {
                     src = getReg(w, reg);
                     setRM(w, mod, rm, src);
-                    clocks += mod == 0b11 ? 2 : 9;
+                    //clocks += mod == 0b11 ? 2 : 9;
                 } else {
                     src = getRM(w, mod, rm);
                     setReg(w, reg, src);
-                    clocks += mod == 0b11 ? 2 : 8;
+                    //clocks +=  mod == 0b11 ? 2 : 8;
                 }
+                clocks += instruction.getClocks();
                 break;
 
             // Immediate to Register/Memory
             case MOV_REG8__MEM8_IMMED8   : // 0xc6: // MOV REG8/MEM8,IMMED8
             case MOV_REG16__MEM16_IMMED16: // 0xc7: // MOV REG16/MEM16,IMMED16
-                decode2();
+//                decode2();
                 switch (reg) {
                 case 0b000:
-                    src = getMem(w);
+                    src = instruction.immediate;      //  getMem(w);
                     setRM(w, mod, rm, src);
                 }
-                clocks += mod == 0b11 ? 4 : 10;
+                clocks += instruction.getClocks();    //  mod == 0b11 ? 4 : 10;
                 break;
 
             // Immediate to Register

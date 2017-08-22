@@ -11,8 +11,18 @@ import static cc.emulator.arch.x86.i8086.Intel8086InstructionSet.*;
 public class RegMemFromToReg extends Instruction8086 {
     public RegMemFromToReg(int[] raw) {
         super(raw, 2);
-        decodeDispData(raw);
+        decodeDisplacement(raw);
+    }
 
+    public int getClocks(int c) {
+        if (mod == 0b11) {
+           return 2;
+        } else {
+            if (d == 0b0) {
+                return 9;
+            }
+            return 8;
+        }
     }
 
     public static boolean hasOpcode(int raw) {

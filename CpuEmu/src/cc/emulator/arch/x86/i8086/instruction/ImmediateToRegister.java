@@ -12,7 +12,7 @@ public class ImmediateToRegister extends Instruction8086 {
         super(raw);
         w = op >>> 3 & 0b1;
         reg = op & 0b111;
-        if(w==0) {  // DATA-8
+        if(w==B) {  // DATA-8
             setImmediate(raw[1]);
             setLength(2);
         } else {    // DATA-16

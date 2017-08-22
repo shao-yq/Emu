@@ -1,10 +1,12 @@
 package cc.emulator.arch.x86.intel;
 
+import cc.emulator.arch.x86.i8086.Intel8086InstructionSet;
+
 /**
  * @author Shao Yongqing
  * Date: 2017/7/27.
  */
-public abstract class IntelInstruction implements cc.emulator.core.cpu.Instruction{
+public abstract class IntelInstruction implements cc.emulator.core.cpu.Instruction, Intel8086InstructionSet {
 
     /** Operation (Instruction) code , 6 bits: opcodeDW*/
     public int                op;
@@ -71,9 +73,6 @@ public abstract class IntelInstruction implements cc.emulator.core.cpu.Instructi
 
     public int  disp;
 
-    public int data;
-
-
     @Override
     public int getOpCode() {
         return op;
@@ -83,5 +82,17 @@ public abstract class IntelInstruction implements cc.emulator.core.cpu.Instructi
     public int getOperand(int index) {
         return 0;
     }
+
+    @Override
+    public int getImmediate() {
+        return immediate;
+    }
+
+    public void setImmediate(int immediate) {
+        this.immediate = immediate;
+    }
+
+    public int immediate = 0;
+
 
 }

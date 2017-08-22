@@ -1,5 +1,6 @@
 package cc.emulator.arch.x86.i8086;
 
+import cc.emulator.arch.x86.i8086.instruction.ImmediateToRegMem;
 import cc.emulator.arch.x86.i8086.instruction.ImmediateToRegister;
 import cc.emulator.arch.x86.i8086.instruction.MemoryToFromAccumulator;
 import cc.emulator.arch.x86.i8086.instruction.RegMemFromToReg;
@@ -30,6 +31,8 @@ public class Decoder8086 extends IntelDecoder {
             instr = new MemoryToFromAccumulator(queue);
         } else if(RegMemFromToReg.hasOpcode(queue[0])){
             instr = new RegMemFromToReg(queue);
+        } else if(ImmediateToRegMem.hasOpcode(queue[0])){
+            instr = new ImmediateToRegMem(queue);
         }
 
         if(instr==null){
@@ -70,16 +73,16 @@ public class Decoder8086 extends IntelDecoder {
          */
 
         switch(instr.mod){
-            case 0b00:
+            case Intel8086InstructionSet.MOD_MEMORY_DISP0:      //  0b00:
                 if(instr.rm == 0b110){
-                    instr.data = queue[3] << 8 | queue[2];
+                    instr.disp = queue[3] << 8 | queue[2];
                 }
                 break;
-            case 0b01:
+            case Intel8086InstructionSet.MOD_MEMORY_DISP8:  //  0b01:
                 // 8-bit displacement follows
                 instr.disp = queue[2];
                 break;
-            case 0b10:
+            case Intel8086InstructionSet.MOD_MEMORY_DISP16:  //  0b10:
                 // 16-bit displacement follows
                 instr.disp = queue[3] << 8 | queue[2];
                 break;

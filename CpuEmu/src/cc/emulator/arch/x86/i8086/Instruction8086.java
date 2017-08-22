@@ -33,7 +33,7 @@ public  class Instruction8086 extends IntelInstruction {
         setLength(cnt);
 
         //if(cnt>1)
-        //    decodeDispData(raw);
+        //    decodeDisplacement(raw);
     }
 
     public void decodeByte0(int raw){
@@ -49,24 +49,79 @@ public  class Instruction8086 extends IntelInstruction {
 
     }
 
-    public void decodeDispData(int queue[]) {
+    public void decodeDisplacement(int queue[]) {
         switch(mod){
-            case 0b00:
+            case MOD_MEMORY_DISP0:
                 if(rm == 0b110){
-                    data = queue[3] << 8 | queue[2];
+                    //immediate = queue[3] << 8 | queue[2];
+                    disp = queue[3] << 8 | queue[2];
                     incLength(2);
                 }
                 break;
-            case 0b01:
+            case MOD_MEMORY_DISP8:
                 // 8-bit displacement follows
                 disp = queue[2];
                 incLength(1);
                 break;
-            case 0b10:
+            case MOD_MEMORY_DISP16:
                 // 16-bit displacement follows
                 disp = queue[3] << 8 | queue[2];
                 incLength(2);
                 break;
+        }
+    }
+
+    public boolean hasDisp(){
+        if(hasDisp8() || hasDisp16())
+            return true;
+        return false;
+    }
+
+    public boolean hasDisp8(){
+        return mod==MOD_MEMORY_DISP8;
+    }
+    public boolean hasDisp16(){
+        return mod==MOD_MEMORY_DISP16;
+    }
+
+    public void decodeDispData(int queue[]) {
+        decodeDisplacement(queue);
+
+        decodeData(queue);
+    }
+    public boolean isRegisterToRegister() {
+        return mod == MOD_REGISTER_TO_REGISTER;
+    }
+    public void decodeData(int[] queue) {
+        if(isRegisterToRegister())
+            return;
+
+        int cnt = 2;
+
+        if(mod==MOD_MEMORY_DISP0 && rm == 0b110) {
+            cnt = 4;
+            if(w==B) {
+                immediate = queue[cnt];
+                incLength(1);
+            }else{
+                immediate = queue[cnt + 1] << 8 | queue[cnt];
+                incLength(2);
+            }
+
+            return;
+        }
+
+        if(hasDisp8())
+            cnt +=1 ;
+        if(hasDisp16())
+            cnt +=2;
+
+        if(w==B){
+            immediate = queue[cnt];
+            incLength(1);
+        } else {
+            immediate = queue[cnt+1]<<8 | queue[cnt];
+            incLength(2);
         }
     }
 
@@ -83,17 +138,6 @@ public  class Instruction8086 extends IntelInstruction {
     public int getClocks() {
         return 1;
     }
-
-    @Override
-    public int getImmediate() {
-        return immediate;
-    }
-
-    public void setImmediate(int immediate) {
-        this.immediate = immediate;
-    }
-
-    protected int immediate = 0;
 
 
     protected int length;
