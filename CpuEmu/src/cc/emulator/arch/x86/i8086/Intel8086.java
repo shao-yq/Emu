@@ -1437,16 +1437,17 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory to/from Segment Register
             case MOV_REG16_MEM16__SEGREG: //  0x8c: // MOV REG16/MEM16,SEGREG
             case MOV_SEGREG_REG16__MEM16: //  0x8e: // MOV SEGREG,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     src = getSegReg(reg);
                     setRM(W, mod, rm, src);
-                    clocks += mod == 0b11 ? 2 : 9;
+                    //clocks += mod == 0b11 ? 2 : 9;
                 } else {
                     src = getRM(W, mod, rm);
                     setSegReg(reg, src);
-                    clocks += mod == 0b11 ? 2 : 8;
+                    //clocks += mod == 0b11 ? 2 : 8;
                 }
+                clocks += instruction.getClocks();
                 break;
 
             /*
