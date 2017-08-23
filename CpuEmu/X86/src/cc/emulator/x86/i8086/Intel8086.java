@@ -1481,10 +1481,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case PUSH_CS: //  0x0e: // PUSH CS
             case PUSH_SS: //  0x16: // PUSH SS
             case PUSH_DS: //  0x1e: // PUSH DS
-                reg = op >>> 3 & 0b111;
+                reg = instruction.reg;      //op >>> 3 & 0b111;
                 src = getSegReg(reg);
                 push(src);
-                clocks += 10;
+                clocks += instruction.getClocks();  //10;
                 break;
 
             /*
@@ -1504,10 +1504,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case POP_BP: //  0x5d: // POP BP
             case POP_SI: //  0x5e: // POP SI
             case POP_DI: //  0x5f: // POP DI
-                reg = op & 0b111;
+                reg = instruction.reg;      //op & 0b111;
                 src = pop();
                 setReg(W, reg, src);
-                clocks += 8;
+                clocks += instruction.getClocks();//8;
                 break;
 
             // Segment Register
@@ -1515,10 +1515,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case POP_CS: //  0x0f: // POP CS
             case POP_SS: //  0x17: // POP SS
             case POP_DS: //  0x1f: // POP DS
-                reg = op >>> 3 & 0b111;
+                reg = instruction.reg;      //op >>> 3 & 0b111;
                 src = pop();
                 setSegReg(reg, src);
-                clocks += 8;
+                clocks += instruction.getClocks();  //8;
                 break;
 
             /*
@@ -1532,12 +1532,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory with Register
             case XCHG_REG8_REG8__MEM8   : // 0x86: // XCHG REG8,REG8/MEM8
             case XCHG_REG16_REG16__MEM16: // 0x87: // XCHG REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 dst = getReg(w, reg);
                 src = getRM(w, mod, rm);
                 setReg(w, reg, src);
                 setRM(w, mod, rm, dst);
-                clocks += mod == 0b11 ? 3 : 17;
+                clocks += instruction.getClocks();      //mod == 0b11 ? 3 : 17;
                 break;
 
             // Register with Accumulator
