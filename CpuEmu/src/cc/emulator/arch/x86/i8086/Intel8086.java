@@ -1468,10 +1468,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case PUSH_BP: //  0x55: // PUSH BP
             case PUSH_SI: //  0x56: // PUSH SI
             case PUSH_DI: //  0x57: // PUSH DI
-                reg = op & 0b111;
+                reg = instruction.reg;      //  op & 0b111;
                 src = getReg(W, reg);
                 push(src);
-                clocks += 11;
+                clocks += instruction.getClocks();  //  11;
                 break;
 
             // Segment Register

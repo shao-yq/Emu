@@ -32,6 +32,8 @@ public class Decoder8086 extends IntelDecoder {
             instr = new ImmediateToRegMem(queue);
         }  else if(RegMemFromToSegReg.hasOpcode(queue[0])){
             instr = new RegMemFromToSegReg(queue);
+        }  else if(PushGeneralRegister.hasOpcode(queue[0])){
+            instr = new PushGeneralRegister(queue);
         }
 
         if(instr==null){
