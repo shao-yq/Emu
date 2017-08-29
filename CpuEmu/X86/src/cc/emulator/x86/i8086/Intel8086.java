@@ -1548,12 +1548,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XCHG_AX_BP: // 0x95: // XCHG AX,BP
             case XCHG_AX_SI: // 0x96: // XCHG AX,SI
             case XCHG_AX_DI: // 0x97: // XCHG AX,DI
-                reg = op & 0b111;
+                //reg = op & 0b111;
                 dst = getReg(W, AX);
                 src = getReg(W, reg);
                 setReg(W, AX, src);
                 setReg(W, reg, dst);
-                clocks += 3;
+                clocks += instruction.getClocks();      //  3;
                 break;
 
             /*
@@ -1571,9 +1571,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * another, the classic example being ASCII to EBCDIC or the
              * reverse.
              */
-            case 0xd7: // XLAT SOURCE-TABLE
+            case XLAT_SOURCE_TABLE:     // 0xd7: // XLAT SOURCE-TABLE
                 al = getMem(B, getAddr(os, getReg(W, BX) + al));
-                clocks += 11;
+                clocks += instruction.getClocks();      //  11;
                 break;
 
             /*

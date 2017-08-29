@@ -9,5 +9,25 @@ import cc.emulator.x86.i8086.Instruction8086;
 public class XchgRegWithAcc extends Instruction8086 {
     public XchgRegWithAcc(int[] raw) {
         super(raw);
+        reg = op & 0b111;
+    }
+
+
+    public static boolean hasOpcode(int raw) {
+        switch (raw) {
+            // Register with Accumulator
+            case XCHG_AX_CX: // 0x91: // XCHG AX,CX
+            case XCHG_AX_DX: // 0x92: // XCHG AX,DX
+            case XCHG_AX_BX: // 0x93: // XCHG AX,BX
+            case XCHG_AX_SP: // 0x94: // XCHG AX,SP
+            case XCHG_AX_BP: // 0x95: // XCHG AX,BP
+            case XCHG_AX_SI: // 0x96: // XCHG AX,SI
+            case XCHG_AX_DI: // 0x97: // XCHG AX,DI
+                return true;
+        }
+        return false;
+    }
+    public int getClocks() {
+        return 3;
     }
 }

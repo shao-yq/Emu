@@ -141,7 +141,7 @@ public interface Intel8086InstructionSet {
     
     public final static int MOV_REG8__MEM8_IMMED8    = 0xc6; // MOV REG8/MEM8,IMMED8   
     public final static int MOV_REG16__MEM16_IMMED16 = 0xc7; // MOV REG16/MEM16,IMMED16
-    
+    public final static int XLAT_SOURCE_TABLE = 0xd7; // XLAT SOURCE-TABLE
     public final static int IN_AL_IMMED8 =  0xe4; // IN AL,IMMED8
     public final static int IN_AX_IMMED8 =  0xe5; // IN AX,IMMED8
     
