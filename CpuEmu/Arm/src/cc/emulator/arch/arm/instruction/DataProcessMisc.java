@@ -8,4 +8,7 @@ import cc.emulator.arch.arm.ArmInstruction;
  */
 public  class DataProcessMisc extends ArmInstructionBase {
 
+    public DataProcessMisc(int[] queue) {
+        super(queue);
+    }
 }

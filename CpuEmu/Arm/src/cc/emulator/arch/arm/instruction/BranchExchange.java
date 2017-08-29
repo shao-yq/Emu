@@ -1,5 +1,6 @@
 package cc.emulator.arch.arm.instruction;
 
+import cc.emulator.arch.arm.ArmInstruction;
 import cc.emulator.core.cpu.ExecutionUnit;
 
 /**
@@ -54,6 +55,10 @@ public class BranchExchange extends ArmInstructionBase {
         if ((instruction & 0x0FFFFFF0) == 0x012FFF10)
             return true;
         return false;
+    }
+
+    public static BranchExchange createInstruction(int[] queue){
+        return new BranchExchange(queue);
     }
 
     public void execute(ExecutionUnit eu){

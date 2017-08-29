@@ -20,16 +20,16 @@ public class ArmDecoder implements InstructionDecoder {
         int instruction = queue[0];
 
         if(BranchExchange.canHandle(instruction)){
-            instr = new BranchExchange(queue);
+            instr = BranchExchange.createInstruction(queue);
         } else {
             int op = instruction & 0x0E000000;
             if(Branch.canHandle(op)){
-                instr = new Branch(queue);
+                instr = Branch.createInstruction(queue);
             }
         }
 
         if(instr == null){
-            instr = new ArmInstructionBase(queue);
+            instr =  ArmInstructionBase.createInstruction(queue);
         }
 
         return instr;

@@ -1,6 +1,7 @@
 package cc.emulator.arch.arm.instruction;
 
 import cc.emulator.arch.arm.ArmInstruction;
+import cc.emulator.core.cpu.Instruction;
 
 public class ArmInstructionBase implements ArmInstruction{
 
@@ -70,5 +71,9 @@ public class ArmInstructionBase implements ArmInstruction{
     @Override
     public int getAddress() {
         return address;
+    }
+
+    public static Instruction createInstruction(int[] queue) {
+        return new ArmInstructionBase(queue);
     }
 }
