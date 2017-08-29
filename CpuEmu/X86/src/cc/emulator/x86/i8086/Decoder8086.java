@@ -46,6 +46,10 @@ public class Decoder8086 extends IntelDecoder {
             instr = new XchgRegWithAcc(queue);
         }else if(TranslateSourceTable.hasOpcode(queue[0])){
             instr = new TranslateSourceTable(queue);
+        }else if(InVariablePort.hasOpcode(queue[0])){
+            instr = new InVariablePort(queue);
+        }else if(InFixedPort.hasOpcode(queue[0])){
+            instr = new InFixedPort(queue);
         }
 
         if(instr==null){

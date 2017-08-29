@@ -1589,18 +1589,19 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Variable Port
             case IN_AL_IMMED8: //  0xe4: // IN AL,IMMED8
             case IN_AX_IMMED8: //  0xe5: // IN AX,IMMED8
-                src = getMem(B);
+                src = instruction.immediate;        //  getMem(B);
                 setReg(w, AX, portIn(w, src));
-                clocks += 10;
-                if (w == W && (src & 0b1) == 0b1)
-                    clocks += 4;
+                clocks = instruction.getClocks();
+//                clocks += 10;
+//                if (w == W && (src & 0b1) == 0b1)
+//                    clocks += 4;
                 break;
             // Fixed Port
             case IN_AL_DX: //  0xec: // IN AL,DX
             case IN_AX_DX: //  0xed: // IN AX,DX
                 src = getReg(W, DX);
                 setReg(w, AX, portIn(w, src));
-                clocks += 8;
+                clocks += instruction.getClocks();  //  8;
                 if (w == W && (src & 0b1) == 0b1)
                     clocks += 4;
                 break;
