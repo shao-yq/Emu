@@ -60,6 +60,14 @@ public class Decoder8086 extends IntelDecoder {
             instr = new LoadStoreAHFromFlag(queue);
         }else if(PushPopFlags.hasOpcode(queue[0])){
             instr = new PushPopFlags(queue);
+        }else if(AddRegisterMemory.hasOpcode(queue[0])){
+            instr = new AddRegisterMemory(queue);
+        }else if(AddAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new AddAccumulatorImmediate(queue);
+        }else if(AddcRegisterMemory.hasOpcode(queue[0])){
+            instr = new AddcRegisterMemory(queue);
+        }else if(AddcAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new AddcAccumulatorImmediate(queue);
         }
 
         if(instr==null){

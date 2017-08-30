@@ -9,5 +9,33 @@ import cc.emulator.x86.i8086.Instruction8086;
 public class AddAccumulatorImmediate extends Instruction8086 {
     public AddAccumulatorImmediate(int[] raw) {
         super(raw);
+        immediate = raw[1];
+        incLength(1);
+        if(op == ADD_AX_IMMED16){
+            immediate |= (raw[2]<<8);
+            incLength(1);
+        }
+    }
+
+    public static boolean hasOpcode(int raw) {
+        switch(raw) {
+            /*
+             * ADD destination,source
+             *
+             * The sum of the two operands, which may be bytes or words,
+             * replaces the destination operand. Both operands may be signed or
+             * unsigned binary numbers. ADD updates AF, CF, OF, PF, SF and ZF.
+             */
+            // Immediate to Accumulator
+            case ADD_AL_IMMED8 : //  0x04: // ADD AL,IMMED8
+            case ADD_AX_IMMED16: //  0x05: // ADD AX,IMMED16
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int getClocks() {
+        return 4;
     }
 }
