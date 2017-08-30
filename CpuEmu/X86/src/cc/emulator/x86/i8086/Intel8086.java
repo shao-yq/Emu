@@ -2373,7 +2373,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     ah = 0xff;
                 else
                     ah = 0x00;
-                clocks += 2;
+                clocks += instruction.getClocks();              //  2
                 break;
 
             /*
@@ -2389,7 +2389,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     setReg(W, DX, 0xffff);
                 else
                     setReg(W, DX, 0x0000);
-                clocks += 5;
+                clocks += instruction.getClocks();              //  5;
                 break;
 
             /*
@@ -2441,7 +2441,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
             case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
             case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
-                decode2();
+                // decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2453,10 +2453,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 logic(w, res);
                 if (d == 0b0) {
                     setRM(w, mod, rm, res);
-                    clocks += mod == 0b11 ? 3 : 16;
+                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
-                    clocks += mod == 0b11 ? 3 : 9;
+                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
                 }
                 break;
 
@@ -2464,11 +2464,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case AND_AL_IMMED8 : //  0x24: // AND AL,IMMED8
             case AND_AX_IMMED16: //  0x25: // AND AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;                    //  getMem(w);
                 res = dst & src;
                 logic(w, res);
                 setReg(w, AX, res);
-                clocks += 4;
+                clocks += instruction.getClocks();              //  4;
                 break;
 
             /*
