@@ -50,6 +50,16 @@ public class Decoder8086 extends IntelDecoder {
             instr = new InVariablePort(queue);
         }else if(InFixedPort.hasOpcode(queue[0])){
             instr = new InFixedPort(queue);
+        }else if(OutVariablePort.hasOpcode(queue[0])){
+            instr = new OutVariablePort(queue);
+        }else if(LoadEffectiveAddress.hasOpcode(queue[0])){
+            instr = new LoadEffectiveAddress(queue);
+        }else if(LoadPointerUsingDSES.hasOpcode(queue[0])){
+            instr = new LoadPointerUsingDSES(queue);
+        }else if(LoadStoreAHFromFlag.hasOpcode(queue[0])){
+            instr = new LoadStoreAHFromFlag(queue);
+        }else if(PushPopFlags.hasOpcode(queue[0])){
+            instr = new PushPopFlags(queue);
         }
 
         if(instr==null){

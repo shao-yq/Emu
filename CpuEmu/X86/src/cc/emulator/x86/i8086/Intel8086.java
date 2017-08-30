@@ -1619,18 +1619,20 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Variable Port
             case OUT_AL_IMMED8: //  0xe6: // OUT AL,IMMED8
             case OUT_AX_IMMED8: //  0xe7: // OUT AX,IMMED8
-                src = getMem(B);
+                src = instruction.immediate;        //  getMem(B);
                 portOut(w, src, getReg(w, AX));
-                clocks += 10;
-                if (w == W && (src & 0b1) == 0b1)
-                    clocks += 4;
+                clocks += instruction.getClocks();
+
+//                clocks += 10;
+//                if (w == W && (src & 0b1) == 0b1)
+//                    clocks += 4;
                 break;
             // Fixed Port
             case OUT_AL_DX: //  0xee: // OUT AL,DX
             case OUT_AX_DX: //  0xef: // OUT AX,DX
                 src = getReg(W, DX);
                 portOut(w, src, getReg(w, AX));
-                clocks += 8;
+                clocks += instruction.getClocks();      //  8;
                 if (w == W && (src & 0b1) == 0b1)
                     clocks += 4;
                 break;
@@ -1655,10 +1657,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * XLAT instruction).
              */
             case LEA_REG16_MEM16: //  0x8d: // LEA REG16,MEM16
-                decode2();
+                //decode2();
                 src = getEA(mod, rm) - (os << 4);
                 setReg(w, reg, src);
-                clocks += 2;
+                clocks += instruction.getClocks();      //  2;
                 break;
 
             /*
@@ -1676,11 +1678,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * segment and that SI contains the offset of the string).
              */
             case LDS_REG16_MEM32: //  0xc5: // LDS REG16,MEM32
-                decode2();
+//                decode2();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 ds = getMem(W, src + 2);
-                clocks += 16;
+                clocks += instruction.getClocks();      //  16;
                 break;
 
             /*
@@ -1698,11 +1700,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * the offset of the string).
              */
             case LES_REG16_MEM32: //  0xc4: // LES REG16,MEM32
-                decode2();
+                //decode2();
                 src = getEA(mod, rm);
                 setReg(w, reg, getMem(W, src));
                 es = getMem(W, src + 2);
-                clocks += 16;
+                clocks += instruction.getClocks();      //  16;
                 break;
 
             /*
@@ -1719,7 +1721,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case LAHF: //  0x9f: // LAHF
                 ah = flags.getData() & 0xff;
-                clocks += 4;
+                clocks += instruction.getClocks();      //  4;
                 break;
 
             /*
@@ -1733,7 +1735,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case SAHF: //  0x9e: // SAHF
                 flags.setData(flags.getData() & 0xff00 | ah);
-                clocks += 4;
+                clocks += instruction.getClocks();      //  4;
                 break;
 
             /*
@@ -1745,7 +1747,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case PUSHF: //  0x9c: // PUSHF
                 push(flags.getData());
-                clocks += 10;
+                clocks += instruction.getClocks();      //  10;
                 break;
 
             /*
@@ -1763,7 +1765,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case POPF: //  0x9d: // POPF
                 flags.setData(pop());
-                clocks += 8;
+                clocks += instruction.getClocks();      //  8;
                 break;
 
             /*
