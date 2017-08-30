@@ -1952,11 +1952,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case INC_BP: //  0x45: // INC BP
             case INC_SI: //  0x46: // INC SI
             case INC_DI: //  0x47: // INC DI
-                reg = op & 0b111;
+                //reg = op & 0b111;
                 src = getReg(W, reg);
                 res = alu.inc(W, src);
                 setReg(W, reg, res);
-                clocks += 2;
+                clocks += instruction.getClocks();      //  2;
                 break;
 
             /*
@@ -2117,11 +2117,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case DEC_BP: //   0x4d: // DEC BP
             case DEC_SI: //   0x4e: // DEC SI
             case DEC_DI: //   0x4f: // DEC DI
-                reg = op & 0b111;
+                //reg = op & 0b111;
                 dst = getReg(W, reg);
                 res = alu.dec(W, dst);
                 setReg(W, reg, res);
-                clocks += 2;
+                clocks += instruction.getClocks();      //  2;
                 break;
 
             /*
