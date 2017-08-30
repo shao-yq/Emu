@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Yongqing
  * Date: 2017/8/30.
  */
-public class ReturnIntraSegment extends Instruction8086{
-    public ReturnIntraSegment(int[] raw) {
+public class ReturnNoImmed extends Instruction8086{
+    public ReturnNoImmed(int[] raw) {
         super(raw);
     }
     public static boolean hasOpcode(int raw) {
@@ -32,12 +32,23 @@ public class ReturnIntraSegment extends Instruction8086{
             // Within Segment
             case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
                 return true;
+            // Intersegment
+            case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
+                return true;
         }
         return false;
     }
 
     @Override
     public int getClocks() {
+        switch (op) {
+            // Within Segment
+            case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
+                return 8;
+            // Intersegment
+            case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
+                return 18;
+        }
         return 8;
     }
 }

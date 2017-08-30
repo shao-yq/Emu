@@ -128,14 +128,14 @@ public class Decoder8086 extends IntelDecoder {
             instr = new CallNearProc(queue);
         }else if(CallFarProc.hasOpcode(queue[0])){
             instr = new CallFarProc(queue);
-        }else if(ReturnIntraSegment.hasOpcode(queue[0])){
-            instr = new ReturnIntraSegment(queue);
-        }else if(ReturnImmedIntraSeg.hasOpcode(queue[0])){
-            instr = new ReturnImmedIntraSeg(queue);
-        }else if(ReturnInterSegment.hasOpcode(queue[0])){
-            instr = new ReturnInterSegment(queue);
-        }else if(ReturnImmedInterSeg.hasOpcode(queue[0])){
-            instr = new ReturnImmedInterSeg(queue);
+        }else if(ReturnNoImmed.hasOpcode(queue[0])){
+            instr = new ReturnNoImmed(queue);
+        }else if(ReturnImmediate.hasOpcode(queue[0])){
+            instr = new ReturnImmediate(queue);
+//        }else if(ReturnInterSegment.hasOpcode(queue[0])){
+//            instr = new ReturnInterSegment(queue);
+//        }else if(ReturnImmedInterSeg.hasOpcode(queue[0])){
+//            instr = new ReturnImmedInterSeg(queue);
         }
 
         if(instr==null){

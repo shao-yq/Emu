@@ -22,8 +22,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * discard parameters pushed onto the stack before the execution of
  * the CALL instruction.
  */
-public class ReturnImmedIntraSeg extends Instruction8086{
-    public ReturnImmedIntraSeg(int[] raw) {
+public class ReturnImmediate extends Instruction8086{
+    public ReturnImmediate(int[] raw) {
         super(raw);
         //
         immediate = raw[1]|(raw[2]<<8);
@@ -34,6 +34,8 @@ public class ReturnImmedIntraSeg extends Instruction8086{
         switch (raw){
             // Within Seg Adding Immed to SP
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
+                // Intersegment Adding Immediate to SP
+            case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
                 return true;
         }
         return false;
@@ -41,6 +43,12 @@ public class ReturnImmedIntraSeg extends Instruction8086{
 
     @Override
     public int getClocks() {
+        switch (op) {
+            case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
+                return 12;
+            case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
+                return 17;
+        }
         return 12;
     }
 }
