@@ -1,6 +1,8 @@
 package cc.emulator.x86.i8086;
 
 import cc.emulator.core.cpu.*;
+import cc.emulator.x86.i8086.instruction.CallFarProc;
+import cc.emulator.x86.i8086.instruction.CallNearProc;
 import cc.emulator.x86.intel.*;
 import cc.emulator.x86.intel.*;
 import cc.emulator.x86.intel.*;
@@ -3004,22 +3006,22 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             // Direct with Segment
             case CALL_NEAR_PROC: //   0xe8: // CALL NEAR-PROC
-                dst = getMem(W);
+                dst = ((CallNearProc)instruction).getIpInc();  //  getMem(W);
                 dst = signconv(W, dst);
                 push(instructionLocator.getOffset());       //  push(ip);
                 instructionLocator.incOffset(dst);          //  ip = ip + dst & 0xffff;
-                clocks += 19;
+                clocks += instruction.getClocks();          // 19;
                 break;
 
             // Direct Intersegment
             case CALL_FAR_PROC: //   0x9a: // CALL FAR-PROC
-                dst = getMem(W);
-                src = getMem(W);
+                dst = ((CallFarProc)instruction).getOffset();       // getMem(W);
+                src = ((CallFarProc)instruction).getBase();         // getMem(W);
                 push(instructionLocator.getBase());     //  push(cs);
                 push(instructionLocator.getOffset());   //  push(ip);
                 instructionLocator.setOffset(dst);      //  ip = dst;
                 instructionLocator.setBase(src);        //  cs = src;
-                clocks += 28;
+                clocks += instruction.getClocks();      // 28;
                 break;
 
             /*
@@ -3041,31 +3043,31 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Within Segment
             case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
                 instructionLocator.setOffset(pop());        //  ip = pop();
-                clocks += 8;
+                clocks += instruction.getClocks();          //  8;
                 break;
 
             // Within Seg Adding Immed to SP
             case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
-                src = getMem(W);
+                src = instruction.immediate;                //  getMem(W);
                 instructionLocator.setOffset(pop());        // ip = pop();
                 stack.addSp(src);       //  sp += src;
-                clocks += 12;
+                clocks += instruction.getClocks();          //  12;
                 break;
 
             // Intersegment
             case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
                 instructionLocator.setOffset(pop());      // ip = pop();
                 instructionLocator.setBase(pop());        // cs = pop();
-                clocks += 18;
+                clocks += instruction.getClocks();          // 18;
                 break;
 
             // Intersegment Adding Immediate to SP
             case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
-                src = getMem(W);
-                instructionLocator.setOffset(pop());      // ip = pop();
-                instructionLocator.setBase(pop());        // cs = pop();
-                stack.addSp(src);       //  sp += src;
-                clocks += 17;
+                src = instruction.immediate;               // getMem(W);
+                instructionLocator.setOffset(pop());       // ip = pop();
+                instructionLocator.setBase(pop());         // cs = pop();
+                stack.addSp(src);                           //  sp += src;
+                clocks += instruction.getClocks();         //  17;
                 break;
 
             /*
