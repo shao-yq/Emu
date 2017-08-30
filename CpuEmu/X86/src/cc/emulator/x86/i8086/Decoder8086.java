@@ -114,6 +114,16 @@ public class Decoder8086 extends IntelDecoder {
             instr = new TestAccumulatorImmediate(queue);
         }else if(ConvertByteWord.hasOpcode(queue[0])){
             instr = new ConvertByteWord(queue);
+        }else if(MoveString.hasOpcode(queue[0])){
+            instr = new MoveString(queue);
+        }else if(CompareString.hasOpcode(queue[0])){
+            instr = new CompareString(queue);
+        }else if(ScanString.hasOpcode(queue[0])){
+            instr = new ScanString(queue);
+        }else if(LoadString.hasOpcode(queue[0])){
+            instr = new LoadString(queue);
+        }else if(StoreString.hasOpcode(queue[0])){
+            instr = new StoreString(queue);
         }
 
         if(instr==null){

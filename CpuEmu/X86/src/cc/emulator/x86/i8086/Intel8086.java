@@ -2814,7 +2814,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 setMem(w, getAddr(es, di), src);
                 si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                clocks += 17;
+                clocks += instruction.getClocks();              //  17;
                 break;
 
             /*
@@ -2844,7 +2844,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
-                clocks += 22;
+                clocks += instruction.getClocks();              //  22;
                 break;
 
             /*
@@ -2873,7 +2873,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
-                clocks += 15;
+                clocks += instruction.getClocks();                  //  15;
                 break;
 
             /*
@@ -2893,7 +2893,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 src = getMem(w, getAddr(os, si));
                 setReg(w, AX, src);
                 si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                clocks += 13;
+                clocks += instruction.getClocks();                  //  13;
                 break;
 
             /*
@@ -2910,7 +2910,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 src = getReg(w, AX);
                 setMem(w, getAddr(es, di), src);
                 di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                clocks += 10;
+                clocks += instruction.getClocks();                  //  10;
                 break;
 
             /*
