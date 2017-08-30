@@ -72,6 +72,18 @@ public class Decoder8086 extends IntelDecoder {
             instr = new IncRegister(queue);
         }else if(DecRegister.hasOpcode(queue[0])){
             instr = new DecRegister(queue);
+        }else if(AsciiAdjustForAddition.hasOpcode(queue[0])){
+            instr = new AsciiAdjustForAddition(queue);
+        }else if(DecimalAdjustForAddition.hasOpcode(queue[0])){
+            instr = new DecimalAdjustForAddition(queue);
+        }else if(SubRegisterMemory.hasOpcode(queue[0])){
+            instr = new SubRegisterMemory(queue);
+        }else if(SubAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new SubAccumulatorImmediate(queue);
+        }else if(SubbRegisterMemory.hasOpcode(queue[0])){
+            instr = new SubbRegisterMemory(queue);
+        }else if(SubbAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new SubbAccumulatorImmediate(queue);
         }
 
         if(instr==null){

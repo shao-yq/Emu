@@ -1978,7 +1978,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     flags.setFlag(AF, false);
                 }
                 al &= 0xf;
-                clocks += 4;
+                clocks += instruction.getClocks();          //  4;
                 break;
 
             /*
@@ -2009,7 +2009,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 } else
                     flags.setFlag(CF, false);
                 flags.setFlags(B, al);
-                clocks += 4;
+                clocks += instruction.getClocks();          //  4;
                 break;
             }
 
@@ -2029,7 +2029,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SUB_REG16__MEM16_REG16: //   0x29: // SUB REG16/MEM16,REG16
             case SUB_REG8_REG8__MEM8   : //   0x2a: // SUB REG8,REG8/MEM8
             case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2040,10 +2040,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 res = alu.sub(w, dst, src);
                 if (d == 0b0) {
                     setRM(w, mod, rm, res);
-                    clocks += mod == 0b11 ? 3 : 16;
+                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
-                    clocks += mod == 0b11 ? 3 : 9;
+                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 9;
                 }
                 break;
 
@@ -2051,10 +2051,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SUB_AL_IMMED8 : //  0x2c: // SUB AL,IMMED8
             case SUB_AX_IMMED16: //  0x2d: // SUB AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;            //  getMem(w);
                 res = alu.sub(w, dst, src);
                 setReg(w, AX, res);
-                clocks += 4;
+                clocks += instruction.getClocks();      //  4;
                 break;
 
             /*
@@ -2073,7 +2073,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SBB_REG16__MEM16_REG16: //   0x19: // SBB REG16/MEM16,REG16
             case SBB_REG8_REG8__MEM8   : //   0x1a: // SBB REG8,REG8/MEM8
             case SBB_REG16_REG16__MEM16: //   0x1b: // SBB REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2084,10 +2084,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 res = alu.sbb(w, dst, src);
                 if (d == 0b0) {
                     setRM(w, mod, rm, res);
-                    clocks += mod == 0b11 ? 3 : 16;
+                    clocks += instruction.getClocks();      // mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
-                    clocks += mod == 0b11 ? 3 : 9;
+                    clocks += instruction.getClocks();      // mod == 0b11 ? 3 : 9;
                 }
                 break;
 
@@ -2095,10 +2095,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SBB_AL_IMMED8 : //   0x1c: // SBB AL,IMMED8
             case SBB_AX_IMMED16: //   0X1d: // SBB AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;            //  getMem(w);
                 res = alu.sbb(w, dst, src);
                 setReg(w, AX, res);
-                clocks += 4;
+                clocks += instruction.getClocks();      //  4;
                 break;
 
             /*
