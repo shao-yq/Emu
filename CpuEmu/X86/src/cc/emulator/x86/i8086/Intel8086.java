@@ -2155,7 +2155,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case CMP_REG16__MEM16_REG16: //  0x39: // CMP REG16/MEM16,REG16
             case CMP_REG8_REG8__MEM8   : //  0x3a: // CMP REG8,REG8/MEM8
             case CMP_REG16_REG16__MEM16: //  0x3b: // CMP REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2164,16 +2164,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     src = getRM(w, mod, rm);
                 }
                 alu.sub(w, dst, src);
-                clocks += mod == 0b11 ? 3 : 9;
+                clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
                 break;
 
             // Immediate with Accumulator
             case CMP_AL_IMMED8 : //  0x3c: // CMP AL,IMMED8
             case CMP_AX_IMMED16: //  0x3d: // CMP AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;            //  getMem(w);
                 alu.sub(w, dst, src);
-                clocks += 4;
+                clocks += instruction.getClocks();      //  4;
                 break;
 
             /*
@@ -2198,7 +2198,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     flags.setFlag(AF, false);
                 }
                 al &= 0xf;
-                clocks += 4;
+                clocks += instruction.getClocks();          //  4;
                 break;
 
             /*
@@ -2229,7 +2229,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 } else
                     flags.setFlag(CF, false);
                 setFlags(B, al);
-                clocks += 4;
+                clocks += instruction.getClocks();              //  4;
                 break;
             }
 
@@ -2281,14 +2281,14 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * and OF is undefined following execution of AAM.
              */
             case AAM: //  0xd4: // AAM
-                src = getMem(B);
+                src = instruction.immediate;            //  getMem(B);
                 if (src == 0)
                     callInt(0);
                 else {
                     ah = al / src & 0xff;
                     al = al % src & 0xff;
                     setFlags(W, getReg(W, AX));
-                    clocks += 83;
+                    clocks += instruction.getClocks();      //  83;
                 }
                 break;
 
@@ -2353,11 +2353,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * is undefined following execution of AAD.
              */
             case AAD: //  0xd5: // AAD
-                src = getMem(B);
+                src = instruction.immediate;            //  getMem(B);
                 al = ah * src + al & 0xff;
                 ah = 0;
                 setFlags(B, al);
-                clocks += 60;
+                clocks += instruction.getClocks();      //  60;
                 break;
 
             /*

@@ -76,6 +76,14 @@ public class Decoder8086 extends IntelDecoder {
             instr = new AsciiAdjustForAddition(queue);
         }else if(DecimalAdjustForAddition.hasOpcode(queue[0])){
             instr = new DecimalAdjustForAddition(queue);
+        }else if(AsciiAdjustForSubstraction.hasOpcode(queue[0])){
+            instr = new AsciiAdjustForSubstraction(queue);
+        }else if(DecimalAdjustForSubstraction.hasOpcode(queue[0])){
+            instr = new DecimalAdjustForSubstraction(queue);
+        }else if(AsciiAdjustForMultiply.hasOpcode(queue[0])){
+            instr = new AsciiAdjustForMultiply(queue);
+        }else if(AsciiAdjustForDivision.hasOpcode(queue[0])){
+            instr = new AsciiAdjustForDivision(queue);
         }else if(SubRegisterMemory.hasOpcode(queue[0])){
             instr = new SubRegisterMemory(queue);
         }else if(SubAccumulatorImmediate.hasOpcode(queue[0])){
@@ -84,6 +92,10 @@ public class Decoder8086 extends IntelDecoder {
             instr = new SubbRegisterMemory(queue);
         }else if(SubbAccumulatorImmediate.hasOpcode(queue[0])){
             instr = new SubbAccumulatorImmediate(queue);
+        }else if(CmpRegisterMemory.hasOpcode(queue[0])){
+            instr = new CmpRegisterMemory(queue);
+        }else if(CmpAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new CmpAccumulatorImmediate(queue);
         }
 
         if(instr==null){
