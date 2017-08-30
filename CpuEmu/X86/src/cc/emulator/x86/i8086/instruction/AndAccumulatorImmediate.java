@@ -11,7 +11,7 @@ public class AndAccumulatorImmediate extends Instruction8086 {
         super(raw);
         immediate = raw[1];
         incLength(1);
-        if(op == ADD_AX_IMMED16){
+        if(op == AND_AX_IMMED16){
             immediate |= (raw[2]<<8);
             incLength(1);
         }

@@ -2484,7 +2484,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
             case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
             case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2496,10 +2496,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 logic(w, res);
                 if (d == 0b0) {
                     setRM(w, mod, rm, res);
-                    clocks += mod == 0b11 ? 3 : 16;
+                    clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
-                    clocks += mod == 0b11 ? 3 : 9;
+                    clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 9;
                 }
                 break;
 
@@ -2507,11 +2507,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case OR_AL_IMMED8 : //   0x0c: // OR AL,IMMED8
             case OR_AX_IMMED16: //   0x0d: // OR AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;                //  getMem(w);
                 res = dst | src;
                 logic(w, res);
                 setReg(w, AX, res);
-                clocks += 4;
+                clocks += instruction.getClocks();          //
                 break;
 
             /*
@@ -2528,7 +2528,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
             case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
             case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
-                decode2();
+                //decode2();
                 if (d == 0b0) {
                     dst = getRM(w, mod, rm);
                     src = getReg(w, reg);
@@ -2540,10 +2540,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 logic(w, res);
                 if (d == 0b0) {
                     setRM(w, mod, rm, res);
-                    clocks += mod == 0b11 ? 3 : 16;
+                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
-                    clocks += mod == 0b11 ? 3 : 9;
+                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
                 }
                 break;
 
@@ -2551,11 +2551,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XOR_AL_IMMED8 : //   0x34: // XOR AL,IMMED8
             case XOR_AX_IMMED16: //   0x35: // XOR AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;                    //  getMem(w);
                 res = dst ^ src;
                 logic(w, res);
                 setReg(w, AX, res);
-                clocks += 4;
+                clocks += instruction.getClocks();              //  4;
                 break;
 
             /*
@@ -2570,20 +2570,20 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Register/Memory and Register
             case TEST_REG8__MEM8_REG8   : //   0x84: // TEST REG8/MEM8,REG8
             case TEST_REG16__MEM16_REG16: //   0x85: // TEST REG16/MEM16,REG16
-                decode2();
+                //decode2();
                 dst = getRM(w, mod, rm);
                 src = getReg(w, reg);
                 logic(w, dst & src);
-                clocks += mod == 0b11 ? 3 : 9;
+                clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 9;
                 break;
 
             // Immediate and Accumulator
             case TEST_AL_IMMED8 : //   0xa8: // TEST AL,IMMED8
             case TEST_AX_IMMED16: //   0xa9: // TEST AX,IMMED16
                 dst = getReg(w, AX);
-                src = getMem(w);
+                src = instruction.immediate;                    //  getMem(w);
                 logic(w, dst & src);
-                clocks += 4;
+                clocks += instruction.getClocks();              //  4;
                 break;
 
             /*
