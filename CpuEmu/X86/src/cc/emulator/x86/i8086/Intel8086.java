@@ -3,6 +3,7 @@ package cc.emulator.x86.i8086;
 import cc.emulator.core.cpu.*;
 import cc.emulator.x86.i8086.instruction.CallFarProc;
 import cc.emulator.x86.i8086.instruction.CallNearProc;
+import cc.emulator.x86.i8086.instruction.Jump;
 import cc.emulator.x86.intel.*;
 import cc.emulator.x86.intel.*;
 import cc.emulator.x86.intel.*;
@@ -3106,27 +3107,27 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             // Direct within Segment
             case JMP_NEAR: //   0xe9: // JMP NEAR-LABEL
-                dst = getMem(W);
+                dst = ((Jump)instruction).getIpInc();           //  getMem(W);
                 dst = signconv(W, dst);
-                instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
-                clocks += 15;
+                instructionLocator.incOffset(dst);              //  ip = ip + dst & 0xffff;
+                clocks += instruction.getClocks();              //  15;
                 break;
 
             // Direct within Segment-Short
             case JMP_SHORT: //   0xeb: // JMP SHORT-LABEL
-                dst = getMem(B);
+                dst = ((Jump)instruction).getIpInc();           //  getMem(B);
                 dst = signconv(B, dst);
-                instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
-                clocks += 15;
+                instructionLocator.incOffset(dst);              //  ip = ip + dst & 0xffff;
+                clocks += instruction.getClocks();              //  15;
                 break;
 
             // Direct Intersegment
             case JMP_FAR: //   0xea: // JMP FAR-LABEL
-                dst = getMem(W);
-                src = getMem(W);
-                instructionLocator.setOffset(dst);      //  ip = dst;
-                instructionLocator.setBase(src);        //  cs = src;
-                clocks += 15;
+                dst = ((Jump)instruction).getOffset();       //  getMem(W);
+                src = ((Jump)instruction).getBase();         //  getMem(W);
+                instructionLocator.setOffset(dst);          //  ip = dst;
+                instructionLocator.setBase(src);            //  cs = src;
+                clocks += instruction.getClocks();              //  15;
                 break;
 
             /*
@@ -3153,7 +3154,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if overflow - OF=1.
              */
             case JO_SHORT: //   0x70: // JO SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(OF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3168,7 +3169,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not overflow - OF=0.
              */
             case JNO_SHORT: //  0x71: // JNO SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!getFlag(OF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3183,7 +3184,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if below/not above nor equal/carry - CF=1.
              */
             case JB__JNAE__JC_SHORT: //   0x72: // JB/JNAE/JC SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(CF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3198,7 +3199,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not below/above or equal/not carry - CF=0.
              */
             case JNB__JAE__JNC_SHORT: //  0x73: // JNB/JAE/JNC SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!getFlag(CF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3213,7 +3214,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if equal/zero - ZF=1.
              */
             case JE__JZ_SHORT: //  0x74: // JE/JZ SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(ZF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3228,7 +3229,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not equal/not zero - ZF=0.
              */
             case JNE__JNZ_SHORT: //  0x75: // JNE/JNZ SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!getFlag(ZF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3243,7 +3244,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if below or equal/not above - (CF or ZF)=1.
              */
             case JBE__JNA_SHORT: //   0x76: // JBE/JNA SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(CF) | getFlag(ZF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3258,7 +3259,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not below nor equal/above - (CF or ZF)=0.
              */
             case JNBE__JA_SHORT: //   0x77: // JNBE/JA SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!(getFlag(CF) | getFlag(ZF))) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3273,7 +3274,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if sign - SF=1.
              */
             case JS_SHORT: //   0x78: // JS SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(SF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3288,7 +3289,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not sign - SF=0.
              */
             case JNS_SHORT: //  0x79: // JNS SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!getFlag(SF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3303,7 +3304,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if parity/parity equal - PF=1.
              */
             case JP__JPE_SHORT: //  0x7a: // JP/JPE SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(PF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3318,7 +3319,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not parity/parity odd - PF=0.
              */
             case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!getFlag(PF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3333,7 +3334,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if less/not greater nor equal - (SF xor OF)=1.
              */
             case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(SF) ^ getFlag(OF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3348,7 +3349,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not less/greater or equal - (SF xor OF)=0.
              */
             case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!(getFlag(SF) ^ getFlag(OF))) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3363,7 +3364,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if less or equal/not greater - ((SF xor OF) or ZF)=1.
              */
             case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getFlag(SF) ^ getFlag(OF) | getFlag(ZF)) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3378,7 +3379,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * Jump if not less nor equal/greater - ((SF xor OF) or ZF)=0.
              */
             case JNLE__JG_SHORT: //  0x7f: // JNLE/JG SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (!(getFlag(SF) ^ getFlag(OF) | getFlag(ZF))) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
@@ -3405,7 +3406,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * is executed.
              */
             case LOOP_SHORT: //  0xe2: // LOOP SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
@@ -3426,7 +3427,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * set; otherwise the instruction following LOOPE/LOOPZ is executed.
              */
             case LOOPE__LOOPZ_SHORT: //  0xe1: // LOOPE/LOOPZ SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
@@ -3447,7 +3448,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * is executed.
              */
             case LOOPNE__LOOPNZ_SHORT: //   0xe0: // LOOPNE/LOOPNZ SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 src = getReg(W, CX) - 1 & 0xffff;
                 setReg(W, CX, src);
@@ -3467,7 +3468,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * loop zero times.
              */
             case JCXZ_SHORT: //  0xe3: // JCXZ SHORT-LABEL
-                dst = getMem(B);
+                dst = instruction.disp;                     // getMem(B);
                 dst = signconv(B, dst);
                 if (getReg(W, CX) == 0) {
                     instructionLocator.incOffset(dst);      //  ip = ip + dst & 0xffff;
