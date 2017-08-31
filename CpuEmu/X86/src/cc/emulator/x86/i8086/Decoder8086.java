@@ -142,6 +142,12 @@ public class Decoder8086 extends IntelDecoder {
             instr = new Interrupt(queue);
         }else if(InterruptReturn.hasOpcode(queue[0])){
             instr = new InterruptReturn(queue);
+        }else if(Escape.hasOpcode(queue[0])){
+            instr = new Escape(queue);
+        }else if(FlagOp.hasOpcode(queue[0])){
+            instr = new FlagOp(queue);
+        }else if(ControlOp.hasOpcode(queue[0])){
+            instr = new ControlOp(queue);
 //        }else if(ReturnInterSegment.hasOpcode(queue[0])){
 //            instr = new ReturnInterSegment(queue);
 //        }else if(ReturnImmedInterSeg.hasOpcode(queue[0])){

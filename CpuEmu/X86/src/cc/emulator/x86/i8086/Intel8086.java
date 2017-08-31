@@ -3710,8 +3710,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ESC_5_SOURCE: //   0xdd: // ESC 5,SOURCE
             case ESC_6_SOURCE: //   0xde: // ESC 6,SOURCE
             case ESC_7_SOURCE: //   0xdf: // ESC 7,SOURCE
-                decode2();
-                clocks += mod == 0b11 ? 2 : 8;
+                //decode2();
+                clocks += instruction.getClocks();          //  mod == 0b11 ? 2 : 8;
                 break;
 
             /*
