@@ -3514,10 +3514,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             // Type 3
             case INT_3: //  0xcc: // INT 3
+                callInt(3);
+                clocks += 52;
+                break;
             // Type Specified
             case INT_IMMED8: //  0xcd: // INT IMMED8
-                callInt(op == 0xcc ? 3 : getMem(B));
-                clocks += op == 0xcc ? 52 : 51;
+                callInt(instruction.immediate);
+                clocks +=  51;
+                //callInt(op == 0xcc ? 3 : getMem(B));
+                //clocks += op == 0xcc ? 52 : 51;
                 break;
 
             /*
@@ -3553,7 +3558,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 instructionLocator.setOffset(pop());        //  ip = pop();
                 instructionLocator.setBase(pop());          //  cs = pop();
                 flags.setData(pop());
-                clocks += 24;
+                clocks += instruction.getClocks();          //  24;
                 break;
 
             /*
