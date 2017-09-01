@@ -3774,14 +3774,17 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SBB REG16/MEM16,IMMED8
                 // SUB REG16/MEM16,IMMED8
                 // CMP REG16/MEM16,IMMED8
-                decode2();
+
+                // decode2();
                 dst = getRM(w, mod, rm);
-                src = getMem(B);
-                if (op == 0x81)
-                    src |= getMem(B) << 8;
+                src = instruction.immediate;        //  getMem(B);
+                //if (op == 0x81)
+                //    src |= getMem(B) << 8;
+
                 // Perform sign extension if needed.
-                else if (op == 0x83 && (src & SIGN[B]) > 0)
+                if (op == 0x83 && (src & SIGN[B]) > 0)
                     src |= 0xff00;
+
                 switch (reg) {
                 case MOD_ADD: //   0b000: // ADD
                     res = alu.add(w, dst, src);

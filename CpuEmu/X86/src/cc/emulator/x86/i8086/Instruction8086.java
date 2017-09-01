@@ -125,6 +125,21 @@ public  class Instruction8086 extends IntelInstruction {
         }
     }
 
+    protected void decodeDataExt(int[] raw){
+        immediate = raw[length];
+        incLength(1);
+        if(op==EXT_0X81){
+            immediate |= raw[length]<<8;
+            incLength(1);
+        } else if(op==EXT_0X83){
+            // Extend sign 0f byte?
+            if((immediate &0x80) != 0){
+                immediate  |= 0xff00;
+            }
+        }
+
+    }
+
     protected void setLength(int len) {
         length = len;
     }
