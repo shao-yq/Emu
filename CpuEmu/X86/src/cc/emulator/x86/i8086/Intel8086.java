@@ -3883,7 +3883,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SHR REG16/MEM16,CL
                 // SAR REG16/MEM16,CL
             {
-                decode2();
+                //decode2();
                 dst = getRM(w, mod, rm);
                 src = op == 0xd0 || op == 0xd1 ? 1 : cl;
                 boolean tempCF;

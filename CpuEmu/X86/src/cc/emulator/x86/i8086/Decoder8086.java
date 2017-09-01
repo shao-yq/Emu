@@ -148,6 +148,8 @@ public class Decoder8086 extends IntelDecoder {
             instr = new FlagOp(queue);
         }else if(ControlOp.hasOpcode(queue[0])){
             instr = new ControlOp(queue);
+        }else if(ShiftRotate.hasOpcode(queue[0])){
+            instr = new ShiftRotate(queue);
         }else if(ExtDecoder.hasOpcode(queue[0])){
             instr = ExtDecoder.decode(queue);
 //        }else if(ReturnInterSegment.hasOpcode(queue[0])){
