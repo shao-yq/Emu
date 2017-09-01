@@ -168,8 +168,10 @@ public class Decoder8086 extends IntelDecoder {
             instr = new CallIndirect(queue);
         }else if(JmpIndirect.hasOpcode(queue)){
             instr = new JmpIndirect(queue);
-        }else if(PushMemory.hasOpcode(queue)){
-            instr = new PushMemory(queue);
+        }else if(PushRegisterMemory.hasOpcode(queue)){
+            instr = new PushRegisterMemory(queue);
+        }else if(PopRegisterMemory.hasOpcode(queue)){
+            instr = new PopRegisterMemory(queue);
         }else if(ExtDecoder.hasOpcode(queue[0])){
             instr = ExtDecoder.decode(queue);
         }

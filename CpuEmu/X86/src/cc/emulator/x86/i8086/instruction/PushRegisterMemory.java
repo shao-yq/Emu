@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Yongqing
  * Date: 2017/9/1.
  */
-public class PushMemory extends Instruction8086 {
-    public PushMemory(int[] raw) {
+public class PushRegisterMemory extends Instruction8086 {
+    public PushRegisterMemory(int[] raw) {
         super(raw,2);
         decodeDisplacement(raw);
     }

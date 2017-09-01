@@ -3837,7 +3837,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * GROUP 1A
              */
             case POP_REG16__MEM16: //  0x8f: // POP REG16/MEM16
-                decode2();
+                //decode2();
                 switch (reg) {
                 case MOD_POP: //  0b000: // POP
                     src = pop();
