@@ -3744,7 +3744,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             /*
              * GROUP 1
              */
-            case 0x80:
+            case EXT_0X80:  // 0x80:
                 // ADD REG8/MEM8,IMMED8
                 // OR REG8/MEM8,IMMED8
                 // ADC REG8/MEM8,IMMED8
@@ -3753,7 +3753,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SUB REG8/MEM8,IMMED8
                 // XOR REG8/MEM8,IMMED8
                 // CMP REG8/MEM8,IMMED8
-            case 0x81:
+            case EXT_0X81:  // 0x81:
                 // ADD REG16/MEM16,IMMED16
                 // OR REG16/MEM16,IMMED16
                 // ADC REG16/MEM16,IMMED16
@@ -3762,13 +3762,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SUB REG16/MEM16,IMMED16
                 // XOR REG16/MEM16,IMMED16
                 // CMP REG16/MEM16,IMMED16
-            case 0x82:
+            case EXT_0X82:  // 0x82:
                 // ADD REG8/MEM8,IMMED8
                 // ADC REG8/MEM8,IMMED8
                 // SBB REG8/MEM8,IMMED8
                 // SUB REG8/MEM8,IMMED8
                 // CMP REG8/MEM8,IMMED8
-            case 0x83:
+            case EXT_0X83:  // 0x83:
                 // ADD REG16/MEM16,IMMED8
                 // ADC REG16/MEM16,IMMED8
                 // SBB REG16/MEM16,IMMED8
@@ -3847,7 +3847,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             /*
              * GROUP 2
              */
-            case 0xd0:
+            case EXT_0XD0:  // 0xd0:
                 // ROL REG8/MEM8,1
                 // ROR REG8/MEM8,1
                 // RCL REG8/MEM8,1
@@ -3855,7 +3855,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SAL/SHL REG8/MEM8,1
                 // SHR REG8/MEM8,1
                 // SAR REG8/MEM8,1
-            case 0xd1:
+            case EXT_0XD1:  // 0xd1:
                 // ROL REG16/MEM16,1
                 // ROR REG16/MEM16,1
                 // RCL REG16/MEM16,1
@@ -3863,7 +3863,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SAL/SHL REG16/MEM16,1
                 // SHR REG16/MEM16,1
                 // SAR REG16/MEM16,1
-            case 0xd2:
+            case EXT_0XD2:  // 0xd2:
                 // ROL REG8/MEM8,CL
                 // ROR REG8/MEM8,CL
                 // RCL REG8/MEM8,CL
@@ -3871,7 +3871,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SAL/SHL REG8/MEM8,CL
                 // SHR REG8/MEM8,CL
                 // SAR REG8/MEM8,CL
-            case 0xd3:
+            case EXT_0XD3:  // 0xd3:
                 // ROL REG16/MEM16,CL
                 // ROR REG16/MEM16,CL
                 // RCL REG16/MEM16,CL
@@ -3978,7 +3978,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             /*
              * GROUP 3
              */
-            case 0xf6:
+            case EXT_0XF6:  // 0xf6:
                 // TEST REG8/MEM8,IMMED8
                 // NOT REG8/MEM8
                 // NEG REG8/MEM8
@@ -3986,7 +3986,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // IMUL REG8/MEM8
                 // DIV REG8/MEM8
                 // IDIV REG8/MEM8
-            case 0xf7:
+            case EXT_0XF7:  // 0xf7:
                 // TEST REG16/MEM16,IMMED16
                 // NOT REG16/MEM16
                 // NEG REG16/MEM16
@@ -4136,7 +4136,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             /*
              * GROUP 4
              */
-            case 0xfe:
+            case EXT_0XFE:  // 0xfe:
                 // INC REG8/MEM8
                 // DEC REG8/MEM8
                 decode2();
@@ -4157,7 +4157,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             /*
              * GROUP 5
              */
-            case 0xff:
+            case EXT_0XFF:  // 0xff:
                 // INC REG16/MEM16
                 // DEC REG16/MEM16
                 // CALL REG16/MEM16 (intra)

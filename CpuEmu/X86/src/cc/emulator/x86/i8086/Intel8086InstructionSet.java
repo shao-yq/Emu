@@ -81,8 +81,7 @@ public interface Intel8086InstructionSet {
     public final static int PUSH_BP =  0x55; // PUSH BP
     public final static int PUSH_SI =  0x56; // PUSH SI
     public final static int PUSH_DI =  0x57; // PUSH DI
-    
-    
+
     
     public final static int XCHG_REG8_REG8__MEM8   = 0x86; // XCHG REG8,REG8/MEM8   
     public final static int XCHG_REG16_REG16__MEM16= 0x87; // XCHG REG16,REG16/MEM16
@@ -374,5 +373,18 @@ public interface Intel8086InstructionSet {
     public final static int JMP_REG16__MEM16_INTRA = 0b100; // JMP REG16/MEM16(intra)
     public final static int JMP_MEM16_INTERSEGMENT = 0b101; // JMP MEM16(intersegment)
     public final static int PUSH_MEM16 =   0b110; // PUSH MEM16
-       
+
+    public final static int EXT_0X80 = 0x80;  // 0x80
+    public final static int EXT_0X81 = 0x81;  // 0x81
+    public final static int EXT_0X82 = 0x82;  // 0x82
+    public final static int EXT_0X83 = 0x83;  // 0x83
+    public final static int EXT_0XD0 = 0xd0;  // 0xd0
+    public final static int EXT_0XD1 = 0xd1;  // 0xd1
+    public final static int EXT_0XD2 = 0xd2;  // 0xd2
+    public final static int EXT_0XD3 = 0xd3;  // 0xd3
+    public final static int EXT_0XF6 = 0xf6;  // 0xf6
+    public final static int EXT_0XF7 = 0xf7;  // 0xf7
+    public final static int EXT_0XFE = 0xfe;  // 0xfe
+    public final static int EXT_0XFF = 0xff;  // 0xff
+
 }    
