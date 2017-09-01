@@ -160,6 +160,16 @@ public class Decoder8086 extends IntelDecoder {
             instr = new NegRegisterMemory(queue);
         }else if(TestRegisterMemoryImmediate.hasOpcode(queue)){
             instr = new TestRegisterMemoryImmediate(queue);
+        }else if(IncRegisterMemory.hasOpcode(queue)){
+            instr = new IncRegisterMemory(queue);
+        }else if(DecRegisterMemory.hasOpcode(queue)){
+            instr = new DecRegisterMemory(queue);
+        }else if(CallIndirect.hasOpcode(queue)){
+            instr = new CallIndirect(queue);
+        }else if(JmpIndirect.hasOpcode(queue)){
+            instr = new JmpIndirect(queue);
+        }else if(PushMemory.hasOpcode(queue)){
+            instr = new PushMemory(queue);
         }else if(ExtDecoder.hasOpcode(queue[0])){
             instr = ExtDecoder.decode(queue);
         }

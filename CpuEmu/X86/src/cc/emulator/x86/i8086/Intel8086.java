@@ -4142,7 +4142,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case EXT_0XFE:  // 0xfe:
                 // INC REG8/MEM8
                 // DEC REG8/MEM8
-                decode2();
+
+                //decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG8__MEM8: //   0b000: // INC REG8/MEM8
@@ -4168,7 +4169,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // JMP REG16/MEM16 (intra)
                 // JMP MEM16 (intersegment)
                 // PUSH REG16/MEM16
-                decode2();
+
+                //decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case INC_REG16__MEM16: //   0b000: // INC REG16/MEM16
