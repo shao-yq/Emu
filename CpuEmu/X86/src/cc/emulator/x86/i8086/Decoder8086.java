@@ -150,12 +150,18 @@ public class Decoder8086 extends IntelDecoder {
             instr = new ControlOp(queue);
         }else if(ShiftRotate.hasOpcode(queue[0])){
             instr = new ShiftRotate(queue);
+        }else if(MulRegisterMemory.hasOpcode(queue)){
+            instr = new MulRegisterMemory(queue);
+        }else if(DivRegisterMemory.hasOpcode(queue)){
+            instr = new DivRegisterMemory(queue);
+        }else if(NotRegisterMemory.hasOpcode(queue)){
+            instr = new NotRegisterMemory(queue);
+        }else if(NegRegisterMemory.hasOpcode(queue)){
+            instr = new NegRegisterMemory(queue);
+        }else if(TestRegisterMemoryImmediate.hasOpcode(queue)){
+            instr = new TestRegisterMemoryImmediate(queue);
         }else if(ExtDecoder.hasOpcode(queue[0])){
             instr = ExtDecoder.decode(queue);
-//        }else if(ReturnInterSegment.hasOpcode(queue[0])){
-//            instr = new ReturnInterSegment(queue);
-//        }else if(ReturnImmedInterSeg.hasOpcode(queue[0])){
-//            instr = new ReturnImmedInterSeg(queue);
         }
 
         if(instr==null){

@@ -3997,11 +3997,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // IMUL REG16/MEM16
                 // DIV REG16/MEM16
                 // IDIV REG16/MEM16
-                decode2();
+                //decode2();
                 src = getRM(w, mod, rm);
                 switch (reg) {
                 case MOD_TEST: //   0b000: // TEST
-                    dst = getMem(w);
+                    dst = instruction.immediate;        //  getMem(w);
                     logic(w, dst & src);
                     clocks += mod == 0b11 ? 5 : 11;
                     break;
