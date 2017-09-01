@@ -5,8 +5,6 @@ import cc.emulator.x86.i8086.instruction.CallFarProc;
 import cc.emulator.x86.i8086.instruction.CallNearProc;
 import cc.emulator.x86.i8086.instruction.Jump;
 import cc.emulator.x86.intel.*;
-import cc.emulator.x86.intel.*;
-import cc.emulator.x86.intel.*;
 import cc.emulator.core.Peripheral;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.cpu.bus.DataBus;
@@ -455,7 +453,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     // Current instruction decoded
     Instruction8086 instruction;
 
-    private void decode1() {
+    private void decode() {
         instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
         op = instruction.op;
         d  = instruction.d;
@@ -1293,9 +1291,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
         fetchInstructions();
 
-        //decode();
+        decode();
         // Decode first byte.
-        decode1();
+        //decode1();
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
@@ -4218,11 +4216,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return true;
     }
 
-    private void decode() {
-        decode1();
-//        if(instruction.op==)
-//        decode2();
-    }
+//    private void decode() {
+//        decode1();
+////        if(instruction.op==)
+////        decode2();
+//    }
 
     private void execute(Instruction8086 instruction) {
 
@@ -4235,9 +4233,5 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new RegisteredMemoryLocator(cs,pc);
     }
 
-//    @Override
-//    protected MemoryLocator createDataLocator() {
-//        return new RegisteredMemoryLocator(new SegmentRegister("DS", 2), new PointerIndexer("BP",1));
-//    }
 
 }
