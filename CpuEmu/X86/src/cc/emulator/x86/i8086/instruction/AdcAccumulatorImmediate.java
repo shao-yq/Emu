@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class AddcAccumulatorImmediate extends Instruction8086 {
-    public AddcAccumulatorImmediate(int[] raw) {
+public class AdcAccumulatorImmediate extends Instruction8086 {
+    public AdcAccumulatorImmediate(int[] raw) {
         super(raw);
         immediate = raw[1];
         incLength(1);

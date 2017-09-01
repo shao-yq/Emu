@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class SubbRegisterMemory extends Instruction8086 {
-    public SubbRegisterMemory(int[] raw) {
+public class SbbRegisterMemory extends Instruction8086 {
+    public SbbRegisterMemory(int[] raw) {
         super(raw, 2);
         decodeDisplacement(raw);
     }

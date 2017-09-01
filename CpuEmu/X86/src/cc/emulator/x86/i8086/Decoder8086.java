@@ -64,10 +64,10 @@ public class Decoder8086 extends IntelDecoder {
             instr = new AddRegisterMemory(queue);
         }else if(AddAccumulatorImmediate.hasOpcode(queue[0])){
             instr = new AddAccumulatorImmediate(queue);
-        }else if(AddcRegisterMemory.hasOpcode(queue[0])){
-            instr = new AddcRegisterMemory(queue);
-        }else if(AddcAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new AddcAccumulatorImmediate(queue);
+        }else if(AdcRegisterMemory.hasOpcode(queue[0])){
+            instr = new AdcRegisterMemory(queue);
+        }else if(AdcAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new AdcAccumulatorImmediate(queue);
         }else if(AndRegisterMemory.hasOpcode(queue[0])){
             instr = new AndRegisterMemory(queue);
         }else if(AndAccumulatorImmediate.hasOpcode(queue[0])){
@@ -100,10 +100,10 @@ public class Decoder8086 extends IntelDecoder {
             instr = new SubRegisterMemory(queue);
         }else if(SubAccumulatorImmediate.hasOpcode(queue[0])){
             instr = new SubAccumulatorImmediate(queue);
-        }else if(SubbRegisterMemory.hasOpcode(queue[0])){
-            instr = new SubbRegisterMemory(queue);
-        }else if(SubbAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new SubbAccumulatorImmediate(queue);
+        }else if(SbbRegisterMemory.hasOpcode(queue[0])){
+            instr = new SbbRegisterMemory(queue);
+        }else if(SbbAccumulatorImmediate.hasOpcode(queue[0])){
+            instr = new SbbAccumulatorImmediate(queue);
         }else if(CmpRegisterMemory.hasOpcode(queue[0])){
             instr = new CmpRegisterMemory(queue);
         }else if(CmpAccumulatorImmediate.hasOpcode(queue[0])){

@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class AddcRegisterMemory extends Instruction8086 {
-    public AddcRegisterMemory(int[] raw) {
+public class AdcRegisterMemory extends Instruction8086 {
+    public AdcRegisterMemory(int[] raw) {
         super(raw, 2);
         decodeDisplacement(raw);
     }

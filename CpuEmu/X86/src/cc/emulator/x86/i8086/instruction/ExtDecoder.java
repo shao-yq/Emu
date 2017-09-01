@@ -1,6 +1,5 @@
 package cc.emulator.x86.i8086.instruction;
 
-import cc.emulator.core.cpu.Instruction;
 import cc.emulator.x86.i8086.Intel8086InstructionSet;
 import cc.emulator.x86.intel.IntelInstruction;
 
@@ -61,7 +60,7 @@ public class ExtDecoder implements Intel8086InstructionSet{
                 instr =  new OrRegisterMemoryImmediate(raw);
                 break;
             case MOD_ADC: //   0b010: // ADC
-                instr =  new AddcRegisterMemoryImmediate(raw);
+                instr =  new AdcRegisterMemoryImmediate(raw);
                 break;
             case MOD_SBB: //   0b011: // SBB
                 instr =  new SbbRegisterMemoryImmediate(raw);
