@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class ImmediateToRegMem extends Instruction8086 {
-    public ImmediateToRegMem(int[] raw) {
+public class MovImmediateToRegMem extends MOV {
+    public MovImmediateToRegMem(int[] raw) {
         super(raw, 2);
         decodeDisplacement(raw);
         if(reg == 0b000)
@@ -23,21 +23,6 @@ public class ImmediateToRegMem extends Instruction8086 {
         }
         return false;
     }
-
-//    public void decodeDisplacement(int queue[]) {
-//        switch (reg) {
-//            case 0b000:
-//                disp = (queue[3]<<8) | queue[2];
-//                if(w==0){
-//                    // MOV MEM8, IMMED8
-//                    data = queue[4];
-//                } else {
-//                    // MOV MEM16, IMMED16
-//                    data = (queue[5]<<8)|queue[4];
-//                }
-//                break;
-//        }
-//    }
 
     @Override
     public int getClocks() {

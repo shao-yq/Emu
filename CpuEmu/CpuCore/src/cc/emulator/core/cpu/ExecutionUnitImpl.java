@@ -6,7 +6,7 @@ import cc.emulator.core.cpu.register.StatusRegister;
 public abstract class ExecutionUnitImpl implements ExecutionUnit{
     ArithmeticLogicUnit alu;
     InstructionDecoder decoder;
-    GeneralRegister[] generalRegisters;
+    protected GeneralRegister[] generalRegisters;
     StatusRegister statusRegister;
 
     public ExecutionUnitImpl(){

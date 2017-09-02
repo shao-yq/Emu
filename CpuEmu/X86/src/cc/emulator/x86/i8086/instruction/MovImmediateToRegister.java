@@ -1,14 +1,12 @@
 package cc.emulator.x86.i8086.instruction;
 
-import cc.emulator.x86.i8086.Instruction8086;
-
 /**
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class ImmediateToRegister extends Instruction8086 {
+public class MovImmediateToRegister extends MOV {
 
-    public ImmediateToRegister(int raw[]) {
+    public MovImmediateToRegister(int raw[]) {
         super(raw);
         w = op >>> 3 & 0b1;
         reg = op & 0b111;

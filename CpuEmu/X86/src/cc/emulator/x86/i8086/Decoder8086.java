@@ -1,6 +1,8 @@
 package cc.emulator.x86.i8086;
 
 import cc.emulator.x86.i8086.instruction.*;
+import cc.emulator.x86.i8086.instruction.MovImmediateToRegister;
+import cc.emulator.x86.i8086.instruction.MovRegMemFromToReg;
 import cc.emulator.x86.intel.IntelDecoder;
 import cc.emulator.x86.intel.IntelInstruction;
 import cc.emulator.core.cpu.Instruction;
@@ -13,8 +15,8 @@ public class Decoder8086 extends IntelDecoder {
     @Override
     protected IntelInstruction newInstruction(int raw[]) {
         IntelInstruction intelInstruction=null;
-        if(ImmediateToRegister.hasOpcode(raw[0])){
-            intelInstruction =  new ImmediateToRegister(raw);
+        if(MovImmediateToRegister.hasOpcode(raw[0])){
+            intelInstruction =  new MovImmediateToRegister(raw);
         }
         return  intelInstruction;
     }
@@ -22,16 +24,16 @@ public class Decoder8086 extends IntelDecoder {
 
     public Instruction decode(int[] queue) {
         instr = null;
-        if(ImmediateToRegister.hasOpcode(queue[0])){
-            instr =  new ImmediateToRegister(queue);
-        } else if(MemoryToFromAccumulator.hasOpcode(queue[0])){
-            instr = new MemoryToFromAccumulator(queue);
-        } else if(RegMemFromToReg.hasOpcode(queue[0])){
-            instr = new RegMemFromToReg(queue);
-        } else if(ImmediateToRegMem.hasOpcode(queue[0])){
-            instr = new ImmediateToRegMem(queue);
-        }  else if(RegMemFromToSegReg.hasOpcode(queue[0])){
-            instr = new RegMemFromToSegReg(queue);
+        if(MovImmediateToRegister.hasOpcode(queue[0])){
+            instr =  new MovImmediateToRegister(queue);
+        } else if(MovMemoryToFromAccumulator.hasOpcode(queue[0])){
+            instr = new MovMemoryToFromAccumulator(queue);
+        } else if(MovRegMemFromToReg.hasOpcode(queue[0])){
+            instr = new MovRegMemFromToReg(queue);
+        } else if(MovImmediateToRegMem.hasOpcode(queue[0])){
+            instr = new MovImmediateToRegMem(queue);
+        }  else if(MovRegMemFromToSegReg.hasOpcode(queue[0])){
+            instr = new MovRegMemFromToSegReg(queue);
         }  else if(PushGeneralRegister.hasOpcode(queue[0])){
             instr = new PushGeneralRegister(queue);
         }  else if(PushSegmentRegister.hasOpcode(queue[0])){

@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class MemoryToFromAccumulator extends Instruction8086 {
-    public MemoryToFromAccumulator(int raw[]){
+public class MovMemoryToFromAccumulator extends MOV {
+    public MovMemoryToFromAccumulator(int raw[]){
         super(raw);
         setAddress(raw[2]<<8|raw[1]);
         setLength(3);

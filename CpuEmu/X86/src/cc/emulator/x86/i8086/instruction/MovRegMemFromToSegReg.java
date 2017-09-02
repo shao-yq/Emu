@@ -6,8 +6,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class RegMemFromToSegReg extends Instruction8086 {
-    public RegMemFromToSegReg(int[] raw) {
+public class MovRegMemFromToSegReg extends MOV {
+    public MovRegMemFromToSegReg(int[] raw) {
         super(raw, 2);
         decodeDisplacement(raw);
     }
