@@ -35,8 +35,8 @@ public class MoveString extends Instruction8086 {
              * are useful when the assembler cannot determine the attributes of
              * a string, e.g., a section of code is being moved.
              */
-            case MOVS_DEST8_SRC8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
-            case MOVS_DEST16_SRC16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
+            case MOVS_STR8_STR8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
+            case MOVS_STR16_STR16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
                 return true;
         }
         return false;

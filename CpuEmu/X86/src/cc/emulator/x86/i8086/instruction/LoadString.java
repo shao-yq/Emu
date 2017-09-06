@@ -28,8 +28,8 @@ public class LoadString extends Instruction8086 {
         int opcode = raw;
         switch (opcode){
 
-            case LODS_SRC8 : //  0xac: // LODS SRC-STR8
-            case LODS_SRC16: //  0xad: // LODS SRC-STR16
+            case LODS_STR8 : //  0xac: // LODS SRC-STR8
+            case LODS_STR16: //  0xad: // LODS SRC-STR16
                 return true;
         }
         return false;

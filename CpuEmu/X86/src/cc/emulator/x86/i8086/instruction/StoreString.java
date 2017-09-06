@@ -24,8 +24,8 @@ public class StoreString extends Instruction8086 {
     public static boolean hasOpcode(int raw) {
         int opcode = raw;
         switch (opcode){
-            case STOS_DEST8 : //   0xaa: // STOS DEST-STR8
-            case STOS_DEST16: //   0xab: // STOS DEST-STR16
+            case STOS_STR8 : //   0xaa: // STOS DEST-STR8
+            case STOS_STR16: //   0xab: // STOS DEST-STR16
                 return true;
         }
         return false;

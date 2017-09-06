@@ -34,8 +34,8 @@ public class CompareString extends Instruction8086 {
         int opcode = raw;
         switch (opcode){
 
-            case CMPS_DEST8_SRC8  : //   0xa6: // CMPS DEST-STR8,SRC-STR8
-            case CMPS_DEST16_SRC16: //   0xa7: // CMPS DEST-STR16,SRC-STR16
+            case CMPS_STR8_STR8  : //   0xa6: // CMPS DEST-STR8,SRC-STR8
+            case CMPS_STR16_STR16: //   0xa7: // CMPS DEST-STR16,SRC-STR16
                 return true;
         }
         return false;

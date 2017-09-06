@@ -1256,54 +1256,56 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         os = ds;
         int rep = 0;
         prefixes: while (true) {
-            // Segment prefix check.
-            switch (getMem(B)) {
-            case 0x26: // ES: (segment override prefix)
-                os = es;
-                clocks += 2;
-                break;
-            case 0x2e: // CS: (segment override prefix)
-                os = instructionLocator.getBase();  //  cs;
-                clocks += 2;
-                break;
-            case 0x36: // SS: (segment override prefix)
-                os = stack.getSs();     // ss;
-                clocks += 2;
-                break;
-            case 0x3e: // DS: (segment override prefix)
-                os = ds;
-                clocks += 2;
-                break;
-            // Repeat prefix check.
-            case 0xf2: // REPNE/REPNZ
-                rep = 2;
-                clocks += 9;
-                break;
-            case 0xf3: // REP/REPE/REPZ
-                rep = 1;
-                clocks += 9;
-                break;
-            default:
-                instructionLocator.incOffset(-1);           //  ip = ip - 1 & 0xffff;
-                break prefixes;
-            }
-        }
+            fetchInstructions();
 
-        fetchInstructions();
-
-        decode();
-        // Decode first byte.
-        //decode1();
+            decode();
+            // Decode first byte.
+            //decode1();
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
-        //instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
+            //instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
 
-        //instructionLocator.incOffset(instruction.getLength());
+            //instructionLocator.incOffset(instruction.getLength());
 
-        execute(instruction);
+            execute(instruction);
 
-        // Only repeat string instructions.
+            // Segment prefix check.
+            //switch (getMem(B)) {
+            switch (op) {
+                case PREFIX_ES: //  0x26: // ES: (segment override prefix)
+                    os = es;
+                    clocks += 2;
+                    break;
+                case PREFIX_CS: //  0x2e: // CS: (segment override prefix)
+                    os = instructionLocator.getBase();  //  cs;
+                    clocks += 2;
+                    break;
+                case PREFIX_SS: //  0x36: // SS: (segment override prefix)
+                    os = stack.getSs();     // ss;
+                    clocks += 2;
+                    break;
+                case PREFIX_DS: //  0x3e: // DS: (segment override prefix)
+                    os = ds;
+                    clocks += 2;
+                    break;
+                // Repeat prefix check.
+                case PREFIX_REPNEZ: //  0xf2: // REPNE/REPNZ
+                    rep = 2;
+                    clocks += 9;
+                    break;
+                case PREFIX_REPEZ: //  0xf3: // REP/REPE/REPZ
+                    rep = 1;
+                    clocks += 9;
+                    break;
+                default:
+                    //instructionLocator.incOffset(-1);           //  ip = ip - 1 & 0xffff;
+                    break prefixes;
+            }
+        }
+
+
+        // Only repeat string instructions. : string and I/O instructions (MOVS, CMPS, SCAS, LODS, STOS, INS, and OUTS).
         switch (op) {
         case MOVS_STR8_STR8  : //  0xa4: // MOVS
         case MOVS_STR16_STR16: //  0xa5:
@@ -2809,8 +2811,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * are useful when the assembler cannot determine the attributes of
              * a string, e.g., a section of code is being moved.
              */
-            case MOVS_DEST8_SRC8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
-            case MOVS_DEST16_SRC16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
+            case MOVS_STR8_STR8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
+            case MOVS_STR16_STR16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setMem(w, getAddr(es, di), src);
                 si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
@@ -2836,8 +2838,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * not zero) and strings are not equal (ZF = 0)." Thus, CMPS can be
              * used to find matching or differing string elements.
              */
-            case CMPS_DEST8_SRC8  : //   0xa6: // CMPS DEST-STR8,SRC-STR8
-            case CMPS_DEST16_SRC16: //   0xa7: // CMPS DEST-STR16,SRC-STR16
+            case CMPS_STR8_STR8  : //   0xa6: // CMPS DEST-STR8,SRC-STR8
+            case CMPS_STR16_STR16: //   0xa7: // CMPS DEST-STR16,SRC-STR16
                 dst = getMem(w, getAddr(es, di));
                 src = getMem(w, getAddr(os, si));
                 alu.sub(w, src, dst);
@@ -2866,8 +2868,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * scan-value (ZF = 0)." This form may be used to locate a value in
              * a string.
              */
-            case SCAS_DEST8 : //   0xae: // SCAS DEST-STR8
-            case SCAS_DEST16: //   0xaf: // SCAS DEST-STR16
+            case SCAS_STR8 : //   0xae: // SCAS DEST-STR8
+            case SCAS_STR16: //   0xaf: // SCAS DEST-STR16
                 dst = getMem(w, getAddr(es, di));
                 src = getReg(w, AX);
                 alu.sub(w, src, dst);
@@ -2889,8 +2891,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * complex string function built up from string primitives and other
              * instructions.
              */
-            case LODS_SRC8 : //  0xac: // LODS SRC-STR8
-            case LODS_SRC16: //  0xad: // LODS SRC-STR16
+            case LODS_STR8 : //  0xac: // LODS SRC-STR8
+            case LODS_STR16: //  0xad: // LODS SRC-STR16
                 src = getMem(w, getAddr(os, si));
                 setReg(w, AX, src);
                 si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
@@ -2906,8 +2908,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              * provides a convenient way to initialize a string to a constant
              * value (e.g., to blank out a print line).
              */
-            case STOS_DEST8 : //   0xaa: // STOS DEST-STR8
-            case STOS_DEST16: //   0xab: // STOS DEST-STR16
+            case STOS_STR8 : //   0xaa: // STOS DEST-STR8
+            case STOS_STR16: //   0xab: // STOS DEST-STR16
                 src = getReg(w, AX);
                 setMem(w, getAddr(es, di), src);
                 di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;

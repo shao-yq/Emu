@@ -108,19 +108,31 @@ public interface Intel8086InstructionSet {
     public final static int MOV_MEM8_AL  =   0xa2; // MOV MEM8,AL 
     public final static int MOV_MEM16_AX =   0xa3; // MOV MEM16,AX
     
-    public final static int MOVS_STR8_STR8   =  0xa4; // MOVS
-    public final static int MOVS_STR16_STR16 =  0xa5;        
+    public final static int MOVS_STR8_STR8   =  0xa4;   // MOVS DEST-STR8,SRC-STR8
+    public final static int MOVS_STR16_STR16 =  0xa5;  // MOVS DEST-STR16,SRC-STR16
     
-    public final static int CMPS_STR8_STR8   =  0xa6; // CMPS
-    public final static int CMPS_STR16_STR16 =  0xa7;        
-    public final static int SCAS_STR8  =  0xae; // SCAS      
-    public final static int SCAS_STR16 =  0xaf;                                         
-    public final static int LODS_STR8  =  0xac; // LODS      
-    public final static int LODS_STR16 =  0xad;              
+    public final static int CMPS_STR8_STR8   =  0xa6; // CMPS DEST-STR8,SRC-STR8
+    public final static int CMPS_STR16_STR16 =  0xa7; // CMPS DEST-STR16,SRC-STR16
+    public final static int SCAS_STR8  =  0xae;     // SCAS DEST-STR8
+    public final static int SCAS_STR16 =  0xaf;     // SCAS DEST-STR16
+    public final static int LODS_STR8  =  0xac;     // LODS SRC-STR8
+    public final static int LODS_STR16 =  0xad;     // LODS SRC-STR16
     
-    public final static int STOS_STR8  = 0xaa; // STOS       
-    public final static int STOS_STR16 = 0xab;               
-    
+    public final static int STOS_STR8  = 0xaa;      // STOS DEST-STR8
+    public final static int STOS_STR16 = 0xab;      // STOS DEST-STR16
+
+    //public final static int MOVS_DEST8_SRC8   = 0xa4; // MOVS DEST-STR8,SRC-STR8
+    //public final static int MOVS_DEST16_SRC16 = 0xa5; // MOVS DEST-STR16,SRC-STR16
+    //public final static int CMPS_DEST8_SRC8   = 0xa6; // CMPS DEST-STR8,SRC-STR8
+    //public final static int CMPS_DEST16_SRC16 = 0xa7; // CMPS DEST-STR16,SRC-STR16
+    //public final static int SCAS_DEST8  =  0xae; // SCAS DEST-STR8
+    //public final static int SCAS_DEST16 =  0xaf; // SCAS DEST-STR16
+
+    //public final static int LODS_SRC8   = 0xac; // LODS SRC-STR8
+    //public final static int LODS_SRC16  = 0xad; // LODS SRC-STR16
+    //public final static int STOS_DEST8  = 0xaa; // STOS DEST-STR8
+    //public final static int STOS_STR16 = 0xab; // STOS DEST-STR16
+
     public final static int MOV_AL_IMMED8  = 0xb0; // MOV AL,IMMED8 
     public final static int MOV_CL_IMMED8  = 0xb1; // MOV CL,IMMED8 
     public final static int MOV_DL_IMMED8  = 0xb2; // MOV DL,IMMED8 
@@ -261,17 +273,7 @@ public interface Intel8086InstructionSet {
     public final static int TEST_AL_IMMED8  =  0xa8; // TEST AL,IMMED8 
     public final static int TEST_AX_IMMED16 =  0xa9; // TEST AX,IMMED16
     
-    public final static int MOVS_DEST8_SRC8   = 0xa4; // MOVS DEST-STR8,SRC-STR8  
-    public final static int MOVS_DEST16_SRC16 = 0xa5; // MOVS DEST-STR16,SRC-STR16
-    public final static int CMPS_DEST8_SRC8   = 0xa6; // CMPS DEST-STR8,SRC-STR8  
-    public final static int CMPS_DEST16_SRC16 = 0xa7; // CMPS DEST-STR16,SRC-STR16
-    public final static int SCAS_DEST8  =  0xae; // SCAS DEST-STR8 
-    public final static int SCAS_DEST16 =  0xaf; // SCAS DEST-STR16
-    
-    public final static int LODS_SRC8   = 0xac; // LODS SRC-STR8 
-    public final static int LODS_SRC16  = 0xad; // LODS SRC-STR16
-    public final static int STOS_DEST8  = 0xaa; // STOS DEST-STR8 
-    public final static int STOS_DEST16 = 0xab; // STOS DEST-STR16
+
         
     public final static int CALL_NEAR_PROC =  0xe8; // CALL NEAR-PROC
     public final static int CALL_FAR_PROC  =  0x9a; // CALL FAR-PROC
@@ -387,4 +389,29 @@ public interface Intel8086InstructionSet {
     public final static int EXT_0XFE = 0xfe;  // 0xfe
     public final static int EXT_0XFF = 0xff;  // 0xff
 
-}    
+    public final static int PREFIX_ES = 0x26; // ES segment override prefix (use with any branch instruction is reserved)
+    public final static int PREFIX_CS = 0x2e; // CS segment override (use with any branch instruction is reserved)
+    public final static int PREFIX_SS = 0x36; // SS segment override prefix (use with any branch instruction is reserved)
+    public final static int PREFIX_DS = 0x3e; // DS segment override prefix (use with any branch instruction is reserved)
+
+    public final static int PREFIX_FS = 0x64; // FS segment override prefix (use with any branch instruction is reserved)
+    public final static int PREFIX_GS = 0x65; // GS segment override prefix (use with any branch instruction is reserved)
+
+    // (66H is also used as a mandatory prefix for some instructions).
+    public final static int PREFIX_OPERAND_SIZE = 0x66; // Operand-size override prefix is encoded using 66H
+    public final static int PREFIX_ADDRESS_SIZE = 0x67; // Address-size override prefix
+
+    // Repeat-Not-Zero prefix applies only to string and input/output instructions.
+    // (F2H is also used as a mandatory prefix for some instructions)
+    public final static int PREFIX_REPNEZ= 0xf2; // REPNE/REPNZ
+    // The repeat prefix applies only to string and input/output instructions.
+    // F3H is also used as a mandatory prefix for POPCNT, LZCNT and ADOX instructions.
+    public final static int PREFIX_REPEZ = 0xf3; // REP/REPE/REPZ
+
+    public final static int PREFIX_LOCK = 0xf0;  // LOCK
+
+    public final static int PREFIX_BRANCH_NOT_TAKEN = 0x2e; // Branch not taken (used only with Jcc instructions)
+    public final static int PREFIX_BRANCH_TAKEN = 0x3e;     // Branch taken (used only with Jcc instructions)
+
+
+}

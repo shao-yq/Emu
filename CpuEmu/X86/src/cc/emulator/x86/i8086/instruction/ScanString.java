@@ -34,8 +34,8 @@ public class ScanString extends Instruction8086 {
         int opcode = raw;
         switch (opcode){
 
-            case SCAS_DEST8 : //   0xae: // SCAS DEST-STR8
-            case SCAS_DEST16: //   0xaf: // SCAS DEST-STR16
+            case SCAS_STR8 : //   0xae: // SCAS DEST-STR8
+            case SCAS_STR16: //   0xaf: // SCAS DEST-STR16
                 return true;
         }
         return false;
