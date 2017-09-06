@@ -449,26 +449,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     }
 
 
-
     // Current instruction decoded
     Instruction8086 instruction;
 
     private void decode() {
         instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
-        op = instruction.op;
-        d  = instruction.d;
-        w  = instruction.w;
-
-        // Maybe meaningless for some instructions
-        mod = instruction.mod;
-        reg = instruction.reg;
-        rm = instruction.rm;
-
         instructionLocator.incOffset(instruction.getLength());
-
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
     }
 
     /**
@@ -496,6 +482,23 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // No displacement
             instructionLocator.incOffset(1);    // ip = ip + 1 & 0xffff;
     }
+
+    private void execute(Instruction8086 instruction) {
+        op = instruction.op;
+        d  = instruction.d;
+        w  = instruction.w;
+
+        // Maybe meaningless for some instructions
+        mod = instruction.mod;
+        reg = instruction.reg;
+        rm = instruction.rm;
+
+//        op = queue[0];
+//        d  = op >>> 1 & 0b1;
+//        w  = op       & 0b1;
+
+    }
+
 
     /**
      * Gets the absolute address from a segment and an offset.
@@ -1253,87 +1256,123 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             clocks += 61;
         }
 
+        return pipelineExecute();
+    }
+
+    //            // Segment prefix check.
+    boolean checkSegmentPrefix(int op){
+        //op = instruction.op;
+        boolean prefix = true;
+        switch (op) {
+            case PREFIX_ES: //  0x26: // ES: (segment override prefix)
+                os = es;
+                clocks += 2;
+                break;
+            case PREFIX_CS: //  0x2e: // CS: (segment override prefix)
+                os = instructionLocator.getBase();  //  cs;
+                clocks += 2;
+                break;
+            case PREFIX_SS: //  0x36: // SS: (segment override prefix)
+                os = stack.getSs();     // ss;
+                clocks += 2;
+                break;
+            case PREFIX_DS: //  0x3e: // DS: (segment override prefix)
+                os = ds;
+                clocks += 2;
+                break;
+
+            default:
+                //instructionLocator.incOffset(-1);           //  ip = ip - 1 & 0xffff;
+                prefix = false;
+                break ;
+        }
+        return prefix;
+    }
+    int rep = 0;
+    // Repeat instruction check
+    int checkRepeatPrefix(int op){
+        //op = instruction.op;
+        int rept = 0;
+        switch (op) {
+
+            // Repeat prefix check.
+            case PREFIX_REPNEZ: //  0xf2: // REPNE/REPNZ
+                rept = 2;
+                clocks += 9;
+                break;
+            case PREFIX_REPEZ: //  0xf3: // REP/REPE/REPZ
+                rept = 1;
+                clocks += 9;
+                break;
+            default:
+
+                break ;
+        }
+        return rept;
+    }
+    
+    // Repeat string logic
+    void repeatStringProcess(int op){
+        // Only repeat string instructions. : string and I/O instructions (MOVS, CMPS, SCAS, LODS, STOS, INS, and OUTS).
+        switch (op) {
+            case MOVS_STR8_STR8  : //  0xa4: // MOVS
+            case MOVS_STR16_STR16: //  0xa5:
+            case STOS_STR8 : // 0xaa: // STOS
+            case STOS_STR16: // 0xab:
+                if (rep == 0)
+                    ++clocks;
+                break;
+            case CMPS_STR8_STR8  : //  0xa6: // CMPS
+            case CMPS_STR16_STR16: //  0xa7:
+            case SCAS_STR8 : //  0xae: // SCAS
+            case SCAS_STR16: //  0xaf:
+                break;
+            case LODS_STR8 : //  0xac: // LODS
+            case LODS_STR16: //  0xad:
+                if (rep == 0)
+                    --clocks;
+                break;
+            default:
+                rep = 0;
+                break;
+        }
+    }
+
+    void tickDownPit(){
+        // Tick the Programmable Interval Timer.
+        while (clocks > 3) {
+            clocks -= 4;
+            pit.tick();
+        }
+    }
+
+    boolean pipelineExecute(){
         os = ds;
-        int rep = 0;
-        prefixes: while (true) {
+        boolean prefix = true;
+        while (prefix) {
             fetchInstructions();
 
             decode();
-            // Decode first byte.
-            //decode1();
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
-            //instructionLocator.incOffset(1);        //  ip = ip + 1 & 0xffff; // Increment IP.
-
-            //instructionLocator.incOffset(instruction.getLength());
 
             execute(instruction);
 
-            // Segment prefix check.
-            //switch (getMem(B)) {
-            switch (op) {
-                case PREFIX_ES: //  0x26: // ES: (segment override prefix)
-                    os = es;
-                    clocks += 2;
-                    break;
-                case PREFIX_CS: //  0x2e: // CS: (segment override prefix)
-                    os = instructionLocator.getBase();  //  cs;
-                    clocks += 2;
-                    break;
-                case PREFIX_SS: //  0x36: // SS: (segment override prefix)
-                    os = stack.getSs();     // ss;
-                    clocks += 2;
-                    break;
-                case PREFIX_DS: //  0x3e: // DS: (segment override prefix)
-                    os = ds;
-                    clocks += 2;
-                    break;
-                // Repeat prefix check.
-                case PREFIX_REPNEZ: //  0xf2: // REPNE/REPNZ
-                    rep = 2;
-                    clocks += 9;
-                    break;
-                case PREFIX_REPEZ: //  0xf3: // REP/REPE/REPZ
-                    rep = 1;
-                    clocks += 9;
-                    break;
-                default:
-                    //instructionLocator.incOffset(-1);           //  ip = ip - 1 & 0xffff;
-                    break prefixes;
+            prefix = checkSegmentPrefix(op);
+            if(!prefix) {
+                int rept = checkRepeatPrefix(op);
+                if(rept >0) {
+                    prefix = true;
+                    rep = rept;
+                }
             }
         }
 
-
-        // Only repeat string instructions. : string and I/O instructions (MOVS, CMPS, SCAS, LODS, STOS, INS, and OUTS).
-        switch (op) {
-        case MOVS_STR8_STR8  : //  0xa4: // MOVS
-        case MOVS_STR16_STR16: //  0xa5:
-        case STOS_STR8 : // 0xaa: // STOS
-        case STOS_STR16: // 0xab:
-            if (rep == 0)
-                ++clocks;
-            break;
-        case CMPS_STR8_STR8  : //  0xa6: // CMPS
-        case CMPS_STR16_STR16: //  0xa7:
-        case SCAS_STR8 : //  0xae: // SCAS
-        case SCAS_STR16: //  0xaf:
-            break;
-        case LODS_STR8 : //  0xac: // LODS
-        case LODS_STR16: //  0xad:
-            if (rep == 0)
-                --clocks;
-            break;
-        default:
-            rep = 0;
-            break;
-        }
+        repeatStringProcess(op);
 
         do {
+
             // Repeat prefix present.
             if (rep > 0) {
                 final int cx = getReg(W, CX);
-
                 // Reached EOS.
                 if (cx == 0)
                     break;
@@ -1343,10 +1382,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             }
 
             // Tick the Programmable Interval Timer.
-            while (clocks > 3) {
-                clocks -= 4;
-                pit.tick();
-            }
+            tickDownPit();
 
             ea = -1; // Reset stored EA.
             int dst, src, res;
@@ -4223,10 +4259,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 ////        if(instruction.op==)
 ////        decode2();
 //    }
-
-    private void execute(Instruction8086 instruction) {
-
-    }
 
     @Override
     protected MemoryLocator createInstructionLocator() {

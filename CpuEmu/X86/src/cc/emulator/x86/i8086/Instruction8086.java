@@ -31,9 +31,6 @@ public  class Instruction8086 extends IntelInstruction {
         }
 
         setLength(cnt);
-
-        //if(cnt>1)
-        //    decodeDisplacement(raw);
     }
 
     public void decodeByte0(int raw){
