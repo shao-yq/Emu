@@ -483,22 +483,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             instructionLocator.incOffset(1);    // ip = ip + 1 & 0xffff;
     }
 
-    private void execute(Instruction8086 instruction) {
-        op = instruction.op;
-        d  = instruction.d;
-        w  = instruction.w;
-
-        // Maybe meaningless for some instructions
-        mod = instruction.mod;
-        reg = instruction.reg;
-        rm = instruction.rm;
-
-//        op = queue[0];
-//        d  = op >>> 1 & 0b1;
-//        w  = op       & 0b1;
-
-    }
-
 
     /**
      * Gets the absolute address from a segment and an offset.
@@ -1310,7 +1294,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         }
         return rept;
     }
-    
+
     // Repeat string logic
     void repeatStringProcess(int op){
         // Only repeat string instructions. : string and I/O instructions (MOVS, CMPS, SCAS, LODS, STOS, INS, and OUTS).
@@ -1338,6 +1322,33 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         }
     }
 
+    private int preExecute(Instruction8086 instruction) {
+        op = instruction.op;
+        d  = instruction.d;
+        w  = instruction.w;
+
+        // Maybe meaningless for some instructions
+        mod = instruction.mod;
+        reg = instruction.reg;
+        rm = instruction.rm;
+
+//        op = queue[0];
+//        d  = op >>> 1 & 0b1;
+//        w  = op       & 0b1;
+
+        prefixMode = tryPrefix(op);
+        if(prefixMode == PREFIX_NONE){
+            // Not a prefix instruction, continue the execution
+            repeatStringProcess(op);
+        } else {
+            // Prefix mode further process
+        }
+
+        return prefixMode;
+
+    }
+
+
     void tickDownPit(){
         // Tick the Programmable Interval Timer.
         while (clocks > 3) {
@@ -1345,41 +1356,53 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             pit.tick();
         }
     }
+    int prefixMode = PREFIX_NONE;
+
+    public final static int PREFIX_NONE = 0;
+    public final static int PREFIX_SEGMENT = 1;
+    public final static int PREFIX_REPEAT = 2;
+
+    int tryPrefix(int op){
+        prefixMode = PREFIX_NONE;
+
+        if(checkSegmentPrefix(op)){
+            prefixMode = PREFIX_SEGMENT;
+        } else {
+            int rept = checkRepeatPrefix(op);
+            if(rept >0) {
+                rep = rept;
+                prefixMode = PREFIX_REPEAT;
+            }
+        }
+
+        return prefixMode;
+    }
+    boolean reachedEOS(){
+        // Repeat prefix present.
+        if (rep > 0) {
+            final int cx = getReg(W, CX);
+            // Reached EOS.
+            if (cx == 0)
+                return true;
+
+            // Decrement CX.
+            setReg(W, CX, cx - 1);
+        }
+        return false;
+    }
 
     boolean pipelineExecute(){
         os = ds;
         boolean prefix = true;
-        while (prefix) {
+        do {
             fetchInstructions();
-
             decode();
-
-            execute(instruction);
-
-            prefix = checkSegmentPrefix(op);
-            if(!prefix) {
-                int rept = checkRepeatPrefix(op);
-                if(rept >0) {
-                    prefix = true;
-                    rep = rept;
-                }
-            }
-        }
-
-        repeatStringProcess(op);
+            prefixMode = preExecute(instruction);
+        } while (prefixMode!=PREFIX_NONE);
 
         do {
-
-            // Repeat prefix present.
-            if (rep > 0) {
-                final int cx = getReg(W, CX);
-                // Reached EOS.
-                if (cx == 0)
-                    break;
-
-                // Decrement CX.
-                setReg(W, CX, cx - 1);
-            }
+            if(reachedEOS())
+                break;
 
             // Tick the Programmable Interval Timer.
             tickDownPit();
