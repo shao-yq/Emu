@@ -31,23 +31,6 @@ public class BIU8086 extends BusInterfaceUnitImpl {
     }
 
     @Override
-    public PointerIndexer[] createPointerIndexers() {
-        PointerIndexer pniRegisters[] = new PointerIndexer[4];
-        PointerIndexer sp = new PointerIndexer("SP",2);
-        PointerIndexer bp = new PointerIndexer("BP",2);
-        PointerIndexer si = new PointerIndexer("SI",2);
-        PointerIndexer di = new PointerIndexer("DI",2);
-
-        int i=0;
-        pniRegisters[i++]=sp;
-        pniRegisters[i++]=bp;
-        pniRegisters[i++]=si;
-        pniRegisters[i++]=di;
-
-        return pniRegisters;
-    }
-
-    @Override
     public AddressGenerator createAddressGenerator() {
         return new IntelAddressGenerator();
     }
@@ -67,15 +50,6 @@ public class BIU8086 extends BusInterfaceUnitImpl {
         return null;
     }
 
-    @Override
-    public PointerIndexer getPointerIndexer(String name) {
-        for(PointerIndexer register:getPointerIndexers()){
-            if(register.getName().equalsIgnoreCase(name)){
-                return register;
-            }
-        }
-        return null;
-    }
 
     @Override
     public void fetchInstructions(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator) {
@@ -91,12 +65,5 @@ public class BIU8086 extends BusInterfaceUnitImpl {
             //queue[i] = memoryAccessor.getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
         }
     }
-
-//    private void fetchInstructions() {
-//        //Calculate the Instruction's Address.
-//        getAddressGenerator().getAddr(ins)
-//        //Call Instruction Queue to fetch instruction at the Location.
-//
-//    }
 
 }

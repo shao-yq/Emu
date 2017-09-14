@@ -10,14 +10,12 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  */
 public interface BusInterfaceUnit {
     SegmentRegister[] getSegmentRegisters();
-    PointerIndexer[] getPointerIndexers();
     AddressGenerator getAddressGenerator();
     InstructionQueue getInstructionQueue();
     ProgramCounter getProgramCounter();
 
     SegmentRegister getSegmentRegister(String name);
 
-    PointerIndexer getPointerIndexer(String name);
 
     void reset();
 

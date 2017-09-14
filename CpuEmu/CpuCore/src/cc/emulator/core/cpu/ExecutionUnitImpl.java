@@ -1,10 +1,12 @@
 package cc.emulator.core.cpu;
 
 import cc.emulator.core.cpu.register.GeneralRegister;
+import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.StatusRegister;
 
 public abstract class ExecutionUnitImpl implements ExecutionUnit{
     ArithmeticLogicUnit alu;
+    protected PointerIndexer pointerIndexers[];
 
     protected GeneralRegister[] generalRegisters;
     StatusRegister statusRegister;
@@ -13,6 +15,12 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
         generalRegisters=createGeneralRegisters();
         statusRegister=createStatusRegister();
         alu=createALU(statusRegister);
+        pointerIndexers=createPointerIndexers();
+    }
+
+    @Override
+    public PointerIndexer[] getPointerIndexers() {
+        return pointerIndexers;
     }
 
     @Override
@@ -23,7 +31,11 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
             register.reset();
         }
         statusRegister.reset();
+        for(PointerIndexer pointerIndexer:pointerIndexers)
+            pointerIndexer.reset();
     }
+
+    public abstract PointerIndexer[] createPointerIndexers();
 
     protected abstract StatusRegister createStatusRegister();
 

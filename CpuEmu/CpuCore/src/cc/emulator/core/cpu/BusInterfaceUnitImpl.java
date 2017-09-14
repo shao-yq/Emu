@@ -1,12 +1,10 @@
 package cc.emulator.core.cpu;
 
 import cc.emulator.core.cpu.register.ProgramCounter;
-import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
 public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     protected SegmentRegister segmentRegisters[];
-    protected PointerIndexer pointerIndexers[];
     protected ProgramCounter programCounter;
     protected AddressGenerator addressGenerator;
     protected InstructionQueue instructionQueue;
@@ -19,7 +17,6 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     public BusInterfaceUnitImpl(){
         addressGenerator=createAddressGenerator();
         instructionQueue=createInstructionQueue();
-        pointerIndexers=createPointerIndexers();
         segmentRegisters=createSegmentRegisters();
         programCounter =createProgramCounter();
     }
@@ -27,7 +24,6 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     protected abstract ProgramCounter createProgramCounter();
 
     public abstract SegmentRegister[] createSegmentRegisters();
-    public abstract PointerIndexer[] createPointerIndexers();
     public abstract AddressGenerator createAddressGenerator();
     public abstract InstructionQueue createInstructionQueue();
 
@@ -36,10 +32,6 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
         return segmentRegisters;
     }
 
-    @Override
-    public PointerIndexer[] getPointerIndexers() {
-        return pointerIndexers;
-    }
 
     @Override
     public AddressGenerator getAddressGenerator() {
@@ -55,8 +47,6 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     public void reset() {
         addressGenerator.reset();
         instructionQueue.reset();
-        for(PointerIndexer pointerIndexer:pointerIndexers)
-            pointerIndexer.reset();
         for(SegmentRegister segmentRegister:segmentRegisters)
             segmentRegister.reset();
         programCounter.reset();

@@ -1,6 +1,7 @@
 package cc.emulator.core.cpu;
 
 import cc.emulator.core.cpu.register.GeneralRegister;
+import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.StatusRegister;
 
 /**
@@ -11,6 +12,9 @@ public interface ExecutionUnit {
     ArithmeticLogicUnit getALU();
     GeneralRegister[] getGeneralRegisters();
     StatusRegister getStatusRegister();
+
+    PointerIndexer[] getPointerIndexers();
+    PointerIndexer getPointerIndexer(String name);
 
     void reset();
 

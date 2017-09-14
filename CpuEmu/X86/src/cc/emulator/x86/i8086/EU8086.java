@@ -98,29 +98,48 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 
     @Override
     protected GeneralRegister[] createGeneralRegisters() {
-        GeneralRegister regs[] = new GeneralRegister[8];
+        GeneralRegister regs[] = new GeneralRegister[4];
         // Create general registers
         //ax = new DividableRegister8086("AX", 2);
         ax = new DividableRegister8086("AX",2);
         bx = new DividableRegister8086("BX",2);
         cx = new DividableRegister8086("CX",2);
         dx = new DividableRegister8086("DX",2);
-        sp = new PointerIndexer("SP",2);
-        bp = new PointerIndexer("BP",2);
-        si = new PointerIndexer("SI",2);
-        di = new PointerIndexer("DI",2);
 
         int i=0;
         regs[i++] = ax;
         regs[i++] = bx;
         regs[i++] = cx;
         regs[i++] = dx;
-        regs[i++] = sp;
-        regs[i++] = bp;
-        regs[i++] = si;
-        regs[i++] = di;
 
         return regs;
+    }
+
+    @Override
+    public PointerIndexer[] createPointerIndexers() {
+        PointerIndexer pniRegisters[] = new PointerIndexer[4];
+        sp = new PointerIndexer("SP",2);
+        bp = new PointerIndexer("BP",2);
+        si = new PointerIndexer("SI",2);
+        di = new PointerIndexer("DI",2);
+
+        int i=0;
+        pniRegisters[i++]=sp;
+        pniRegisters[i++]=bp;
+        pniRegisters[i++]=si;
+        pniRegisters[i++]=di;
+
+        return pniRegisters;
+    }
+
+    @Override
+    public PointerIndexer getPointerIndexer(String name) {
+        for(PointerIndexer register:getPointerIndexers()){
+            if(register.getName().equalsIgnoreCase(name)){
+                return register;
+            }
+        }
+        return null;
     }
 
     @Override

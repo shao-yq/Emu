@@ -105,7 +105,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     protected Stack createStack() {
-        return new IntelStack(busInterfaceUnit.getSegmentRegister("SS"),busInterfaceUnit.getPointerIndexer("SP"));
+        return new IntelStack(busInterfaceUnit.getSegmentRegister("SS"),executionUnit.getPointerIndexer("SP"));
     }
 
     @Override
