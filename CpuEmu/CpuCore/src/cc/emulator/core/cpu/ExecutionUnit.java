@@ -9,9 +9,10 @@ import cc.emulator.core.cpu.register.StatusRegister;
  */
 public interface ExecutionUnit {
     ArithmeticLogicUnit getALU();
-    InstructionDecoder getDecoder();
     GeneralRegister[] getGeneralRegisters();
     StatusRegister getStatusRegister();
 
     void reset();
+
+    void execute(Instruction instr);
 }

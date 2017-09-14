@@ -5,12 +5,11 @@ import cc.emulator.core.cpu.register.StatusRegister;
 
 public abstract class ExecutionUnitImpl implements ExecutionUnit{
     ArithmeticLogicUnit alu;
-    InstructionDecoder decoder;
+
     protected GeneralRegister[] generalRegisters;
     StatusRegister statusRegister;
 
     public ExecutionUnitImpl(){
-        decoder=createDecoder();
         generalRegisters=createGeneralRegisters();
         statusRegister=createStatusRegister();
         alu=createALU(statusRegister);
@@ -19,7 +18,7 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
     @Override
     public void reset(){
         alu.reset();
-        decoder.reset();
+
         for(GeneralRegister register:generalRegisters){
             register.reset();
         }
@@ -37,11 +36,6 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
     @Override
     public ArithmeticLogicUnit getALU() {
         return alu;
-    }
-
-    @Override
-    public InstructionDecoder getDecoder() {
-        return decoder;
     }
 
     @Override

@@ -52,7 +52,7 @@ public abstract class Cpu {
     protected AddressGenerator addressGenerator;
     protected MemoryAccessor memoryAccessor;
 
-    protected InstructionDecoder decoder;
+    protected InstructionUnit instructionUnit;
 
     public MemoryManager getMemoryManager() {
         return memoryManager;
@@ -77,13 +77,15 @@ public abstract class Cpu {
         stack.setAddressGenerator(addressGenerator);
         stack.setMemoryAccessor(memoryAccessor);
 
-        decoder = executionUnit.getDecoder();
+        instructionUnit =  createInstructionUnit();
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
     }
 
     protected abstract MemoryLocator createInstructionLocator();
+
+    protected abstract InstructionUnit createInstructionUnit();
 
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);

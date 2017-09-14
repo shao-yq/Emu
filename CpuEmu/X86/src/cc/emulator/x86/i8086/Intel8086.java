@@ -113,6 +113,12 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new IntelAddressGenerator();
     }
 
+    @Override
+    protected InstructionUnit createInstructionUnit() {
+        return new IU8086();
+    }
+
+
     /**
      * Entry point. For now it executes a little test program.
      */
@@ -387,7 +393,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     private int                rm;
 
     /** Store Effective Address to void recalculating it. */
-    private int                ea;
+    //private int                ea;
 
     /** Count clock cycles for a more accurate emulation. */
     private long               clocks;
@@ -453,7 +459,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     Instruction8086 instruction;
 
     private void decode() {
-        instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
+        //instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
+        instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
         instructionLocator.incOffset(instruction.getLength());
     }
 
@@ -466,7 +473,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        reg = queue[1] >>> 3 & 0b111;
 //        rm  = queue[1]       & 0b111;
 
-        instruction = (Instruction8086) decoder.decode2(busInterfaceUnit.getInstructionQueue());
+        //instruction = (Instruction8086) decoder.decode2(busInterfaceUnit.getInstructionQueue());
+        instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
         mod = instruction.mod;
         reg = instruction.reg;
         rm = instruction.rm;
@@ -853,7 +861,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             return getReg(w, rm);
         else
             // Memory mode
-            return getMem(w, ea > 0 ? ea : getEA(mod, rm));
+            return getMem(w, getEA(mod, rm));
     }
 
     /**
@@ -1189,7 +1197,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             setReg(w, rm, val);
         else
             // Memory mode
-            setMem(w, ea > 0 ? ea : getEA(mod, rm), val);
+            setMem(w,  getEA(mod, rm), val);
     }
 
     /**
@@ -1395,9 +1403,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         os = ds;
         boolean prefix = true;
         do {
+            // Bus Unit to fetch instruction from memory
             fetchInstructions();
+
+            // Instruction unit to decode the instruction from the raw instruction queue
             decode();
+
+            // Execution Unit to execute the instruction in the Decodec Instruction Queue
+
             prefixMode = preExecute(instruction);
+
         } while (prefixMode!=PREFIX_NONE);
 
         do {
@@ -1407,7 +1422,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             // Tick the Programmable Interval Timer.
             tickDownPit();
 
-            ea = -1; // Reset stored EA.
+            //ea = -1; // Reset stored EA.
             int dst, src, res;
             switch (op) {
             /*

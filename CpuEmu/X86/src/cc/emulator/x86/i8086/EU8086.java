@@ -2,6 +2,7 @@ package cc.emulator.x86.i8086;
 
 import cc.emulator.core.cpu.ArithmeticLogicUnit;
 import cc.emulator.core.cpu.ExecutionUnitImpl;
+import cc.emulator.core.cpu.Instruction;
 import cc.emulator.core.cpu.InstructionDecoder;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.x86.intel.ProgramStatusWord;
@@ -143,7 +144,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      *            the register field
      * @return the value
      */
-    private int getReg(final int w, final int reg) {
+    public int getReg(final int w, final int reg) {
         if (w == Intel8086InstructionSet.B)
             // Byte data
             switch (reg) {
@@ -199,7 +200,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * @param val
      *            the new value
      */
-    private void setReg(final int w, final int reg, final int val) {
+    public void setReg(final int w, final int reg, final int val) {
         if (w == B)
             // Byte data
             switch (reg) {
@@ -277,4 +278,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             }
     }
 
+    @Override
+    public void execute(Instruction instr) {
+
+    }
 }
