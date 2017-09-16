@@ -455,19 +455,21 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     }
 
 
-    // Current instruction decoded
-    Instruction8086 instruction;
 
-    private void decode() {
+    private Instruction8086 decode() {
+        // Current instruction decoded
+        Instruction8086 instruction;
+
         //instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
         instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
         instructionLocator.incOffset(instruction.getLength());
+        return instruction;
     }
 
     /**
      * Decodes the second byte of the instruction and increments IP accordingly.
      */
-    private void decode2() {
+    private void decode2(Instruction8086 instruction) {
 
 //        mod = queue[1] >>> 6 & 0b11;
 //        reg = queue[1] >>> 3 & 0b111;
@@ -660,17 +662,17 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      *            the register/memory field
      * @return the effective address
      */
-    private int getEA(final int mod, final int rm) {
-        int disp = 0;
+    private int getEA(final int mod, final int rm, int disp) {
+        //int disp = 0;
         //int queue[]=busInterfaceUnit.getInstructionQueue().getQueue();
         if (mod == 0b01) {
             // 8-bit displacement follows
             clocks += 4;
-            disp = instruction.disp;        //  queue[2];
+            //disp = instruction.disp;        //  queue[2];
         } else if (mod == 0b10) {
             // 16-bit displacement follows
             clocks += 4;
-            disp = instruction.disp;        // queue[3] << 8 | queue[2];
+            //disp = instruction.disp;        // queue[3] << 8 | queue[2];
         }
 
         int ea = 0;
@@ -703,7 +705,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             if (mod == 0b00) {
                 // Direct address
                 clocks += 6;
-                ea = instruction.disp;          //queue[3] << 8 | queue[2];
+                ea = disp;      //  instruction.disp;          //queue[3] << 8 | queue[2];
             } else {
                 // EA = (BP) + DISP
                 clocks += 5;
@@ -719,7 +721,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     }
 
     private int getEA(IntelInstruction instruction) {
-        return getEA(instruction.mod,instruction.rm);
+        return getEA(instruction.mod,instruction.rm, instruction.disp);
     }
 
     /**
@@ -855,13 +857,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      *            the register/memory field
      * @return the value
      */
-    private int getRM(final int w, final int mod, final int rm) {
+    private int getRM(final int w, final int mod, final int rm, int disp) {
         if (mod == 0b11)
             // Register-to-register mode
             return getReg(w, rm);
         else
             // Memory mode
-            return getMem(w, getEA(mod, rm));
+            return getMem(w, getEA(mod, rm, disp));
     }
 
     /**
@@ -1191,13 +1193,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @param val
      *            the new value
      */
-    private void setRM(final int w, final int mod, final int rm, final int val) {
+    private void setRM(final int w, final int mod, final int rm, final int disp, final int val) {
         if (mod == MOD_REGISTER_TO_REGISTER) // 0b11
             // Register-to-register mode
             setReg(w, rm, val);
         else
             // Memory mode
-            setMem(w,  getEA(mod, rm), val);
+            setMem(w,  getEA(mod, rm, disp), val);
     }
 
     /**
@@ -1340,6 +1342,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         reg = instruction.reg;
         rm = instruction.rm;
 
+        //disp = instruction.disp;
+
 //        op = queue[0];
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
@@ -1421,20 +1425,21 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         fetchInstructions();
 
         // Instruction unit to decode the instruction from the raw instruction queue
-        decode();
+        Instruction8086 instruction = decode();
 
         // Execution Unit to execute the instruction in the Decodec Instruction Queue
 
         //prefixMode = preExecute(instruction);
 
         //} while (prefixMode!=PREFIX_NONE);
-        return execute();
+        return execute(instruction);
     }
 
-    boolean execute(){
+    boolean execute(Instruction8086 instruction){
         //  Prefix processing
         prefixMode = preExecute(instruction);
-
+        int disp = instruction.disp;
+        
         do {
             if(reachedEOS())
                 break;
@@ -1471,10 +1476,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 //decode2();
                 if (d == 0b0) {
                     src = getReg(w, reg);
-                    setRM(w, mod, rm, src);
+                    setRM(w, mod, rm, disp, src);
                     //clocks += mod == 0b11 ? 2 : 9;
                 } else {
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                     setReg(w, reg, src);
                     //clocks +=  mod == 0b11 ? 2 : 8;
                 }
@@ -1488,7 +1493,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 switch (reg) {
                 case 0b000:
                     src = instruction.immediate;      //  getMem(w);
-                    setRM(w, mod, rm, src);
+                    setRM(w, mod, rm, disp, src);
                 }
                 clocks += instruction.getClocks();    //  mod == 0b11 ? 4 : 10;
                 break;
@@ -1539,10 +1544,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 //decode2();
                 if (d == 0b0) {
                     src = getSegReg(reg);
-                    setRM(W, mod, rm, src);
+                    setRM(W, mod, rm, disp, src);
                     //clocks += mod == 0b11 ? 2 : 9;
                 } else {
-                    src = getRM(W, mod, rm);
+                    src = getRM(W, mod, rm, disp);
                     setSegReg(reg, src);
                     //clocks += mod == 0b11 ? 2 : 8;
                 }
@@ -1631,9 +1636,9 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XCHG_REG16_REG16__MEM16: // 0x87: // XCHG REG16,REG16/MEM16
                 //decode2();
                 dst = getReg(w, reg);
-                src = getRM(w, mod, rm);
+                src = getRM(w, mod, rm, disp);
                 setReg(w, reg, src);
-                setRM(w, mod, rm, dst);
+                setRM(w, mod, rm, disp, dst);
                 clocks += instruction.getClocks();      //mod == 0b11 ? 3 : 17;
                 break;
 
@@ -1755,7 +1760,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case LEA_REG16_MEM16: //  0x8d: // LEA REG16,MEM16
                 //decode2();
-                src = getEA(mod, rm) - (os << 4);
+                src = getEA(mod, rm, disp) - (os << 4);
                 setReg(w, reg, src);
                 clocks += instruction.getClocks();      //  2;
                 break;
@@ -1776,7 +1781,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case LDS_REG16_MEM32: //  0xc5: // LDS REG16,MEM32
 //                decode2();
-                src = getEA(mod, rm);
+                src = getEA(mod, rm, disp);
                 setReg(w, reg, getMem(W, src));
                 ds = getMem(W, src + 2);
                 clocks += instruction.getClocks();      //  16;
@@ -1798,7 +1803,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
              */
             case LES_REG16_MEM32: //  0xc4: // LES REG16,MEM32
                 //decode2();
-                src = getEA(mod, rm);
+                src = getEA(mod, rm, disp);
                 setReg(w, reg, getMem(W, src));
                 es = getMem(W, src + 2);
                 clocks += instruction.getClocks();      //  16;
@@ -1964,15 +1969,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = alu.add(w, dst, src);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2007,15 +2012,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case ADC_REG16_REG16__MEM16: //  0x13: // ADC REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = alu.adc(w, dst, src);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2128,15 +2133,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = alu.sub(w, dst, src);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2172,15 +2177,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case SBB_REG16_REG16__MEM16: //   0x1b: // SBB REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = alu.sbb(w, dst, src);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      // mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2254,11 +2259,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case CMP_REG16_REG16__MEM16: //  0x3b: // CMP REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 alu.sub(w, dst, src);
                 clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
@@ -2540,16 +2545,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
                 // decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = dst & src;
                 logic(w, res);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2583,16 +2588,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = dst | src;
                 logic(w, res);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2627,16 +2632,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
                 //decode2();
                 if (d == 0b0) {
-                    dst = getRM(w, mod, rm);
+                    dst = getRM(w, mod, rm, disp);
                     src = getReg(w, reg);
                 } else {
                     dst = getReg(w, reg);
-                    src = getRM(w, mod, rm);
+                    src = getRM(w, mod, rm, disp);
                 }
                 res = dst ^ src;
                 logic(w, res);
                 if (d == 0b0) {
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
                 } else {
                     setReg(w, reg, res);
@@ -2668,7 +2673,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
             case TEST_REG8__MEM8_REG8   : //   0x84: // TEST REG8/MEM8,REG8
             case TEST_REG16__MEM16_REG16: //   0x85: // TEST REG16/MEM16,REG16
                 //decode2();
-                dst = getRM(w, mod, rm);
+                dst = getRM(w, mod, rm, disp);
                 src = getReg(w, reg);
                 logic(w, dst & src);
                 clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 9;
@@ -3870,7 +3875,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // CMP REG16/MEM16,IMMED8
 
                 // decode2();
-                dst = getRM(w, mod, rm);
+                dst = getRM(w, mod, rm, disp);
                 src = instruction.immediate;        //  getMem(B);
                 //if (op == 0x81)
                 //    src |= getMem(B) << 8;
@@ -3882,40 +3887,40 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 switch (reg) {
                 case MOD_ADD: //   0b000: // ADD
                     res = alu.add(w, dst, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 case MOD_OR : //   0b001: // OR
                     if (op == 0x80 || op == 0x81) {
                         res = dst | src;
                         logic(w, res);
-                        setRM(w, mod, rm, res);
+                        setRM(w, mod, rm, disp, res);
                         break;
                     }
                     break;
                 case MOD_ADC: //   0b010: // ADC
                     res = alu.adc(w, dst, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 case MOD_SBB: //   0b011: // SBB
                     res = alu.sbb(w, dst, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 case MOD_AND: //   0b100: // AND
                     if (op == 0x80 || op == 0x81) {
                         res = dst & src;
                         logic(w, res);
-                        setRM(w, mod, rm, res);
+                        setRM(w, mod, rm, disp, res);
                     }
                     break;
                 case MOD_SUB: //   0b101: // SUB
                     res = alu.sub(w, dst, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 case MOD_XOR: //   0b110: // XOR
                     if (op == 0x80 || op == 0x81) {
                         res = dst ^ src;
                         logic(w, res);
-                        setRM(w, mod, rm, res);
+                        setRM(w, mod, rm, disp, res);
                     }
                     break;
                 case MOD_CMP: //   0b111: // CMP
@@ -3935,7 +3940,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 switch (reg) {
                 case MOD_POP: //  0b000: // POP
                     src = pop();
-                    setRM(w, mod, rm, src);
+                    setRM(w, mod, rm, disp, src);
                     break;
                 }
                 clocks += mod == 0b11 ? 8 : 17;
@@ -3978,7 +3983,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // SAR REG16/MEM16,CL
             {
                 //decode2();
-                dst = getRM(w, mod, rm);
+                dst = getRM(w, mod, rm, disp);
                 src = op == 0xd0 || op == 0xd1 ? 1 : cl;
                 boolean tempCF;
                 switch (reg) {
@@ -4064,7 +4069,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                         flags.setFlags(w, dst);
                     break;
                 }
-                setRM(w, mod, rm, dst);
+                setRM(w, mod, rm, disp, dst);
                 if (op == 0xd0 || op == 0xd1)
                     clocks += mod == 0b11 ? 2 : 15;
                 else
@@ -4092,7 +4097,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // DIV REG16/MEM16
                 // IDIV REG16/MEM16
                 //decode2();
-                src = getRM(w, mod, rm);
+                src = getRM(w, mod, rm, disp);
                 switch (reg) {
                 case MOD_TEST: //   0b000: // TEST
                     dst = instruction.immediate;        //  getMem(w);
@@ -4100,13 +4105,13 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     clocks += mod == 0b11 ? 5 : 11;
                     break;
                 case MOD_NOT: //   0b010: // NOT
-                    setRM(w, mod, rm, ~src);
+                    setRM(w, mod, rm, disp, ~src);
                     clocks += mod == 0b11 ? 3 : 16;
                     break;
                 case MOD_NEG: //   0b011: // NEG
                     dst = alu.sub(w, 0, src);
                     flags.setFlag(CF, dst > 0);
-                    setRM(w, mod, rm, dst);
+                    setRM(w, mod, rm, disp, dst);
                     clocks += mod == 0b11 ? 3 : 16;
                     break;
                 case MOD_MUL: //   0b100: // MUL
@@ -4238,15 +4243,15 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // DEC REG8/MEM8
 
                 //decode2();
-                src = getRM(w, mod, rm);
+                src = getRM(w, mod, rm, disp);
                 switch (reg) {
                 case INC_REG8__MEM8: //   0b000: // INC REG8/MEM8
                     res = alu.inc(w, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 case DEC_REG8__MEM8: //   0b001: // DEC REG8/MEM8
                     res = alu.dec(w, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     break;
                 }
                 clocks += mod == 0b11 ? 3 : 15;
@@ -4265,16 +4270,16 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 // PUSH REG16/MEM16
 
                 //decode2();
-                src = getRM(w, mod, rm);
+                src = getRM(w, mod, rm, disp);
                 switch (reg) {
                 case INC_REG16__MEM16: //   0b000: // INC REG16/MEM16
                     res = alu.inc(w, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += mod == 0b11 ? 3 : 15;
                     break;
                 case DEC_REG16__MEM16: //   0b001: // DEC REG16/MEM16
                     res = alu.dec(w, src);
-                    setRM(w, mod, rm, res);
+                    setRM(w, mod, rm, disp, res);
                     clocks += mod == 0b11 ? 3 : 15;
                     break;
                 case CALL_REG16__MEM16_INTRA: //   0b010: // CALL REG16/MEM16(intra)
@@ -4286,7 +4291,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     push(instructionLocator.getBase());             //  push(cs);
                     push(instructionLocator.getOffset());           //  push(ip);
 
-                    dst = getEA(mod, rm);
+                    dst = getEA(mod, rm, disp);
                     instructionLocator.setOffset(getMem(W, dst));           //  ip = getMem(W, dst);
                     instructionLocator.setBase(getMem(W, dst + 2));   //  cs = getMem(W, dst + 2);
                     clocks += 37;
@@ -4296,7 +4301,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                     clocks += mod == 0b11 ? 11 : 18;
                     break;
                 case JMP_MEM16_INTERSEGMENT: //  0b101: // JMP MEM16(intersegment)
-                    dst = getEA(mod, rm);
+                    dst = getEA(mod, rm, disp);
                     instructionLocator.setOffset(getMem(W, dst));           //  ip = getMem(W, dst);
                     instructionLocator.setBase(getMem(W, dst + 2));   //  cs = getMem(W, dst + 2);
                     clocks += 24;
