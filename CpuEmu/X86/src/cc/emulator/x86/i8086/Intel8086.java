@@ -8,14 +8,10 @@ import cc.emulator.core.cpu.register.SegmentRegister;
 import cc.emulator.x86.intel.IntelAddressGenerator;
 import cc.emulator.x86.intel.IntelDataBus;
 import cc.emulator.x86.intel.IntelMemoryAccessor;
-import cc.emulator.x86.intel.IntelStack;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import static cc.emulator.x86.intel.ProgramStatusWord.IF;
-import static cc.emulator.x86.intel.ProgramStatusWord.TF;
 
 /**
  * @author Shao Yongqing
@@ -32,11 +28,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new IntelDataBus();
     }
 
-//    @Override
-//    protected Stack createStack() {
-//        return new IntelStack(busInterfaceUnit.getSegmentRegister("SS"),executionUnit.getPointerIndexer("SP"));
-//    }
-
     @Override
     protected AddressGenerator createAddressGenerator() {
         return new IntelAddressGenerator();
@@ -46,7 +37,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     protected InstructionUnit createInstructionUnit() {
         return new IU8086();
     }
-
 
     /**
      * Entry point. For now it executes a little test program.
@@ -106,8 +96,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
                 instructionUnit,
                 busInterfaceUnit,
                 memoryAccessor
-                //stack,
-                //peripherals
                 );
     }
 
@@ -135,21 +123,10 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
      * @return true if instructions remain, false otherwise
      */
     public boolean tick() {
+        // Single-step mode.
         executionUnit.trySingleStepMode();
-
+        // External maskable interrupts.
         executionUnit.tryExternalMaskabkeInterrupts(pic);
-
-//        // Single-step mode.
-//        if (getFlag(TF)) {
-//            callInt(1);
-//            clocks += 50;
-//        }
-//
-//        // External maskable interrupts.
-//        if (getFlag(IF) && pic.hasInt()) {
-//            callInt(pic.nextInt());
-//            clocks += 61;
-//        }
 
         return pipelineExecute();
     }
@@ -157,9 +134,8 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     public Intel8086(MemoryManager mm){
         super(mm);
     }
+
     boolean pipelineExecute() {
-        //boolean prefix = true;
-        //do {
         // Bus Unit to fetch instruction from memory
         fetchInstructions();
 
@@ -167,10 +143,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         Instruction8086 instruction = decode();
 
         // Execution Unit to execute the instruction in the Decodec Instruction Queue
-
-        //prefixMode = preExecute(instruction);
-
-        //} while (prefixMode!=PREFIX_NONE);
         return executionUnit.execute(instruction);
     }
     void fetchInstructions(){

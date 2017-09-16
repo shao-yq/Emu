@@ -1,7 +1,6 @@
 package cc.emulator.x86.i8086;
 
 import cc.emulator.core.ProgrammableInterruptController;
-import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.register.*;
 import cc.emulator.x86.i8086.instruction.CallFarProc;
@@ -9,12 +8,6 @@ import cc.emulator.x86.i8086.instruction.CallNearProc;
 import cc.emulator.x86.i8086.instruction.Jump;
 import cc.emulator.x86.intel.*;
 import cc.emulator.core.Peripheral;
-import cc.emulator.core.MemoryManager;
-import cc.emulator.core.cpu.bus.DataBus;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static cc.emulator.x86.intel.ProgramStatusWord.*;
 
@@ -4336,13 +4329,5 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         } while (rep > 0);
         return true;
     }
-
-//    private void decode() {
-//        decode1();
-////        if(instruction.op==)
-////        decode2();
-//    }
-
-
 
 }
