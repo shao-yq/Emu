@@ -13,8 +13,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  *
  */
 public class ControlOp extends Instruction8086 {
-    public ControlOp(int[] raw) {
-        super(raw);
+    public ControlOp(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

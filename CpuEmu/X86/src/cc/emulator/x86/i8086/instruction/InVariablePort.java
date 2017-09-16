@@ -18,9 +18,9 @@ import cc.emulator.x86.i8086.Instruction8086;
  * the value in DX) to ports numbered from 0 through 65,535.
  */
 public class InVariablePort extends Instruction8086 {
-    public InVariablePort(int[] raw) {
-        super(raw);
-        immediate = raw[1];
+    public InVariablePort(int[] raw, int startIndex) {
+        super(raw, startIndex);
+        immediate = raw[1+startIndex];
         incLength(1);
     }
 

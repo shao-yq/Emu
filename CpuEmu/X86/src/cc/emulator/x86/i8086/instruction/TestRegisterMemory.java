@@ -16,8 +16,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * there are any corresponding 1-bits in both operands.
  */
 public class TestRegisterMemory extends Instruction8086 {
-    public TestRegisterMemory(int[] raw) {
-        super(raw, 2);
+    public TestRegisterMemory(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
 

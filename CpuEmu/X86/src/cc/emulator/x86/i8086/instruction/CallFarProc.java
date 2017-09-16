@@ -57,11 +57,11 @@ import cc.emulator.x86.i8086.Instruction8086;
  */
 public class CallFarProc extends Instruction8086{
 
-    public CallFarProc(int[] raw) {
-        super(raw);
+    public CallFarProc(int[] raw, int startIndex) {
+        super(raw, startIndex);
         // far address & segment
-        disp = raw[1]|(raw[2]<<8);
-        immediate = raw[3]|(raw[4]<<8);
+        disp = raw[1+startIndex]|(raw[2+startIndex]<<8);
+        immediate = raw[3+startIndex]|(raw[4+startIndex]<<8);
         incLength(4);
     }
 

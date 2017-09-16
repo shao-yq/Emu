@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class PopSegmentRegister extends Instruction8086 {
-    public PopSegmentRegister(int[] raw) {
-        super(raw);
+    public PopSegmentRegister(int[] raw, int startIndex) {
+        super(raw, startIndex);
         reg = op >>> 3 & 0b111;
     }
     public static boolean hasOpcode(int raw) {

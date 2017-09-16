@@ -7,12 +7,9 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/9/2.
  */
 public class MOV extends Instruction8086 {
-    public MOV(int[] raw) {
-        super(raw);
-    }
 
-    public MOV(int[] raw, int cnt) {
-        super(raw, cnt);
+    public MOV(int[] raw, int cnt,int startIndex) {
+        super(raw, cnt, startIndex);
     }
     public void execute(){
 

@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class XchgRegWithAcc extends Instruction8086 {
-    public XchgRegWithAcc(int[] raw) {
-        super(raw);
+    public XchgRegWithAcc(int[] raw, int startIndex) {
+        super(raw, startIndex);
         reg = op & 0b111;
     }
 

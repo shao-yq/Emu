@@ -7,12 +7,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/9/1.
  */
 public class PushRegisterMemory extends Instruction8086 {
-    public PushRegisterMemory(int[] raw) {
-        super(raw,2);
+    public PushRegisterMemory(int[] raw, int startIndex) {
+        super(raw,2, startIndex);
         decodeDisplacement(raw);
     }
-    public static boolean hasOpcode(int raw[]) {
-        switch (raw[0]) {
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        switch (raw[startIndex]) {
             case EXT_0XFF:  // 0xff:
                 // INC REG16/MEM16
                 // DEC REG16/MEM16
@@ -21,7 +21,7 @@ public class PushRegisterMemory extends Instruction8086 {
                 // JMP REG16/MEM16 (intra)
                 // JMP MEM16 (intersegment)
                 // PUSH REG16/MEM16
-                int reg = (raw[1]>>3) & 0b111;
+                int reg = (raw[1+startIndex]>>3) & 0b111;
                 switch (reg) {
                     case PUSH_MEM16: //   0b110: // PUSH MEM16
                         return true;

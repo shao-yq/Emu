@@ -21,8 +21,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * when the processor reads it from memory.
  */
 public class Escape extends Instruction8086{
-    public Escape(int[] raw) {
-        super(raw,2);
+    public Escape(int[] raw, int startIndex) {
+        super(raw,2, startIndex);
         decodeDisplacement(raw);
     }
 

@@ -7,8 +7,8 @@ import cc.emulator.core.cpu.Instruction;
  * Date: 2017/9/1.
  */
 public class OrRegisterMemoryImmediate extends OrRegisterMemory {
-    public OrRegisterMemoryImmediate(int[] raw) {
-        super(raw);
+    public OrRegisterMemoryImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
         decodeDataExt(raw);
     }
 }

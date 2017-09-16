@@ -7,8 +7,8 @@ import cc.emulator.core.cpu.Instruction;
  * Date: 2017/9/1.
  */
 public class CmpRegisterMemoryImmediate extends CmpRegisterMemory {
-    public CmpRegisterMemoryImmediate(int[] raw) {
-        super(raw);
+    public CmpRegisterMemoryImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
         decodeDataExt(raw);
     }
 }

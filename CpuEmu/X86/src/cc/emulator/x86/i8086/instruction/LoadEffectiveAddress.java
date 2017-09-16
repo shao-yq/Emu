@@ -19,8 +19,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * XLAT instruction).
  */
 public class LoadEffectiveAddress extends Instruction8086 {
-    public LoadEffectiveAddress(int[] raw) {
-        super(raw, 2);
+    public LoadEffectiveAddress(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
 

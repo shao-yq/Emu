@@ -19,11 +19,11 @@ import cc.emulator.x86.i8086.Intel8086;
  * on the flags is covered in the description of each instruction.
  */
 public class Interrupt extends Instruction8086 {
-    public Interrupt(int[] raw) {
-        super(raw);
+    public Interrupt(int[] raw, int startIndex) {
+        super(raw, startIndex);
         if(op == INT_IMMED8){
             // DATA-8
-            immediate = raw[1];
+            immediate = raw[1+startIndex];
             incLength(1);
         }
     }

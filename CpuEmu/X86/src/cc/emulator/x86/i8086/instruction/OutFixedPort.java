@@ -17,8 +17,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * value in DX) to ports numbered from 0 through 65,535.
  */
 public class OutFixedPort extends Instruction8086 {
-    public OutFixedPort(int[] raw) {
-        super(raw);
+    public OutFixedPort(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

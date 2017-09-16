@@ -16,8 +16,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * activated by hardware or software.
  */
 public class InterruptReturn extends Instruction8086{
-    public InterruptReturn(int[] raw) {
-        super(raw);
+    public InterruptReturn(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
     public static boolean hasOpcode(int raw) {
         switch (raw) {

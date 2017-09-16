@@ -7,8 +7,8 @@ import cc.emulator.core.cpu.Instruction;
  * Date: 2017/9/1.
  */
 public class AndRegisterMemoryImmediate extends AndRegisterMemory {
-    public AndRegisterMemoryImmediate(int[] raw) {
-        super(raw);
+    public AndRegisterMemoryImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
         decodeDataExt(raw);
     }
 }

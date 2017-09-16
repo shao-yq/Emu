@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/9/1.
  */
 public class ShiftRotate extends Instruction8086{
-    public ShiftRotate(int[] raw) {
-        super(raw,2);
+    public ShiftRotate(int[] raw, int startIndex) {
+        super(raw,2, startIndex);
         decodeDisplacement(raw);
     }
 

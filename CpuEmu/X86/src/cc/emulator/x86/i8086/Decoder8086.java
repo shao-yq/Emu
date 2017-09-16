@@ -12,170 +12,200 @@ import cc.emulator.core.cpu.Instruction;
  * Date: 2017/8/9.
  */
 public class Decoder8086 extends IntelDecoder {
-    @Override
-    protected IntelInstruction newInstruction(int raw[]) {
-        IntelInstruction intelInstruction=null;
-        if(MovImmediateToRegister.hasOpcode(raw[0])){
-            intelInstruction =  new MovImmediateToRegister(raw);
-        }
-        return  intelInstruction;
-    }
+//    @Override
+//    protected IntelInstruction newInstruction(int raw[]) {
+//        IntelInstruction intelInstruction=null;
+//        int startIndex = 0;
+//        if(MovImmediateToRegister.hasOpcode(raw[startIndex])){
+//            intelInstruction =  new MovImmediateToRegister(raw, startIndex);
+//        }
+//        return  intelInstruction;
+//    }
 
+    int checkPrefix(int[] queue){
+        int opcodeIndex=0;
+        boolean prefix = false;
+        do {
+            switch (queue[opcodeIndex]){
+                //
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_ES: //  0x26: // ES: (segment override prefix)
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_CS: //  0x2e: // CS: (segment override prefix)
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_SS: //  0x36: // SS: (segment override prefix)
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_DS: //  0x3e: // DS: (segment override prefix)
+
+                //
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_REPNEZ: //  0xf2: // REPNE/REPNZ
+                case cc.emulator.x86.i8086.Intel8086InstructionSet.PREFIX_REPEZ: //  0xf3: // REP/REPE/REPZ
+                    prefix = true;
+                    opcodeIndex++;
+                    break;
+                default:
+                    prefix = false;
+            }
+
+        } while(opcodeIndex<4 && prefix==true);
+
+        return opcodeIndex;
+    }
 
     public Instruction decode(int[] queue) {
         instr = null;
-        if(MovImmediateToRegister.hasOpcode(queue[0])){
-            instr =  new MovImmediateToRegister(queue);
-        } else if(MovMemoryToFromAccumulator.hasOpcode(queue[0])){
-            instr = new MovMemoryToFromAccumulator(queue);
-        } else if(MovRegMemFromToReg.hasOpcode(queue[0])){
-            instr = new MovRegMemFromToReg(queue);
-        } else if(MovImmediateToRegMem.hasOpcode(queue[0])){
-            instr = new MovImmediateToRegMem(queue);
-        }  else if(MovRegMemFromToSegReg.hasOpcode(queue[0])){
-            instr = new MovRegMemFromToSegReg(queue);
-        }  else if(PushGeneralRegister.hasOpcode(queue[0])){
-            instr = new PushGeneralRegister(queue);
-        }  else if(PushSegmentRegister.hasOpcode(queue[0])){
-            instr = new PushSegmentRegister(queue);
-        }  else if(PopGeneralRegister.hasOpcode(queue[0])){
-            instr = new PopGeneralRegister(queue);
-        }  else if(PopSegmentRegister.hasOpcode(queue[0])){
-            instr = new PopSegmentRegister(queue);
-        }  else if(XchgRegMemWithReg.hasOpcode(queue[0])){
-            instr = new XchgRegMemWithReg(queue);
-        }  else if(XchgRegWithAcc.hasOpcode(queue[0])){
-            instr = new XchgRegWithAcc(queue);
-        }else if(TranslateSourceTable.hasOpcode(queue[0])){
-            instr = new TranslateSourceTable(queue);
-        }else if(InVariablePort.hasOpcode(queue[0])){
-            instr = new InVariablePort(queue);
-        }else if(InFixedPort.hasOpcode(queue[0])){
-            instr = new InFixedPort(queue);
-        }else if(OutVariablePort.hasOpcode(queue[0])){
-            instr = new OutVariablePort(queue);
-        }else if(LoadEffectiveAddress.hasOpcode(queue[0])){
-            instr = new LoadEffectiveAddress(queue);
-        }else if(LoadPointerUsingDSES.hasOpcode(queue[0])){
-            instr = new LoadPointerUsingDSES(queue);
-        }else if(LoadStoreAHFromFlag.hasOpcode(queue[0])){
-            instr = new LoadStoreAHFromFlag(queue);
-        }else if(PushPopFlags.hasOpcode(queue[0])){
-            instr = new PushPopFlags(queue);
-        }else if(AddRegisterMemory.hasOpcode(queue[0])){
-            instr = new AddRegisterMemory(queue);
-        }else if(AddAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new AddAccumulatorImmediate(queue);
-        }else if(AdcRegisterMemory.hasOpcode(queue[0])){
-            instr = new AdcRegisterMemory(queue);
-        }else if(AdcAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new AdcAccumulatorImmediate(queue);
-        }else if(AndRegisterMemory.hasOpcode(queue[0])){
-            instr = new AndRegisterMemory(queue);
-        }else if(AndAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new AndAccumulatorImmediate(queue);
-        }else if(OrRegisterMemory.hasOpcode(queue[0])){
-            instr = new OrRegisterMemory(queue);
-        }else if(OrAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new OrAccumulatorImmediate(queue);
-        }else if(XorRegisterMemory.hasOpcode(queue[0])){
-            instr = new XorRegisterMemory(queue);
-        }else if(XorAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new XorAccumulatorImmediate(queue);
-        }else if(IncRegister.hasOpcode(queue[0])){
-            instr = new IncRegister(queue);
-        }else if(DecRegister.hasOpcode(queue[0])){
-            instr = new DecRegister(queue);
-        }else if(AsciiAdjustForAddition.hasOpcode(queue[0])){
-            instr = new AsciiAdjustForAddition(queue);
-        }else if(DecimalAdjustForAddition.hasOpcode(queue[0])){
-            instr = new DecimalAdjustForAddition(queue);
-        }else if(AsciiAdjustForSubstraction.hasOpcode(queue[0])){
-            instr = new AsciiAdjustForSubstraction(queue);
-        }else if(DecimalAdjustForSubstraction.hasOpcode(queue[0])){
-            instr = new DecimalAdjustForSubstraction(queue);
-        }else if(AsciiAdjustForMultiply.hasOpcode(queue[0])){
-            instr = new AsciiAdjustForMultiply(queue);
-        }else if(AsciiAdjustForDivision.hasOpcode(queue[0])){
-            instr = new AsciiAdjustForDivision(queue);
-        }else if(SubRegisterMemory.hasOpcode(queue[0])){
-            instr = new SubRegisterMemory(queue);
-        }else if(SubAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new SubAccumulatorImmediate(queue);
-        }else if(SbbRegisterMemory.hasOpcode(queue[0])){
-            instr = new SbbRegisterMemory(queue);
-        }else if(SbbAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new SbbAccumulatorImmediate(queue);
-        }else if(CmpRegisterMemory.hasOpcode(queue[0])){
-            instr = new CmpRegisterMemory(queue);
-        }else if(CmpAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new CmpAccumulatorImmediate(queue);
-        }else if(TestRegisterMemory.hasOpcode(queue[0])){
-            instr = new TestRegisterMemory(queue);
-        }else if(TestAccumulatorImmediate.hasOpcode(queue[0])){
-            instr = new TestAccumulatorImmediate(queue);
-        }else if(ConvertByteWord.hasOpcode(queue[0])){
-            instr = new ConvertByteWord(queue);
-        }else if(MoveString.hasOpcode(queue[0])){
-            instr = new MoveString(queue);
-        }else if(CompareString.hasOpcode(queue[0])){
-            instr = new CompareString(queue);
-        }else if(ScanString.hasOpcode(queue[0])){
-            instr = new ScanString(queue);
-        }else if(LoadString.hasOpcode(queue[0])){
-            instr = new LoadString(queue);
-        }else if(StoreString.hasOpcode(queue[0])){
-            instr = new StoreString(queue);
-        }else if(CallNearProc.hasOpcode(queue[0])){
-            instr = new CallNearProc(queue);
-        }else if(CallFarProc.hasOpcode(queue[0])){
-            instr = new CallFarProc(queue);
-        }else if(ReturnNoImmed.hasOpcode(queue[0])){
-            instr = new ReturnNoImmed(queue);
-        }else if(ReturnImmediate.hasOpcode(queue[0])){
-            instr = new ReturnImmediate(queue);
-        }else if(Jump.hasOpcode(queue[0])){
-            instr = new Jump(queue);
-        }else if(JumpIf.hasOpcode(queue[0])){
-            instr = new JumpIf(queue);
-        }else if(Loop.hasOpcode(queue[0])){
-            instr = new Loop(queue);
-        }else if(Interrupt.hasOpcode(queue[0])){
-            instr = new Interrupt(queue);
-        }else if(InterruptReturn.hasOpcode(queue[0])){
-            instr = new InterruptReturn(queue);
-        }else if(Escape.hasOpcode(queue[0])){
-            instr = new Escape(queue);
-        }else if(FlagOp.hasOpcode(queue[0])){
-            instr = new FlagOp(queue);
-        }else if(ControlOp.hasOpcode(queue[0])){
-            instr = new ControlOp(queue);
-        }else if(ShiftRotate.hasOpcode(queue[0])){
-            instr = new ShiftRotate(queue);
-        }else if(MulRegisterMemory.hasOpcode(queue)){
-            instr = new MulRegisterMemory(queue);
-        }else if(DivRegisterMemory.hasOpcode(queue)){
-            instr = new DivRegisterMemory(queue);
-        }else if(NotRegisterMemory.hasOpcode(queue)){
-            instr = new NotRegisterMemory(queue);
-        }else if(NegRegisterMemory.hasOpcode(queue)){
-            instr = new NegRegisterMemory(queue);
-        }else if(TestRegisterMemoryImmediate.hasOpcode(queue)){
-            instr = new TestRegisterMemoryImmediate(queue);
-        }else if(IncRegisterMemory.hasOpcode(queue)){
-            instr = new IncRegisterMemory(queue);
-        }else if(DecRegisterMemory.hasOpcode(queue)){
-            instr = new DecRegisterMemory(queue);
-        }else if(CallIndirect.hasOpcode(queue)){
-            instr = new CallIndirect(queue);
-        }else if(JmpIndirect.hasOpcode(queue)){
-            instr = new JmpIndirect(queue);
-        }else if(PushRegisterMemory.hasOpcode(queue)){
-            instr = new PushRegisterMemory(queue);
-        }else if(PopRegisterMemory.hasOpcode(queue)){
-            instr = new PopRegisterMemory(queue);
-        }else if(ExtDecoder.hasOpcode(queue[0])){
-            instr = ExtDecoder.decode(queue);
+        // 1. Check Prifx(es)
+        int startIndex= checkPrefix(queue);
+
+        // 2. Decode opcode
+        if(MovImmediateToRegister.hasOpcode(queue[startIndex])){
+            instr =  new MovImmediateToRegister(queue, startIndex);
+        } else if(MovMemoryToFromAccumulator.hasOpcode(queue[startIndex])){
+            instr = new MovMemoryToFromAccumulator(queue, startIndex);
+        } else if(MovRegMemFromToReg.hasOpcode(queue[startIndex])){
+            instr = new MovRegMemFromToReg(queue, startIndex);
+        } else if(MovImmediateToRegMem.hasOpcode(queue[startIndex])){
+            instr = new MovImmediateToRegMem(queue, startIndex);
+        }  else if(MovRegMemFromToSegReg.hasOpcode(queue[startIndex])){
+            instr = new MovRegMemFromToSegReg(queue, startIndex);
+        }  else if(PushGeneralRegister.hasOpcode(queue[startIndex])){
+            instr = new PushGeneralRegister(queue, startIndex);
+        }  else if(PushSegmentRegister.hasOpcode(queue[startIndex])){
+            instr = new PushSegmentRegister(queue, startIndex);
+        }  else if(PopGeneralRegister.hasOpcode(queue[startIndex])){
+            instr = new PopGeneralRegister(queue, startIndex);
+        }  else if(PopSegmentRegister.hasOpcode(queue[startIndex])){
+            instr = new PopSegmentRegister(queue, startIndex);
+        }  else if(XchgRegMemWithReg.hasOpcode(queue[startIndex])){
+            instr = new XchgRegMemWithReg(queue, startIndex);
+        }  else if(XchgRegWithAcc.hasOpcode(queue[startIndex])){
+            instr = new XchgRegWithAcc(queue, startIndex);
+        }else if(TranslateSourceTable.hasOpcode(queue[startIndex])){
+            instr = new TranslateSourceTable(queue, startIndex);
+        }else if(InVariablePort.hasOpcode(queue[startIndex])){
+            instr = new InVariablePort(queue, startIndex);
+        }else if(InFixedPort.hasOpcode(queue[startIndex])){
+            instr = new InFixedPort(queue, startIndex);
+        }else if(OutVariablePort.hasOpcode(queue[startIndex])){
+            instr = new OutVariablePort(queue, startIndex);
+        }else if(LoadEffectiveAddress.hasOpcode(queue[startIndex])){
+            instr = new LoadEffectiveAddress(queue, startIndex);
+        }else if(LoadPointerUsingDSES.hasOpcode(queue[startIndex])){
+            instr = new LoadPointerUsingDSES(queue, startIndex);
+        }else if(LoadStoreAHFromFlag.hasOpcode(queue[startIndex])){
+            instr = new LoadStoreAHFromFlag(queue, startIndex);
+        }else if(PushPopFlags.hasOpcode(queue[startIndex])){
+            instr = new PushPopFlags(queue, startIndex);
+        }else if(AddRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new AddRegisterMemory(queue, startIndex);
+        }else if(AddAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new AddAccumulatorImmediate(queue, startIndex);
+        }else if(AdcRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new AdcRegisterMemory(queue, startIndex);
+        }else if(AdcAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new AdcAccumulatorImmediate(queue, startIndex);
+        }else if(AndRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new AndRegisterMemory(queue, startIndex);
+        }else if(AndAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new AndAccumulatorImmediate(queue, startIndex);
+        }else if(OrRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new OrRegisterMemory(queue, startIndex);
+        }else if(OrAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new OrAccumulatorImmediate(queue, startIndex);
+        }else if(XorRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new XorRegisterMemory(queue, startIndex);
+        }else if(XorAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new XorAccumulatorImmediate(queue, startIndex);
+        }else if(IncRegister.hasOpcode(queue[startIndex])){
+            instr = new IncRegister(queue, startIndex);
+        }else if(DecRegister.hasOpcode(queue[startIndex])){
+            instr = new DecRegister(queue, startIndex);
+        }else if(AsciiAdjustForAddition.hasOpcode(queue[startIndex])){
+            instr = new AsciiAdjustForAddition(queue, startIndex);
+        }else if(DecimalAdjustForAddition.hasOpcode(queue[startIndex])){
+            instr = new DecimalAdjustForAddition(queue, startIndex);
+        }else if(AsciiAdjustForSubstraction.hasOpcode(queue[startIndex])){
+            instr = new AsciiAdjustForSubstraction(queue, startIndex);
+        }else if(DecimalAdjustForSubstraction.hasOpcode(queue[startIndex])){
+            instr = new DecimalAdjustForSubstraction(queue, startIndex);
+        }else if(AsciiAdjustForMultiply.hasOpcode(queue[startIndex])){
+            instr = new AsciiAdjustForMultiply(queue, startIndex);
+        }else if(AsciiAdjustForDivision.hasOpcode(queue[startIndex])){
+            instr = new AsciiAdjustForDivision(queue, startIndex);
+        }else if(SubRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new SubRegisterMemory(queue, startIndex);
+        }else if(SubAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new SubAccumulatorImmediate(queue, startIndex);
+        }else if(SbbRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new SbbRegisterMemory(queue, startIndex);
+        }else if(SbbAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new SbbAccumulatorImmediate(queue, startIndex);
+        }else if(CmpRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new CmpRegisterMemory(queue, startIndex);
+        }else if(CmpAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new CmpAccumulatorImmediate(queue, startIndex);
+        }else if(TestRegisterMemory.hasOpcode(queue[startIndex])){
+            instr = new TestRegisterMemory(queue, startIndex);
+        }else if(TestAccumulatorImmediate.hasOpcode(queue[startIndex])){
+            instr = new TestAccumulatorImmediate(queue, startIndex);
+        }else if(ConvertByteWord.hasOpcode(queue[startIndex])){
+            instr = new ConvertByteWord(queue, startIndex);
+        }else if(MoveString.hasOpcode(queue[startIndex])){
+            instr = new MoveString(queue, startIndex);
+        }else if(CompareString.hasOpcode(queue[startIndex])){
+            instr = new CompareString(queue, startIndex);
+        }else if(ScanString.hasOpcode(queue[startIndex])){
+            instr = new ScanString(queue, startIndex);
+        }else if(LoadString.hasOpcode(queue[startIndex])){
+            instr = new LoadString(queue, startIndex);
+        }else if(StoreString.hasOpcode(queue[startIndex])){
+            instr = new StoreString(queue, startIndex);
+        }else if(CallNearProc.hasOpcode(queue[startIndex])){
+            instr = new CallNearProc(queue, startIndex);
+        }else if(CallFarProc.hasOpcode(queue[startIndex])){
+            instr = new CallFarProc(queue, startIndex);
+        }else if(ReturnNoImmed.hasOpcode(queue[startIndex])){
+            instr = new ReturnNoImmed(queue, startIndex);
+        }else if(ReturnImmediate.hasOpcode(queue[startIndex])){
+            instr = new ReturnImmediate(queue, startIndex);
+        }else if(Jump.hasOpcode(queue[startIndex])){
+            instr = new Jump(queue, startIndex);
+        }else if(JumpIf.hasOpcode(queue[startIndex])){
+            instr = new JumpIf(queue, startIndex);
+        }else if(Loop.hasOpcode(queue[startIndex])){
+            instr = new Loop(queue, startIndex);
+        }else if(Interrupt.hasOpcode(queue[startIndex])){
+            instr = new Interrupt(queue, startIndex);
+        }else if(InterruptReturn.hasOpcode(queue[startIndex])){
+            instr = new InterruptReturn(queue, startIndex);
+        }else if(Escape.hasOpcode(queue[startIndex])){
+            instr = new Escape(queue, startIndex);
+        }else if(FlagOp.hasOpcode(queue[startIndex])){
+            instr = new FlagOp(queue, startIndex);
+        }else if(ControlOp.hasOpcode(queue[startIndex])){
+            instr = new ControlOp(queue, startIndex);
+        }else if(ShiftRotate.hasOpcode(queue[startIndex])){
+            instr = new ShiftRotate(queue, startIndex);
+        }else if(MulRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new MulRegisterMemory(queue, startIndex);
+        }else if(DivRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new DivRegisterMemory(queue, startIndex);
+        }else if(NotRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new NotRegisterMemory(queue, startIndex);
+        }else if(NegRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new NegRegisterMemory(queue, startIndex);
+        }else if(TestRegisterMemoryImmediate.hasOpcode(queue, startIndex)){
+            instr = new TestRegisterMemoryImmediate(queue, startIndex);
+        }else if(IncRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new IncRegisterMemory(queue, startIndex);
+        }else if(DecRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new DecRegisterMemory(queue, startIndex);
+        }else if(CallIndirect.hasOpcode(queue, startIndex)){
+            instr = new CallIndirect(queue, startIndex);
+        }else if(JmpIndirect.hasOpcode(queue, startIndex)){
+            instr = new JmpIndirect(queue, startIndex);
+        }else if(PushRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new PushRegisterMemory(queue, startIndex);
+        }else if(PopRegisterMemory.hasOpcode(queue, startIndex)){
+            instr = new PopRegisterMemory(queue, startIndex);
+        }else if(ExtDecoder.hasOpcode(queue[startIndex])){
+            instr = ExtDecoder.decode(queue, startIndex);
         }
 
         if(instr==null){

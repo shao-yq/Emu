@@ -14,8 +14,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * affect CF.
  */
 public class DecRegister extends Instruction8086 {
-    public DecRegister(int[] raw) {
-        super(raw);
+    public DecRegister(int[] raw, int startIndex) {
+        super(raw, startIndex);
         reg = op & 0b111;
     }
 

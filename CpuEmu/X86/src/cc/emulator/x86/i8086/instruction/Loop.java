@@ -17,11 +17,11 @@ import cc.emulator.x86.i8086.Instruction8086;
  * themselves, i.e., they are SHORT transfers.
  */
 public class Loop extends Instruction8086{
-    public Loop(int[] raw) {
-        super(raw);
+    public Loop(int[] raw, int startIndex) {
+        super(raw, startIndex);
 
         // IP-INC-8
-        disp = raw[1];
+        disp = raw[1+startIndex];
         incLength(1);
     }
 

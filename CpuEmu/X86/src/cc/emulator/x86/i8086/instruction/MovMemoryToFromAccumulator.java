@@ -7,10 +7,10 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class MovMemoryToFromAccumulator extends MOV {
-    public MovMemoryToFromAccumulator(int raw[]){
-        super(raw);
-        setAddress(raw[2]<<8|raw[1]);
-        setLength(3);
+    public MovMemoryToFromAccumulator(int raw[], int startIndex){
+        super(raw, 1, startIndex);
+        setAddress(raw[2+startIndex]<<8|raw[1+startIndex]);
+        incLength(2);
     }
 
     public static boolean hasOpcode(int raw) {

@@ -15,22 +15,37 @@ public  class Instruction8086 extends IntelInstruction {
      *
      *   opcodeDW    MOREGR/M    LOW DISP    HIGHDISP    LOW DATA     HIGHDATA
      */
+    public Instruction8086(int[] raw, int startIndex) {
+        // Decode First byte
+        this(raw,1, startIndex);
+    }
 
     public Instruction8086(int[] raw) {
         // Decode First byte
-        this(raw,1);
+        this(raw,0);
     }
-    protected Instruction8086(int[] raw, int cnt) {
+
+    int startIndex=0;
+    protected Instruction8086(int[] raw, int cnt, int startIndex) {
+        this.startIndex=startIndex;
         switch(cnt){
             case 2:
-                decodeByte1(raw[1]);
+                decodeByte1(raw[1+startIndex]);
 
             case 1:
-                decodeByte0(raw[0]);
+                decodeByte0(raw[startIndex]);
                 break;
         }
 
-        setLength(cnt);
+        setLength(cnt+startIndex);
+        // Copy the prefix(es)
+        if(startIndex>0) {
+            prefixCount = startIndex;
+            prefixes = new int[prefixCount];
+            for (int i = 0; i < startIndex; i++) {
+                prefixes[i] = raw[i];
+            }
+        }
     }
 
     public void decodeByte0(int raw){
@@ -51,18 +66,18 @@ public  class Instruction8086 extends IntelInstruction {
             case MOD_MEMORY_DISP0:
                 if(rm == 0b110){
                     //immediate = queue[3] << 8 | queue[2];
-                    disp = queue[3] << 8 | queue[2];
+                    disp = queue[3+startIndex] << 8 | queue[2+startIndex];
                     incLength(2);
                 }
                 break;
             case MOD_MEMORY_DISP8:
                 // 8-bit displacement follows
-                disp = queue[2];
+                disp = queue[2+startIndex];
                 incLength(1);
                 break;
             case MOD_MEMORY_DISP16:
                 // 16-bit displacement follows
-                disp = queue[3] << 8 | queue[2];
+                disp = queue[3+startIndex] << 8 | queue[2+startIndex];
                 incLength(2);
                 break;
         }
@@ -93,10 +108,10 @@ public  class Instruction8086 extends IntelInstruction {
         if(isRegisterToRegister())
             return;
 
-        int cnt = 2;
+        int cnt = 2+startIndex;
 
         if(mod==MOD_MEMORY_DISP0 && rm == 0b110) {
-            cnt = 4;
+            cnt = 4+startIndex;
             if(w==B) {
                 immediate = queue[cnt];
                 incLength(1);

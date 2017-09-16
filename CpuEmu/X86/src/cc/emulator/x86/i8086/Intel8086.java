@@ -1344,13 +1344,25 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 //        d  = op >>> 1 & 0b1;
 //        w  = op       & 0b1;
 
-        prefixMode = tryPrefix(op);
-        if(prefixMode == PREFIX_NONE){
-            // Not a prefix instruction, continue the execution
-            repeatStringProcess(op);
-        } else {
-            // Prefix mode further process
+        // Prefix loop
+        if(instruction.hasPrefix()){
+            for(int i=0; i<instruction.getPrefixCount(); i++){
+                int opc = instruction.getPrefix(i);
+
+                prefixMode = tryPrefix(opc);
+            }
+
         }
+
+        repeatStringProcess(op);
+
+//        prefixMode = tryPrefix(op);
+//        if(prefixMode == PREFIX_NONE){
+//            // Not a prefix instruction, continue the execution
+//            repeatStringProcess(op);
+//        } else {
+//            // Prefix mode further process
+//        }
 
         return prefixMode;
 
@@ -1399,21 +1411,29 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return false;
     }
 
-    boolean pipelineExecute(){
+
+
+    boolean pipelineExecute() {
         os = ds;
-        boolean prefix = true;
-        do {
-            // Bus Unit to fetch instruction from memory
-            fetchInstructions();
+        //boolean prefix = true;
+        //do {
+        // Bus Unit to fetch instruction from memory
+        fetchInstructions();
 
-            // Instruction unit to decode the instruction from the raw instruction queue
-            decode();
+        // Instruction unit to decode the instruction from the raw instruction queue
+        decode();
 
-            // Execution Unit to execute the instruction in the Decodec Instruction Queue
+        // Execution Unit to execute the instruction in the Decodec Instruction Queue
 
-            prefixMode = preExecute(instruction);
+        //prefixMode = preExecute(instruction);
 
-        } while (prefixMode!=PREFIX_NONE);
+        //} while (prefixMode!=PREFIX_NONE);
+        return execute();
+    }
+
+    boolean execute(){
+        //  Prefix processing
+        prefixMode = preExecute(instruction);
 
         do {
             if(reachedEOS())

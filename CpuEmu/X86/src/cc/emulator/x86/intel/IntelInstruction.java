@@ -1,6 +1,8 @@
 package cc.emulator.x86.intel;
 
+import cc.emulator.core.cpu.ExecutionUnit;
 import cc.emulator.core.cpu.Instruction;
+import cc.emulator.core.cpu.Stack;
 import cc.emulator.x86.i8086.Intel8086InstructionSet;
 
 /**
@@ -95,5 +97,25 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
 
     public int immediate = 0;
 
+//    @Override
+//    public void execute(ExecutionUnit  executionUnit, Stack stack) {
+//        // Dummy, here, no op
+//    }
+//
+//    public void execute(ExecutionUnit  executionUnit) {
+//        // Dummy, here, no op
+//        execute(executionUnit, null);
+//    }
 
+    protected int prefixes[];
+    protected int prefixCount=0;
+    public boolean hasPrefix(){
+        return prefixCount>0;
+    }
+    public int getPrefixCount(){
+        return prefixCount;
+    }
+    public int getPrefix(int ind){
+        return prefixes[ind];
+    }
 }

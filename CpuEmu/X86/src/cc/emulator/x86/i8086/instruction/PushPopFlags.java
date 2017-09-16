@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/30.
  */
 public class PushPopFlags extends Instruction8086 {
-    public PushPopFlags(int[] raw) {
-        super(raw);
+    public PushPopFlags(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
 

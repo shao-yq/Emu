@@ -23,10 +23,10 @@ import cc.emulator.x86.i8086.Instruction8086;
  * the CALL instruction.
  */
 public class ReturnImmediate extends Instruction8086{
-    public ReturnImmediate(int[] raw) {
-        super(raw);
+    public ReturnImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
         //
-        immediate = raw[1]|(raw[2]<<8);
+        immediate = raw[1+startIndex]|(raw[2+startIndex]<<8);
         incLength(2);
     }
 

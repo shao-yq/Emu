@@ -26,8 +26,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * used to find matching or differing string elements.
  */
 public class CompareString extends Instruction8086 {
-    public CompareString(int[] raw) {
-        super(raw);
+    public CompareString(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

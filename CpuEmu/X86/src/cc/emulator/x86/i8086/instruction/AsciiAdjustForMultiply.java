@@ -20,10 +20,10 @@ import cc.emulator.x86.i8086.Instruction8086;
 public class AsciiAdjustForMultiply extends Instruction8086 {
 
 
-    public AsciiAdjustForMultiply(int[] raw) {
-        super(raw);
+    public AsciiAdjustForMultiply(int[] raw, int startIndex) {
+        super(raw, startIndex);
         // 2nd byte
-        immediate = raw[1];
+        immediate = raw[1+startIndex];
     }
 
 

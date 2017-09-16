@@ -7,12 +7,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class AdcAccumulatorImmediate extends Instruction8086 {
-    public AdcAccumulatorImmediate(int[] raw) {
-        super(raw);
-        immediate = raw[1];
+    public AdcAccumulatorImmediate(int[] raw, int startIndex) {
+        super(raw,1, startIndex);
+        immediate = raw[1+startIndex];
         incLength(1);
         if(op == ADC_AX_IMMED16){
-            immediate |= (raw[2]<<8);
+            immediate |= (raw[2+startIndex]<<8);
             incLength(1);
         }
     }

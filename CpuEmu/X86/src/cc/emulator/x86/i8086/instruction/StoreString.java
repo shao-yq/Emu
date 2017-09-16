@@ -17,8 +17,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * value (e.g., to blank out a print line).
  */
 public class StoreString extends Instruction8086 {
-    public StoreString(int[] raw) {
-        super(raw);
+    public StoreString(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

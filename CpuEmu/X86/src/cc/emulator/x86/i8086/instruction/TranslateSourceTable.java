@@ -23,8 +23,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * reverse.
  */
 public class TranslateSourceTable extends Instruction8086 {
-    public TranslateSourceTable(int[] raw) {
-        super(raw);
+    public TranslateSourceTable(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
     public static boolean hasOpcode(int raw) {
         switch (raw) {

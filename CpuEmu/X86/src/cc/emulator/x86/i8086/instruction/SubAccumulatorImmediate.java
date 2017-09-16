@@ -7,12 +7,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class SubAccumulatorImmediate extends Instruction8086 {
-    public SubAccumulatorImmediate(int[] raw) {
-        super(raw);
-        immediate = raw[1];
+    public SubAccumulatorImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
+        immediate = raw[1+startIndex];
         incLength(1);
         if(op == SUB_AX_IMMED16){
-            immediate |= (raw[2]<<8);
+            immediate |= (raw[2+startIndex]<<8);
             incLength(1);
         }
     }

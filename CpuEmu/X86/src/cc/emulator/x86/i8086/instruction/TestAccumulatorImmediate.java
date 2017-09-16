@@ -16,12 +16,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * there are any corresponding 1-bits in both operands.
  */
 public class TestAccumulatorImmediate extends Instruction8086 {
-    public TestAccumulatorImmediate(int[] raw) {
-        super(raw);
-        immediate = raw[1];
+    public TestAccumulatorImmediate(int[] raw, int startIndex) {
+        super(raw, startIndex);
+        immediate = raw[1+startIndex];
         incLength(1);
         if(op == ADD_AX_IMMED16){
-            immediate |= (raw[2]<<8);
+            immediate |= (raw[2+startIndex]<<8);
             incLength(1);
         }
     }

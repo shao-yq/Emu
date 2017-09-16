@@ -1,5 +1,8 @@
 package cc.emulator.x86.i8086.instruction;
 
+import cc.emulator.core.cpu.ExecutionUnit;
+import cc.emulator.core.cpu.Stack;
+import cc.emulator.x86.i8086.EU8086;
 import cc.emulator.x86.i8086.Instruction8086;
 
 /**
@@ -7,8 +10,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class MovRegMemFromToReg extends MOV {
-    public MovRegMemFromToReg(int[] raw) {
-        super(raw, 2);
+    public MovRegMemFromToReg(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
 
@@ -35,4 +38,17 @@ public class MovRegMemFromToReg extends MOV {
         return false;
     }
 
+    public void execute(ExecutionUnit executionUnit, Stack stack) {
+//        int src;
+//        EU8086 eu = (EU8086) executionUnit;
+//        if (d == 0b0) {
+//            src = eu.getReg(w, reg);
+//            eu.setRM(w, mod, rm, src);
+//            //clocks += mod == 0b11 ? 2 : 9;
+//        } else {
+//            src = eu.getRM(w, mod, rm);
+//            eu.setReg(w, reg, src);
+//            //clocks +=  mod == 0b11 ? 2 : 8;
+//        }
+    }
 }

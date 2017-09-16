@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class PushSegmentRegister extends Instruction8086 {
-    public PushSegmentRegister(int[] raw) {
-        super(raw);
+    public PushSegmentRegister(int[] raw, int startIndex) {
+        super(raw,1, startIndex);
         reg = op >>> 3 & 0b111;
     }
 

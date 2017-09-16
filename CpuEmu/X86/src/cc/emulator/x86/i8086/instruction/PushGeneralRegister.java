@@ -16,8 +16,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * means of storing temporary data on the stack.
  */
 public class PushGeneralRegister extends Instruction8086 {
-    public PushGeneralRegister(int[] raw) {
-        super(raw);
+    public PushGeneralRegister(int[] raw, int startIndex) {
+        super(raw, startIndex);
         reg = op & 0b111;
     }
 

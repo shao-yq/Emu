@@ -25,7 +25,7 @@ public abstract class IntelDecoder implements InstructionDecoder {
 
     protected abstract Instruction decode2(int[] queue);
 
-    protected abstract IntelInstruction newInstruction(int raw[]) ;
+    //protected abstract IntelInstruction newInstruction(int raw[]) ;
 
 
     @Override

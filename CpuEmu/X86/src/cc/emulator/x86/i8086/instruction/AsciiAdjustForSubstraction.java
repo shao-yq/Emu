@@ -20,8 +20,8 @@ import cc.emulator.x86.i8086.Instruction8086;
 public class AsciiAdjustForSubstraction extends Instruction8086 {
 
 
-    public AsciiAdjustForSubstraction(int[] raw) {
-        super(raw);
+    public AsciiAdjustForSubstraction(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
 

@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class MovRegMemFromToSegReg extends MOV {
-    public MovRegMemFromToSegReg(int[] raw) {
-        super(raw, 2);
+    public MovRegMemFromToSegReg(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
     public static boolean hasOpcode(int raw) {

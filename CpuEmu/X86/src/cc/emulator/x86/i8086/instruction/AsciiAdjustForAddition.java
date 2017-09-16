@@ -19,8 +19,8 @@ import cc.emulator.x86.i8086.Intel8086;
 public class AsciiAdjustForAddition extends Instruction8086 {
 
 
-    public AsciiAdjustForAddition(int[] raw) {
-        super(raw);
+    public AsciiAdjustForAddition(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
 

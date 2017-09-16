@@ -15,8 +15,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * original operands are set; otherwise the result bit is cleared.
  */
 public class OrRegisterMemory extends Instruction8086 {
-    public OrRegisterMemory(int[] raw) {
-        super(raw, 2);
+    public OrRegisterMemory(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
 

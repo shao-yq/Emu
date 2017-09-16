@@ -49,33 +49,33 @@ public class ExtDecoder implements Intel8086InstructionSet{
         return false;
     }
 
-    public static IntelInstruction decode(int[] raw) {
+    public static IntelInstruction decode(int[] raw, int startIndex) {
         IntelInstruction instr = null;
-        int reg = raw[1] >>> 3 & 0b111;
+        int reg = raw[1+startIndex] >>> 3 & 0b111;
         switch(reg) {
             case MOD_ADD: //   0b000: // ADD
-                instr =  new AddRegisterMemoryImmediate(raw);
+                instr =  new AddRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_OR : //   0b001: // OR
-                instr =  new OrRegisterMemoryImmediate(raw);
+                instr =  new OrRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_ADC: //   0b010: // ADC
-                instr =  new AdcRegisterMemoryImmediate(raw);
+                instr =  new AdcRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_SBB: //   0b011: // SBB
-                instr =  new SbbRegisterMemoryImmediate(raw);
+                instr =  new SbbRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_AND: //   0b100: // AND
-                instr =  new AndRegisterMemoryImmediate(raw);
+                instr =  new AndRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_SUB: //   0b101: // SUB
-                instr =  new SubRegisterMemoryImmediate(raw);
+                instr =  new SubRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_XOR: //   0b110: // XOR
-                instr =  new XorRegisterMemoryImmediate(raw);
+                instr =  new XorRegisterMemoryImmediate(raw, startIndex);
                 break;
             case MOD_CMP: //   0b111: // CMP
-                instr =  new CmpRegisterMemoryImmediate(raw);
+                instr =  new CmpRegisterMemoryImmediate(raw, startIndex);
                 break;
         }
         return instr;

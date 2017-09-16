@@ -20,8 +20,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * instructions.
  */
 public class LoadString extends Instruction8086 {
-    public LoadString(int[] raw) {
-        super(raw);
+    public LoadString(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

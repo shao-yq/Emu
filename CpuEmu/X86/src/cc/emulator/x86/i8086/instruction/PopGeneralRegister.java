@@ -1,5 +1,8 @@
 package cc.emulator.x86.i8086.instruction;
 
+import cc.emulator.core.cpu.ExecutionUnit;
+import cc.emulator.core.cpu.Stack;
+import cc.emulator.x86.i8086.EU8086;
 import cc.emulator.x86.i8086.Instruction8086;
 
 /**
@@ -7,8 +10,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class PopGeneralRegister extends Instruction8086 {
-    public PopGeneralRegister(int[] raw) {
-        super(raw);
+    public PopGeneralRegister(int[] raw, int startIndex) {
+        super(raw, startIndex);
         reg = op & 0b111;
     }
 
@@ -30,4 +33,11 @@ public class PopGeneralRegister extends Instruction8086 {
     public int getClocks() {
         return 8;
     }
+
+//    public  void execute(ExecutionUnit eu, Stack stack) {
+//        int src;
+//        //reg = instruction.reg;        //  op & 0b111;
+//        src = stack.pop();         /// pop();
+//        ((EU8086)eu).setReg(W, reg, src);
+//    }
 }

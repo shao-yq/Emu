@@ -7,13 +7,13 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class MulRegisterMemory extends Instruction8086 {
-    public MulRegisterMemory(int[] raw) {
-        super(raw, 2);
+    public MulRegisterMemory(int[] raw, int startIndex) {
+        super(raw, 2,startIndex);
         decodeDisplacement(raw);
     }
 
-    public static boolean hasOpcode(int raw[]) {
-        switch(raw[0]) {
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        switch(raw[startIndex]) {
             case EXT_0XF6:  // 0xf6:
                 // TEST REG8/MEM8,IMMED8
                 // NOT REG8/MEM8
@@ -31,7 +31,7 @@ public class MulRegisterMemory extends Instruction8086 {
                 // DIV REG16/MEM16
                 // IDIV REG16/MEM16
 
-                int reg = (raw[1]>>3) & 0b111;
+                int reg = (raw[1+startIndex]>>3) & 0b111;
                 switch (reg) {
                     case MOD_MUL: //   0b100: // MUL
                     case MOD_IMUL: //   0b101: // IMUL

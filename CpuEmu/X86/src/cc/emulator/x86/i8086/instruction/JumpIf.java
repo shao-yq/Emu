@@ -25,11 +25,11 @@ import cc.emulator.x86.i8086.Instruction8086;
  * appropriate for position-independent routines.
  */
 public class JumpIf extends Instruction8086{
-    public JumpIf(int[] raw) {
-        super(raw);
+    public JumpIf(int[] raw, int startIndex) {
+        super(raw, startIndex);
 
         // IP-INC-8
-        disp = raw[1];
+        disp = raw[1+startIndex];
         incLength(1);
     }
 

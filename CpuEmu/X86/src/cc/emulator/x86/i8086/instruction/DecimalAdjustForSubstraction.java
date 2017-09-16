@@ -20,8 +20,8 @@ import cc.emulator.x86.i8086.Instruction8086;
 public class DecimalAdjustForSubstraction extends Instruction8086 {
 
 
-    public DecimalAdjustForSubstraction(int[] raw) {
-        super(raw);
+    public DecimalAdjustForSubstraction(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
 

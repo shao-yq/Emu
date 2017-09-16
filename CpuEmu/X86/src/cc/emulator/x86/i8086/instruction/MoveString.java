@@ -17,8 +17,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * memory block transfer.
  */
 public class MoveString extends Instruction8086 {
-    public MoveString(int[] raw) {
-        super(raw);
+    public MoveString(int[] raw, int startIndex) {
+        super(raw, startIndex);
     }
 
     public static boolean hasOpcode(int raw) {

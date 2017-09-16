@@ -6,16 +6,16 @@ package cc.emulator.x86.i8086.instruction;
  */
 public class MovImmediateToRegister extends MOV {
 
-    public MovImmediateToRegister(int raw[]) {
-        super(raw);
+    public MovImmediateToRegister(int raw[], int startIndex) {
+        super(raw, 1, startIndex);
         w = op >>> 3 & 0b1;
         reg = op & 0b111;
         if(w==B) {  // DATA-8
-            setImmediate(raw[1]);
-            setLength(2);
+            setImmediate(raw[1+startIndex]);
+            incLength(1);
         } else {    // DATA-16
-            setImmediate((raw[2]<<8) | raw[1]);
-            setLength(3);
+            setImmediate((raw[2+startIndex]<<8) | raw[1+startIndex]);
+            incLength(2);
         }
     }
 

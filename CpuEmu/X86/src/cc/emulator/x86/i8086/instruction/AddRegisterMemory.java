@@ -7,8 +7,8 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class AddRegisterMemory extends Instruction8086 {
-    public AddRegisterMemory(int[] raw) {
-        super(raw, 2);
+    public AddRegisterMemory(int[] raw, int startIndex) {
+        super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
 

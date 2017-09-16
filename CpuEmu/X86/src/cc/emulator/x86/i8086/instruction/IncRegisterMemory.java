@@ -7,13 +7,13 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class IncRegisterMemory extends Instruction8086 {
-    public IncRegisterMemory(int[] raw) {
-        super(raw, 2);
+    public IncRegisterMemory(int[] raw, int startIndex) {
+        super(raw, 2,startIndex);
         decodeDisplacement(raw);
     }
 
-    public static boolean hasOpcode(int raw[]) {
-        switch(raw[0]) {
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        switch(raw[startIndex]) {
             case EXT_0XFE:  // 0xfe:
                 // INC REG8/MEM8
                 // DEC REG8/MEM8
@@ -26,7 +26,7 @@ public class IncRegisterMemory extends Instruction8086 {
                 // JMP MEM16 (intersegment)
                 // PUSH REG16/MEM16
 
-                int reg = (raw[1]>>3) & 0b111;
+                int reg = (raw[1+startIndex]>>3) & 0b111;
                 switch (reg) {
                     case INC_REG8__MEM8: //   0b000: // INC REG8/MEM8  case INC_REG16__MEM16: //   0b000: // INC REG16/MEM16
 
