@@ -1,15 +1,22 @@
 package cc.emulator.core.cpu;
 
+import cc.emulator.core.Peripheral;
+import cc.emulator.core.ProgrammableInterruptController;
+import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.StatusRegister;
 
 public abstract class ExecutionUnitImpl implements ExecutionUnit{
-    ArithmeticLogicUnit alu;
+    protected ArithmeticLogicUnit alu;
     protected PointerIndexer pointerIndexers[];
 
     protected GeneralRegister[] generalRegisters;
     StatusRegister statusRegister;
+    private ProgrammableInterruptController pic;
+    protected ProgrammableIntervalTimer pit;
+    protected Peripheral[] peripherals;
+    protected Stack stack;
 
     public ExecutionUnitImpl(){
         generalRegisters=createGeneralRegisters();
@@ -41,7 +48,7 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
 
     protected abstract GeneralRegister[] createGeneralRegisters();
 
-    protected abstract InstructionDecoder createDecoder();
+//    protected abstract InstructionDecoder createDecoder();
 
     protected abstract ArithmeticLogicUnit createALU(StatusRegister flags) ;
 
@@ -58,5 +65,23 @@ public abstract class ExecutionUnitImpl implements ExecutionUnit{
     @Override
     public StatusRegister getStatusRegister() {
         return statusRegister;
+    }
+
+    protected  abstract  Stack createStack();
+
+    @Override
+    public void setPic(ProgrammableInterruptController pic) {
+        this.pic = pic;
+    }
+
+    @Override
+    public void setPit(ProgrammableIntervalTimer pit) {
+        this.pit = pit;
+    }
+
+
+    @Override
+    public void setPeripherals(Peripheral[] peripherals) {
+        this.peripherals = peripherals;
     }
 }

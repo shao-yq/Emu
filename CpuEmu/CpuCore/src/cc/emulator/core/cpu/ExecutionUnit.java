@@ -1,5 +1,8 @@
 package cc.emulator.core.cpu;
 
+import cc.emulator.core.Peripheral;
+import cc.emulator.core.ProgrammableInterruptController;
+import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.StatusRegister;
@@ -18,5 +21,15 @@ public interface ExecutionUnit {
 
     void reset();
 
-    void execute(Instruction instr);
+    boolean execute(Instruction instr);
+
+    void trySingleStepMode();
+
+    void tryExternalMaskabkeInterrupts(ProgrammableInterruptController pic);
+
+    void setPic(ProgrammableInterruptController pic);
+
+    void setPit(ProgrammableIntervalTimer pit);
+
+    void setPeripherals(Peripheral[] peripherals);
 }

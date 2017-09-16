@@ -48,7 +48,7 @@ public abstract class Cpu {
      */
     public abstract boolean tick();
 
-    protected Stack stack;
+    //protected Stack stack;
     protected AddressGenerator addressGenerator;
     protected MemoryAccessor memoryAccessor;
 
@@ -65,7 +65,6 @@ public abstract class Cpu {
 
 
     public Cpu(MemoryManager mm){
-        executionUnit = createEU();
         busInterfaceUnit = createBIU();
 
         ////////////
@@ -73,14 +72,17 @@ public abstract class Cpu {
         addressGenerator =  busInterfaceUnit.getAddressGenerator();
         memoryAccessor =  createMemoryAccessor(mm);
 
-        stack = createStack();
-        stack.setAddressGenerator(addressGenerator);
-        stack.setMemoryAccessor(memoryAccessor);
+
+//        stack = createStack();
+//        stack.setAddressGenerator(addressGenerator);
+//        stack.setMemoryAccessor(memoryAccessor);
 
         instructionUnit =  createInstructionUnit();
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
+        executionUnit = createEU();
+
     }
 
     protected abstract MemoryLocator createInstructionLocator();
@@ -90,14 +92,14 @@ public abstract class Cpu {
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 
-    protected abstract Stack createStack();
+    //protected abstract Stack createStack();
 
     protected abstract AddressGenerator createAddressGenerator();
     protected abstract DataBus createDataBus();
 
-    public Stack getStack() {
-        return stack;
-    }
+//    public Stack getStack() {
+//        return stack;
+//    }
 
     public AddressGenerator getAddressGenerator() {
         return addressGenerator;
@@ -109,17 +111,21 @@ public abstract class Cpu {
 
     public void setPeripherals(Peripheral[] peripherals) {
         this.peripherals = peripherals;
+        executionUnit.setPeripherals(peripherals);
     }
 
     protected ProgrammableInterruptController pic;
     public void setPic(ProgrammableInterruptController pic) {
         this.pic = pic;
+        executionUnit.setPic(pic);
     }
     protected ProgrammableIntervalTimer pit;
 
     public void setPit(ProgrammableIntervalTimer pit) {
         this.pit = pit;
+        executionUnit.setPit(pit);
     }
+
 
 
 }
