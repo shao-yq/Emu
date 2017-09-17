@@ -48,7 +48,6 @@ public abstract class Cpu {
      */
     public abstract boolean tick();
 
-    //protected Stack stack;
     protected AddressGenerator addressGenerator;
     protected MemoryAccessor memoryAccessor;
 
@@ -63,7 +62,6 @@ public abstract class Cpu {
     protected MemoryLocator instructionLocator;
     protected MemoryLocator dataLocator;
 
-
     public Cpu(MemoryManager mm){
         busInterfaceUnit = createBIU();
 
@@ -72,17 +70,11 @@ public abstract class Cpu {
         addressGenerator =  busInterfaceUnit.getAddressGenerator();
         memoryAccessor =  createMemoryAccessor(mm);
 
-
-//        stack = createStack();
-//        stack.setAddressGenerator(addressGenerator);
-//        stack.setMemoryAccessor(memoryAccessor);
-
         instructionUnit =  createInstructionUnit();
 
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
         executionUnit = createEU();
-
     }
 
     protected abstract MemoryLocator createInstructionLocator();
@@ -92,14 +84,8 @@ public abstract class Cpu {
 
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 
-    //protected abstract Stack createStack();
-
     protected abstract AddressGenerator createAddressGenerator();
     protected abstract DataBus createDataBus();
-
-//    public Stack getStack() {
-//        return stack;
-//    }
 
     public AddressGenerator getAddressGenerator() {
         return addressGenerator;
@@ -126,6 +112,20 @@ public abstract class Cpu {
         executionUnit.setPit(pit);
     }
 
+    protected boolean pipelineExecute() {
+        // Bus Unit to fetch instruction from memory
+        fetchInstructions();
 
+        // Instruction unit to decode the instruction from the raw instruction queue
+        Instruction instruction =  decodeInstruction();
 
+        // Execution Unit to execute the instruction in the Decodec Instruction Queue
+        return executeInstrction(instruction);
+    }
+
+    protected abstract boolean executeInstrction(Instruction instruction);
+
+    protected abstract Instruction decodeInstruction();
+
+    protected abstract void fetchInstructions();
 }

@@ -12,15 +12,6 @@ import cc.emulator.core.cpu.Instruction;
  * Date: 2017/8/9.
  */
 public class Decoder8086 extends IntelDecoder {
-//    @Override
-//    protected IntelInstruction newInstruction(int raw[]) {
-//        IntelInstruction intelInstruction=null;
-//        int startIndex = 0;
-//        if(MovImmediateToRegister.hasOpcode(raw[startIndex])){
-//            intelInstruction =  new MovImmediateToRegister(raw, startIndex);
-//        }
-//        return  intelInstruction;
-//    }
 
     int checkPrefix(int[] queue){
         int opcodeIndex=0;

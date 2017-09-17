@@ -81,11 +81,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     private static final int[] BITS   = new int[] { 8, 16 };
     /** Lookup table used for setting the overflow flag. */
     private static final int[] SIGN   = new int[] { 0x80, 0x8000 };
-    //private ALU8086 alu;
 
-//    public Intel8086(MemoryManager mm){
-//        super(mm);
-//    }
     protected MemoryLocator instructionLocator;
     protected AddressGenerator addressGenerator;
     protected InstructionUnit instructionUnit;
@@ -98,16 +94,12 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                   InstructionUnit instructionUnit,
                   BusInterfaceUnit busInterfaceUnit,
                   MemoryAccessor memoryAccessor
-                  //Stack stack,
-                  //Peripheral[] peripherals
-    ){
+            ){
         this.instructionLocator = instructionLocator;
         this.addressGenerator = addressGenerator;
         this.instructionUnit = instructionUnit;
         this.busInterfaceUnit = busInterfaceUnit;
         this.memoryAccessor = memoryAccessor;
-        //this.stack = stack;
-        //this.peripherals = peripherals;
 
         stack = createStack();
         stack.setAddressGenerator(addressGenerator);
@@ -116,6 +108,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     }
 
     public Stack getStack() {
+        if(stack==null)
+            stack = createStack();
         return stack;
     }
 
@@ -128,7 +122,6 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     protected StatusRegister createStatusRegister() {
         return new ProgramStatusWord();
     }
-
 
     @Override
     protected GeneralRegister[] createGeneralRegisters() {
@@ -1021,26 +1014,17 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * Resets the CPU to its default state.
      */
     public void reset() {
-        flags = (ProgramStatusWord)getStatusRegister();
-        //flags = new ProgramStatusWord();
-        flags.setData(0);
+        super.reset();
 
-        //reset();
         busInterfaceUnit.reset();
-
-        alu= (ALU8086) getALU();
 
         instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
         instructionLocator.setBase(0xffff);     //  cs = 0xffff;
 
-//        ip = 0x0000;
-//        cs = 0xffff;
         ds = 0x0000;
         stack.setSs(0x0000); // ss = 0x0000;
         es = 0x0000;
-        //for (int i = 0; i < 6; i++)
-        //    queue[i] = 0;
-        //instructionQueue.reset();
+
         clocks = 0;
     }
 
@@ -1257,28 +1241,6 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         }
     }
 
-
-
-//    /**
-//     * Fetches and executes an instruction.
-//     *
-//     * @return true if instructions remain, false otherwise
-//     */
-//    public boolean tick() {
-//        // Single-step mode.
-//        if (getFlag(TF)) {
-//            callInt(1);
-//            clocks += 50;
-//        }
-//
-//        // External maskable interrupts.
-//        if (getFlag(IF) && pic.hasInt()) {
-//            callInt(pic.nextInt());
-//            clocks += 61;
-//        }
-//
-//        return pipelineExecute();
-//    }
 
     //            // Segment prefix check.
     boolean checkSegmentPrefix(int op){

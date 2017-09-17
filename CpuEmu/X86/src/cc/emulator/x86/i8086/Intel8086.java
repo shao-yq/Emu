@@ -13,7 +13,48 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 /**
+ * The 8086 CPU is characterized by:
+ * - a standard operating speed of 5 MHz (200 ns a cycle time).
+ * - chips housed in reliable 40-pin packages.
+ * - a processor that operates on both 8- and 16-bit data types.
+ * - up to 1 megabyte of memory that can be addressed, along with a separate
+ * 64k byte I/O space.
+ *
+ * CPU Architecture
+ *
+ * CPU incorporates two separate processing units; the Execution Unit or "EU"
+ * and the Bus Interface Unit or "BIU". The BIU for the 8086 incorporates a
+ * 16-bit data bus and a 6-byte instruction queue.
+ *
+ * The EU is responsible for the execution of all instructions, for providing
+ * data and addresses to the BIU, and for manipulating the general registers
+ * and the flag register. Except for a few control pins, the EU is completely
+ * isolated from the "outside world." The BIU is responsible for executing all
+ * external bus cycles and consists of the segment and communication registers,
+ * the instruction pointer and the instruction object code queue. The BIU
+ * combines segment and offset values in its dedicated adder to derive 20-bit
+ * addresses, transfers data to and from the EU on the ALU data bus and loads
+ * or "prefetches" instructions into the queue from which they are fetched by
+ * the EU.
+ *
+ * The EU, when it is ready to execute an instruction, fetches the instruction
+ * object code byte from the BIU's instruction queue and then executes the
+ * instruction. If the queue is empty when the EU is ready to fetch an
+ * instruction byte, the EU waits for the instruction byte to be fetched. In
+ * the course of instruction execution, if a memory location or I/O port must
+ * be accessed, the EU requests the BIU to perform the required bus cycle.
+ *
+ * The two processing sections of the CPU operate independently. In the 8086
+ * CPU, when two or more bytes of the 6-byte instruction queue are empty and
+ * the EU does not require the BIU to perform a bus cycle, the BIU executes
+ * instruction fetch cycles to refill the queue. Note that the 8086 CPU, since
+ * it has a 16-bit data bus, can access two instructions object code bytes in a
+ * single bus cycle. If the EU issues a request for bus access while the BIU is
+ * in the process of an instruction fetch bus cycle, the BIU completes the
+ * cycle before honoring the EU's request.
+ *
  * @author Shao Yongqing
  * Date: 2017/9/16.
  */
@@ -135,28 +176,23 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         super(mm);
     }
 
-    boolean pipelineExecute() {
-        // Bus Unit to fetch instruction from memory
-        fetchInstructions();
 
-        // Instruction unit to decode the instruction from the raw instruction queue
-        Instruction8086 instruction = decode();
-
-        // Execution Unit to execute the instruction in the Decodec Instruction Queue
-        return executionUnit.execute(instruction);
-    }
-    void fetchInstructions(){
+    @Override
+    public void fetchInstructions(){
 
         busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator);
     }
-    private Instruction8086 decode() {
-        // Current instruction decoded
-        Instruction8086 instruction;
 
-        //instruction = (Instruction8086) decoder.decode(busInterfaceUnit.getInstructionQueue());
-        instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
+    @Override
+    public Instruction decodeInstruction() {
+        // Current instruction decoded
+        Instruction8086 instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
         instructionLocator.incOffset(instruction.getLength());
         return instruction;
+    }
+
+    public boolean executeInstrction(Instruction instruction){
+        return executionUnit.execute(instruction);
     }
 
 }

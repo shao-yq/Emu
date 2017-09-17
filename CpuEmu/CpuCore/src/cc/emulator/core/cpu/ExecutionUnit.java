@@ -8,7 +8,7 @@ import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.StatusRegister;
 
 /**
- * @author Shao Yongqing
+ * @author Shao Bofeng
  * Date: 2017/7/27.
  */
 public interface ExecutionUnit {
