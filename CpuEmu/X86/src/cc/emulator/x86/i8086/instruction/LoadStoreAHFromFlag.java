@@ -10,6 +10,11 @@ public class LoadStoreAHFromFlag extends Instruction8086 {
     public LoadStoreAHFromFlag(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
+
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         int opcode = raw;
         switch (opcode){

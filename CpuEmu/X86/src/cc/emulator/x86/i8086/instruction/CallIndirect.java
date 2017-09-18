@@ -11,6 +11,7 @@ public class CallIndirect extends Instruction8086 {
         super(raw,2, startIndex);
         decodeDisplacement(raw);
     }
+
     public static boolean hasOpcode(int raw[], int startIndex) {
         switch (raw[startIndex]) {
             case EXT_0XFF:  // 0xff:

@@ -61,6 +61,9 @@ public class Jump extends Instruction8086{
                 break;
         }
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch (raw){

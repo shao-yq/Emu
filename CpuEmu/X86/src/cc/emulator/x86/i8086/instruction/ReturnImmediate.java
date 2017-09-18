@@ -30,6 +30,10 @@ public class ReturnImmediate extends Instruction8086{
         incLength(2);
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw){
             // Within Seg Adding Immed to SP

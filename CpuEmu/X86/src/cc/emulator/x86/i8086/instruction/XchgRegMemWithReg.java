@@ -22,6 +22,11 @@ public class XchgRegMemWithReg extends Instruction8086 {
         decodeDisplacement(raw);
 
     }
+
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             // Register/Memory with Register

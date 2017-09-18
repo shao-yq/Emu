@@ -6,7 +6,7 @@ import cc.emulator.core.cpu.Instruction;
  * @author Shao Yongqing
  * Date: 2017/9/1.
  */
-public class AdcRegisterMemoryImmediate extends AddRegisterMemory {
+public class AdcRegisterMemoryImmediate extends AdcRegisterMemory {
     public AdcRegisterMemoryImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
         decodeDataExt(raw);

@@ -19,6 +19,9 @@ public class OrRegisterMemory extends Instruction8086 {
         super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch(raw) {

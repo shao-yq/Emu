@@ -19,6 +19,10 @@ public class MovImmediateToRegister extends MOV {
         }
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
 //        // Immediate to Register
 //        case MOV_AL_IMMED8 : //  0xb0: // MOV AL,IMMED8

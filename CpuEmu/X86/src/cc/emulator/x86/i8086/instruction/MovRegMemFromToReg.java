@@ -26,6 +26,10 @@ public class MovRegMemFromToReg extends MOV {
         }
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             // Register/Memory to/from Register

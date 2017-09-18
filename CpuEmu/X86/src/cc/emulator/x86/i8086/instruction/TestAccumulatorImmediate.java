@@ -26,6 +26,10 @@ public class TestAccumulatorImmediate extends Instruction8086 {
         }
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch(raw) {
             // Immediate to Accumulator

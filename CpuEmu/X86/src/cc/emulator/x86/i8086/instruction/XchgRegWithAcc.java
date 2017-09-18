@@ -12,6 +12,9 @@ public class XchgRegWithAcc extends Instruction8086 {
         reg = op & 0b111;
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch (raw) {

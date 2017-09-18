@@ -64,6 +64,9 @@ public class CallFarProc extends Instruction8086{
         immediate = raw[3+startIndex]|(raw[4+startIndex]<<8);
         incLength(4);
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch (raw){

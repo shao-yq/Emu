@@ -26,6 +26,11 @@ public class TranslateSourceTable extends Instruction8086 {
     public TranslateSourceTable(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
+
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             case XLAT_SOURCE_TABLE:     // 0xd7: // XLAT SOURCE-TABLE

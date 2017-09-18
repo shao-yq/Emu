@@ -8,6 +8,10 @@ import cc.emulator.x86.intel.IntelInstruction;
  * Date: 2017/9/1.
  */
 public class ExtDecoder implements Intel8086InstructionSet{
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             /*

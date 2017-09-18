@@ -16,6 +16,9 @@ public class AndAccumulatorImmediate extends Instruction8086 {
             incLength(1);
         }
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch(raw) {

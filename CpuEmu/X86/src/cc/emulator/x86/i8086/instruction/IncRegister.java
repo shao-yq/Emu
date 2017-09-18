@@ -22,6 +22,9 @@ public class IncRegister extends Instruction8086 {
         super(raw, startIndex);
         reg = op & 0b111;
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch(raw) {

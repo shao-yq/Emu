@@ -10,6 +10,11 @@ public class ReturnNoImmed extends Instruction8086{
     public ReturnNoImmed(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
+
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw){
 

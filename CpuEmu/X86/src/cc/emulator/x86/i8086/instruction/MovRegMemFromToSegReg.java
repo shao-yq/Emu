@@ -11,6 +11,11 @@ public class MovRegMemFromToSegReg extends MOV {
         super(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
+
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             // Register/Memory to/from Segment Register

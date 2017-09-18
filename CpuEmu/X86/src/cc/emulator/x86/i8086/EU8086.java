@@ -1322,6 +1322,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     }
 
     private int preExecute(Instruction8086 instruction) {
+        prefixMode = PREFIX_NONE;
         op = instruction.op;
         d  = instruction.d;
         w  = instruction.w;

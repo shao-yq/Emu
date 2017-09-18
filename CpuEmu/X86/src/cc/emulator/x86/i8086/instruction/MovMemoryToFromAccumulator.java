@@ -12,6 +12,9 @@ public class MovMemoryToFromAccumulator extends MOV {
         setAddress(raw[2+startIndex]<<8|raw[1+startIndex]);
         incLength(2);
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         int opcode = raw;

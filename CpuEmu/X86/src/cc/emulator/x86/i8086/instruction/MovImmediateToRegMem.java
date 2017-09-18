@@ -13,6 +13,9 @@ public class MovImmediateToRegMem extends MOV {
         if(reg == 0b000)
             decodeData(raw);
     }
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         switch(raw) {

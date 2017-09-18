@@ -28,6 +28,10 @@ public class LoadEffectiveAddress extends Instruction8086 {
         return 2;
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
+
     public static boolean hasOpcode(int raw) {
         switch (raw) {
             case LEA_REG16_MEM16: //  0x8d: // LEA REG16,MEM16

@@ -11,6 +11,9 @@ public class PushPopFlags extends Instruction8086 {
         super(raw, startIndex);
     }
 
+    public static boolean hasOpcode(int raw[], int startIndex) {
+        return hasOpcode(raw[startIndex]);
+    }
 
     public static boolean hasOpcode(int raw) {
         int opcode = raw;

@@ -3,18 +3,50 @@ package cc.emulator.x86.i8086;
 import cc.emulator.x86.intel.IntelInstruction;
 
 /**
- * @author Shao Yongqing
+ *
+ * Typical 8086 Machine IntelInstruction Format
+ *
+ * | 0~4 byte (optional)|     BYTE 1     |     BYTE 2      |     BYTE 3    |     BYTE 4     |  BYTE 5  |  BYTE 6   |
+ * |Instruction Prefixes| OPCODE | D | W | MOD | REG | R/M | LOW DISP/DATA | HIGH DISP/DATA | LOW DATA | HIGH DATA |
+ *
+ *   Prefi(optional)           opcodeDW    MOREGR/M          LOW DISP      HIGHDISP        LOW DATA     HIGHDATA
+ *
+ *
+ * Instruction Prefixes
+ * Instruction prefixes are divided into four groups, each with a set of allowable prefix codes. For each instruction, it
+ * is only useful to include up to one prefix code from each of the four groups (Groups 1, 2, 3, 4). Groups 1 through 4
+ * may be placed in any order relative to each other.
+ *
+ * • Group 1
+ * — Lock and repeat prefixes:
+ *   • LOCK prefix is encoded using F0H
+ *   • REPNE/REPNZ prefix is encoded using F2H. Repeat-Not-Zero prefix applies only to string and input/output instructions.
+ *   (F2H is also used as a mandatory prefix for some instructions)
+ * REP or REPE/REPZ is encoded using F3H. The repeat prefix applies only to string and input/output instructions. F3H
+ * is also used as a mandatory prefix for POPCNT, LZCNT and ADOX instructions.
+ * • Group 2
+ * — Segment override prefixes:
+ *   • 2EH—CS segment override (use with any branch instruction is reserved)
+ *   • 36H—SS segment override prefix (use with any branch instruction is reserved)
+ *   • 3EH—DS segment override prefix (use with any branch instruction is reserved)
+ *   • 26H—ES segment override prefix (use with any branch instruction is reserved)
+ *   • 64H—FS segment override prefix (use with any branch instruction is reserved)
+ *   • 65H—GS segment override prefix (use with any branch instruction is reserved)
+ * — Branch hints:
+ *   • 2EH—Branch not taken (used only with Jcc instructions)
+ *   • 3EH—Branch taken (used only with Jcc instructions)
+ * • Group 3
+ *   • Operand-size override prefix is encoded using 66H (66H is also used as a mandatory prefix for some instructions).
+ * • Group 4
+ *   • 67H—Address-size override prefix
+ *
+ *
+ *  @author Shao Yongqing
  * Date: 2017/8/9.
+ *
  */
 public  class Instruction8086 extends IntelInstruction {
-    /*
-     * Typical 8086 Machine IntelInstruction Format
-     *
-     * |     BYTE 1     |     BYTE 2      |     BYTE 3    |     BYTE 4     |  BYTE 5  |  BYTE 6   |
-     * | OPCODE | D | W | MOD | REG | R/M | LOW DISP/DATA | HIGH DISP/DATA | LOW DATA | HIGH DATA |
-     *
-     *   opcodeDW    MOREGR/M    LOW DISP    HIGHDISP    LOW DATA     HIGHDATA
-     */
+
     public Instruction8086(int[] raw, int startIndex) {
         // Decode First byte
         this(raw,1, startIndex);
