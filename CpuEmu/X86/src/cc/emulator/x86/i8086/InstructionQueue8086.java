@@ -37,8 +37,8 @@ public class InstructionQueue8086 implements InstructionQueue {
 
     @Override
     public void reset(){
-        for (int i = 0; i < 6; i++)
-            queue[i] = 0;
+        //for (int i = 0; i < 6; i++)
+        //    queue[i] = 0;
         current=0;
     }
     int current;

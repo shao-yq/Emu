@@ -120,10 +120,10 @@ public abstract class Cpu {
         Instruction instruction =  decodeInstruction();
 
         // Execution Unit to execute the instruction in the Decodec Instruction Queue
-        return executeInstrction(instruction);
+        return executeInstruction(instruction);
     }
 
-    protected abstract boolean executeInstrction(Instruction instruction);
+    protected abstract boolean executeInstruction(Instruction instruction);
 
     protected abstract Instruction decodeInstruction();
 

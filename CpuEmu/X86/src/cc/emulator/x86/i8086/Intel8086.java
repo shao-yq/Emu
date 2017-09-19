@@ -191,7 +191,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return instruction;
     }
 
-    public boolean executeInstrction(Instruction instruction){
+    public boolean executeInstruction(Instruction instruction){
         return executionUnit.execute(instruction);
     }
 

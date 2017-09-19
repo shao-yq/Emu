@@ -2519,35 +2519,6 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
             case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
             case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
-                // decode2();
-                if (d == 0b0) {
-                    dst = getRM(w, mod, rm, disp);
-                    src = getReg(w, reg);
-                } else {
-                    dst = getReg(w, reg);
-                    src = getRM(w, mod, rm, disp);
-                }
-                res = dst & src;
-                logic(w, res);
-                if (d == 0b0) {
-                    setRM(w, mod, rm, disp, res);
-                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
-                } else {
-                    setReg(w, reg, res);
-                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
-                }
-                break;
-
-            // Immediate to Accumulator
-            case AND_AL_IMMED8 : //  0x24: // AND AL,IMMED8
-            case AND_AX_IMMED16: //  0x25: // AND AX,IMMED16
-                dst = getReg(w, AX);
-                src = instruction.immediate;                    //  getMem(w);
-                res = dst & src;
-                logic(w, res);
-                setReg(w, AX, res);
-                clocks += instruction.getClocks();              //  4;
-                break;
 
             /*
              * OR destination,source
@@ -2557,40 +2528,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * in the result is set if either or both corresponding bits of the
              * original operands are set; otherwise the result bit is cleared.
              */
-            // Register/Memory and Register
-            case OR_REG8__MEM8_REG8   : //  0x08: // OR REG8/MEM8,REG8
-            case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
-            case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
-            case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
-                //decode2();
-                if (d == 0b0) {
-                    dst = getRM(w, mod, rm, disp);
-                    src = getReg(w, reg);
-                } else {
-                    dst = getReg(w, reg);
-                    src = getRM(w, mod, rm, disp);
-                }
-                res = dst | src;
-                logic(w, res);
-                if (d == 0b0) {
-                    setRM(w, mod, rm, disp, res);
-                    clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 16;
-                } else {
-                    setReg(w, reg, res);
-                    clocks += instruction.getClocks();              //  mod == 0b11 ? 3 : 9;
-                }
-                break;
-
-            // Immediate to Accumulator
-            case OR_AL_IMMED8 : //   0x0c: // OR AL,IMMED8
-            case OR_AX_IMMED16: //   0x0d: // OR AX,IMMED16
-                dst = getReg(w, AX);
-                src = instruction.immediate;                //  getMem(w);
-                res = dst | src;
-                logic(w, res);
-                setReg(w, AX, res);
-                clocks += instruction.getClocks();          //
-                break;
+                // Register/Memory and Register
+                case OR_REG8__MEM8_REG8   : //  0x08: // OR REG8/MEM8,REG8
+                case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
+                case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
+                case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
 
             /*
              * XOR destination,source
@@ -2601,40 +2543,94 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * operands contain opposite values (one is set, the other is
              * cleared); otherwise the result bit is cleared.
              */
-            // Register/Memory and Register
-            case XOR_REG8__MEM8_REG8   : //    0x30: // XOR REG8/MEM8,REG8
-            case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
-            case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
-            case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
-                //decode2();
-                if (d == 0b0) {
-                    dst = getRM(w, mod, rm, disp);
-                    src = getReg(w, reg);
-                } else {
-                    dst = getReg(w, reg);
-                    src = getRM(w, mod, rm, disp);
-                }
-                res = dst ^ src;
-                logic(w, res);
-                if (d == 0b0) {
-                    setRM(w, mod, rm, disp, res);
-                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
-                } else {
-                    setReg(w, reg, res);
-                    clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
-                }
-                break;
+                // Register/Memory and Register
+                case XOR_REG8__MEM8_REG8   : //    0x30: // XOR REG8/MEM8,REG8
+                case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
+                case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
+                case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
+                    //decode2();
+
+                    // Get operands
+                    if (d == 0b0) {
+                        dst = getRM(w, mod, rm, disp);
+                        src = getReg(w, reg);
+                    } else {
+                        dst = getReg(w, reg);
+                        src = getRM(w, mod, rm, disp);
+                    }
+
+                    res = 0;
+                    switch (op) {
+                        case AND_REG8__MEM8_REG8   : //   0x20: // AND REG8/MEM8,REG8
+                        case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
+                        case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
+                        case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
+                            res = alu.and(w, dst , src);    //  dst & src;
+                            break;
+                        case OR_REG8__MEM8_REG8   : //  0x08: // OR REG8/MEM8,REG8
+                        case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
+                        case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
+                        case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
+                            res = alu.or(w, dst , src);    //  dst | src;
+                            break;
+                        case XOR_REG8__MEM8_REG8   : //    0x30: // XOR REG8/MEM8,REG8
+                        case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
+                        case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
+                        case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
+                            res = alu.xor(w, dst , src);    //  dst ^ src;
+                            break;
+                    }
+                    //logic(w, res);
+
+                    //  post result process
+                    if (d == 0b0) {
+                        setRM(w, mod, rm, disp, res);
+                        clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 16;
+                    } else {
+                        setReg(w, reg, res);
+                        clocks += instruction.getClocks();          //  mod == 0b11 ? 3 : 9;
+                    }
+                    break;
+
 
             // Immediate to Accumulator
+            case AND_AL_IMMED8 : //  0x24: // AND AL,IMMED8
+            case AND_AX_IMMED16: //  0x25: // AND AX,IMMED16
+
+                // Immediate to Accumulator
             case XOR_AL_IMMED8 : //   0x34: // XOR AL,IMMED8
             case XOR_AX_IMMED16: //   0x35: // XOR AX,IMMED16
+
+            // Immediate to Accumulator
+            case OR_AL_IMMED8 : //   0x0c: // OR AL,IMMED8
+            case OR_AX_IMMED16: //   0x0d: // OR AX,IMMED16
+                // Get operands
                 dst = getReg(w, AX);
-                src = instruction.immediate;                    //  getMem(w);
-                res = dst ^ src;
-                logic(w, res);
+                src = instruction.immediate;                //  getMem(w);
+                // Operator
+                res = 0;
+                switch (op) {
+                    case AND_AL_IMMED8 : //  0x24: // AND AL,IMMED8
+                    case AND_AX_IMMED16: //  0x25: // AND AX,IMMED16
+                        res = alu.and(w, dst , src);    //  dst & src;
+                        break;
+                    case OR_AL_IMMED8 : //   0x0c: // OR AL,IMMED8
+                    case OR_AX_IMMED16: //   0x0d: // OR AX,IMMED16
+                        res = alu.or(w, dst , src);    //  dst | src;
+                        break;
+                    case XOR_AL_IMMED8 : //   0x34: // XOR AL,IMMED8
+                    case XOR_AX_IMMED16: //   0x35: // XOR AX,IMMED16
+                        res = alu.xor(w, dst , src);    //  dst ^ src;
+                        break;
+                }
+                //logic(w, res);
+
+                // Result process
                 setReg(w, AX, res);
-                clocks += instruction.getClocks();              //  4;
+                clocks += instruction.getClocks();          //
                 break;
+
+
 
             /*
              * TEST destination,source

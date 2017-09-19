@@ -108,6 +108,28 @@ public class ALU8086 implements ArithmeticLogicUnit {
 
         return result;
     }
+
+    @Override
+    public int and(int w, int dst, int src) {
+        int res = dst & src;
+        logic(w, res);
+        return res;
+    }
+
+    @Override
+    public int or(int w, int dst, int src) {
+        int res = dst | src;
+        logic(w, res);
+        return res;
+    }
+
+    @Override
+    public int xor(int w, int dst, int src) {
+        int res = dst ^ src;
+        logic(w, res);
+        return res;
+    }
+
     /**
      * Performs addition and sets flags accordingly.
      *
