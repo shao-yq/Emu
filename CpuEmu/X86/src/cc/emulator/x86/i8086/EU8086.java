@@ -1943,33 +1943,23 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             case ADD_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
             case ADD_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
             case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
-                //decode2();
-                if (d == 0b0) {
-                    dst = getRM(w, mod, rm, disp);
-                    src = getReg(w, reg);
-                } else {
-                    dst = getReg(w, reg);
-                    src = getRM(w, mod, rm, disp);
-                }
-                res = alu.add(w, dst, src);
-                if (d == 0b0) {
-                    setRM(w, mod, rm, disp, res);
-                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
-                } else {
-                    setReg(w, reg, res);
-                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 9;
-                }
-                break;
-
-            // Immediate to Accumulator
-            case ADD_AL_IMMED8 : //  0x04: // ADD AL,IMMED8
-            case ADD_AX_IMMED16: //  0x05: // ADD AX,IMMED16
-                dst = getReg(w, 0);
-                src = instruction.immediate;        //  getMem(w);
-                res = alu.add(w, dst, src);
-                setReg(w, AX, res);
-                clocks += instruction.getClocks();  //  4;
-                break;
+//                //decode2();
+//                if (d == 0b0) {
+//                    dst = getRM(w, mod, rm, disp);
+//                    src = getReg(w, reg);
+//                } else {
+//                    dst = getReg(w, reg);
+//                    src = getRM(w, mod, rm, disp);
+//                }
+//                res = alu.add(w, dst, src);
+//                if (d == 0b0) {
+//                    setRM(w, mod, rm, disp, res);
+//                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
+//                } else {
+//                    setReg(w, reg, res);
+//                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 9;
+//                }
+//                break;
 
             /*
              * ADC destination,source
@@ -1994,7 +1984,23 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     dst = getReg(w, reg);
                     src = getRM(w, mod, rm, disp);
                 }
-                res = alu.adc(w, dst, src);
+
+                res = 0;
+                switch(op){
+                    case ADD_REG8__MEM8_REG8   : //  0x00: // ADD REG8/MEM8,REG8
+                    case ADD_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
+                    case ADD_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
+                    case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
+                        res = alu.add(w, dst, src);
+                        break;
+                    case ADC_REG8__MEM8_REG8   : //  0x10: // ADC REG8/MEM8,REG8
+                    case ADC_REG16__MEM16_REG16: //  0x11: // ADC REG16/MEM16,REG16
+                    case ADC_REG8_REG8__MEM8   : //  0x12: // ADC REG8,REG8/MEM8
+                    case ADC_REG16_REG16__MEM16: //  0x13: // ADC REG16,REG16/MEM16
+                        res = alu.adc(w, dst, src);
+                        break;
+                }
+
                 if (d == 0b0) {
                     setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
@@ -2007,12 +2013,34 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             // Immediate to Accumulator
             case ADC_AL_IMMED8 : //  0x14: // ADC AL,IMMED8
             case ADC_AX_IMMED16: //  0X15: // ADC AX,IMMED16
-                dst = getReg(w, AX);
-                src = instruction.immediate;                //  getMem(w);
-                res = alu.adc(w, dst, src);
+//                dst = getReg(w, AX);
+//                src = instruction.immediate;                //  getMem(w);
+//                res = alu.adc(w, dst, src);
+//                setReg(w, AX, res);
+//                clocks += instruction.getClocks();          //  4;
+//                break;
+            // Immediate to Accumulator
+            case ADD_AL_IMMED8 : //  0x04: // ADD AL,IMMED8
+            case ADD_AX_IMMED16: //  0x05: // ADD AX,IMMED16
+                dst = getReg(w, 0);
+                src = instruction.immediate;        //  getMem(w);
+
+                res = 0;
+                switch(op) {
+                    case ADC_AL_IMMED8 : //  0x14: // ADC AL,IMMED8
+                    case ADC_AX_IMMED16: //  0X15: // ADC AX,IMMED16
+                        res = alu.adc(w, dst, src);
+                        break;
+                    case ADD_AL_IMMED8 : //  0x04: // ADD AL,IMMED8
+                    case ADD_AX_IMMED16: //  0x05: // ADD AX,IMMED16
+                        res = alu.add(w, dst, src);
+                        break;
+                }
+
                 setReg(w, AX, res);
-                clocks += instruction.getClocks();          //  4;
+                clocks += instruction.getClocks();  //  4;
                 break;
+
 
             /*
              * INC destination
@@ -2107,33 +2135,23 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             case SUB_REG16__MEM16_REG16: //   0x29: // SUB REG16/MEM16,REG16
             case SUB_REG8_REG8__MEM8   : //   0x2a: // SUB REG8,REG8/MEM8
             case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
-                //decode2();
-                if (d == 0b0) {
-                    dst = getRM(w, mod, rm, disp);
-                    src = getReg(w, reg);
-                } else {
-                    dst = getReg(w, reg);
-                    src = getRM(w, mod, rm, disp);
-                }
-                res = alu.sub(w, dst, src);
-                if (d == 0b0) {
-                    setRM(w, mod, rm, disp, res);
-                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
-                } else {
-                    setReg(w, reg, res);
-                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 9;
-                }
-                break;
-
-            // Immediate from Accumulator
-            case SUB_AL_IMMED8 : //  0x2c: // SUB AL,IMMED8
-            case SUB_AX_IMMED16: //  0x2d: // SUB AX,IMMED16
-                dst = getReg(w, AX);
-                src = instruction.immediate;            //  getMem(w);
-                res = alu.sub(w, dst, src);
-                setReg(w, AX, res);
-                clocks += instruction.getClocks();      //  4;
-                break;
+//                //decode2();
+//                if (d == 0b0) {
+//                    dst = getRM(w, mod, rm, disp);
+//                    src = getReg(w, reg);
+//                } else {
+//                    dst = getReg(w, reg);
+//                    src = getRM(w, mod, rm, disp);
+//                }
+//                res = alu.sub(w, dst, src);
+//                if (d == 0b0) {
+//                    setRM(w, mod, rm, disp, res);
+//                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 16;
+//                } else {
+//                    setReg(w, reg, res);
+//                    clocks += instruction.getClocks();      //  mod == 0b11 ? 3 : 9;
+//                }
+//                break;
 
             /*
              * SBB destination,source
@@ -2159,7 +2177,23 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     dst = getReg(w, reg);
                     src = getRM(w, mod, rm, disp);
                 }
-                res = alu.sbb(w, dst, src);
+
+                res=0;
+                switch (op){
+                    case SUB_REG8__MEM8_REG8   : //   0x28: // SUB REG8/MEM8,REG8
+                    case SUB_REG16__MEM16_REG16: //   0x29: // SUB REG16/MEM16,REG16
+                    case SUB_REG8_REG8__MEM8   : //   0x2a: // SUB REG8,REG8/MEM8
+                    case SUB_REG16_REG16__MEM16: //   0x2b: // SUB REG16,REG16/MEM16
+                        res = alu.sub(w, dst, src);
+                        break;
+                    case SBB_REG8__MEM8_REG8   : //   0x18: // SBB REG8/MEM8,REG8
+                    case SBB_REG16__MEM16_REG16: //   0x19: // SBB REG16/MEM16,REG16
+                    case SBB_REG8_REG8__MEM8   : //   0x1a: // SBB REG8,REG8/MEM8
+                    case SBB_REG16_REG16__MEM16: //   0x1b: // SBB REG16,REG16/MEM16
+                        res = alu.sbb(w, dst, src);
+                        break;
+                }
+
                 if (d == 0b0) {
                     setRM(w, mod, rm, disp, res);
                     clocks += instruction.getClocks();      // mod == 0b11 ? 3 : 16;
@@ -2169,12 +2203,34 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 }
                 break;
 
-            // Immediate to Accumulator
+            // Immediate from Accumulator
+            case SUB_AL_IMMED8 : //  0x2c: // SUB AL,IMMED8
+            case SUB_AX_IMMED16: //  0x2d: // SUB AX,IMMED16
+//                dst = getReg(w, AX);
+//                src = instruction.immediate;            //  getMem(w);
+//                res = alu.sub(w, dst, src);
+//                setReg(w, AX, res);
+//                clocks += instruction.getClocks();      //  4;
+//                break;
+
+                // Immediate to Accumulator
             case SBB_AL_IMMED8 : //   0x1c: // SBB AL,IMMED8
             case SBB_AX_IMMED16: //   0X1d: // SBB AX,IMMED16
                 dst = getReg(w, AX);
                 src = instruction.immediate;            //  getMem(w);
-                res = alu.sbb(w, dst, src);
+
+                res=0;
+                switch (op){
+                    case SUB_AL_IMMED8 : //  0x2c: // SUB AL,IMMED8
+                    case SUB_AX_IMMED16: //  0x2d: // SUB AX,IMMED16
+                        res = alu.sub(w, dst, src);
+                        break;
+                    case SBB_AL_IMMED8 : //   0x1c: // SBB AL,IMMED8
+                    case SBB_AX_IMMED16: //   0X1d: // SBB AX,IMMED16
+                        res = alu.sbb(w, dst, src);
+                        break;
+                }
+
                 setReg(w, AX, res);
                 clocks += instruction.getClocks();      //  4;
                 break;
@@ -3863,8 +3919,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     break;
                 case MOD_OR : //   0b001: // OR
                     if (op == 0x80 || op == 0x81) {
-                        res = dst | src;
-                        logic(w, res);
+                        res = alu.or(w,dst, src);   // dst | src;
+                        //logic(w, res);
                         setRM(w, mod, rm, disp, res);
                         break;
                     }
@@ -3879,8 +3935,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     break;
                 case MOD_AND: //   0b100: // AND
                     if (op == 0x80 || op == 0x81) {
-                        res = dst & src;
-                        logic(w, res);
+                        res = alu.and(w,dst, src);   // dst & src;
+                        //logic(w, res);
                         setRM(w, mod, rm, disp, res);
                     }
                     break;
@@ -3890,8 +3946,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     break;
                 case MOD_XOR: //   0b110: // XOR
                     if (op == 0x80 || op == 0x81) {
-                        res = dst ^ src;
-                        logic(w, res);
+                        res = alu.xor(w,dst, src);   // dst ^ src;
+                        //logic(w, res);
                         setRM(w, mod, rm, disp, res);
                     }
                     break;
