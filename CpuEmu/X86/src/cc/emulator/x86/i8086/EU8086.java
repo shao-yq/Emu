@@ -245,7 +245,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * AL - Byte Multiply, Byte Divide, Byte I/O, Translate, Decimal Arithmetic
      * AH - Byte Multiply, Byte Divide
      */
-    private int                ah, al;
+    //private int                ah, al;
     DividableRegister ax;
     /**
      * CX (count)
@@ -254,7 +254,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * CX - String Operations, Loops
      * CL - Variable Shift and Rotate
      */
-    private int                ch, cl;
+    //private int                ch, cl;
     DividableRegister cx;
     /**
      * DX (data)
@@ -262,7 +262,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * Implicit Use:
      * DX - Word Multiply, Word Divide, Indirect I/O
      */
-    private int                dh, dl;
+    //private int                dh, dl;
     DividableRegister dx;
     /**
      * BX (base)
@@ -270,7 +270,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * Implicit Use:
      * BX - Translate
      */
-    private int                bh, bl;
+    //private int                bh, bl;
     DividableRegister bx;
     /**
      * SP (stack pointer)
@@ -725,11 +725,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         switch (rm) {
         case 0b000: // EA = (BX) + (SI) + DISP
             clocks += 7;
-            ea = bh << 8 | bl + si + disp;
+            ea = bx.getX() + si + disp;         //  bh << 8 | bl + si + disp;
             break;
         case 0b001: // EA = (BX) + (DI) + DISP
             clocks += 8;
-            ea = bh << 8 | bl + di + disp;
+            ea = bx.getX() + di + disp;         //  bh << 8 | bl + di + disp;
             break;
         case 0b010: // EA = (BP) + (SI) + DISP
             clocks += 8;
@@ -760,7 +760,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             break;
         case 0b111: // EA = (BX) + DISP
             clocks += 5;
-            ea = bh << 8 | bl + disp;
+            ea = bx.getX() + disp;          //  bh << 8 | bl + disp;
             break;
         }
         return (os << 4) + (ea & 0xffff);
@@ -844,33 +844,33 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             // Byte data
             switch (reg) {
             case 0b000: // AL
-                return al;
+                return ax.getL();       //  al;
             case 0b001: // CL
-                return cl;
+                return cx.getL();       //  cl;
             case 0b010: // DL
-                return dl;
+                return dx.getL();       //  dl;
             case 0b011: // BL
-                return bl;
+                return bx.getL();       //  bl;
             case 0b100: // AH
-                return ah;
+                return ax.getH();       //  ah;
             case 0b101: // CH
-                return ch;
+                return cx.getH();       //  ch;
             case 0b110: // DH
-                return dh;
+                return dx.getH();       //  dh;
             case 0b111: // BH
-                return bh;
+                return bx.getH();       //  bh;
             }
         else
             // Word data
             switch (reg) {
             case AX: //  0b000: // AX
-                return ah << 8 | al;
+                return ax.getX();       //  ah << 8 | al;
             case CX: //  0b001: // CX
-                return ch << 8 | cl;
+                return cx.getX();       //  ch << 8 | cl;
             case DX: //  0b010: // DX
-                return dh << 8 | dl;
+                return dx.getX();       //  dh << 8 | dl;
             case BX: //  0b011: // BX
-                return bh << 8 | bl;
+                return bx.getX();       //  bh << 8 | bl;
             case 0b100: // SP
                 return stack.getSp();   //  sp;
             case 0b101: // BP
@@ -1108,48 +1108,52 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             // Byte data
             switch (reg) {
             case AL: //  0b000: // AL
-                al = val & 0xff;
+                ax.setL(val & 0xff);        //  al = val & 0xff;
                 break;
             case CL: //  0b001: // CL
-                cl = val & 0xff;
+                cx.setL( val & 0xff);       //  cl = val & 0xff;
                 break;
             case DL: //  0b010: // DL
-                dl = val & 0xff;
+                dx.setL(val & 0xff);        //  dl = val & 0xff;
                 break;
             case BL: //  0b011: // BL
-                bl = val & 0xff;
+                bx.setL(val & 0xff);        //  bl = val & 0xff;
                 break;
             case AH: //  0b100: // AH
-                ah = val & 0xff;
+                ax.setH(val & 0xff);        //  ah = val & 0xff;
                 break;
             case CH: //  0b101: // CH
-                ch = val & 0xff;
+                cx.setH(val & 0xff);        //  ch = val & 0xff;
                 break;
             case DH: //  0b110: // DH
-                dh = val & 0xff;
+                dx.setH(val & 0xff);        //  dh = val & 0xff;
                 break;
             case BH: //  0b111: // BH
-                bh = val & 0xff;
+                bx.setH(val & 0xff);        //  bh = val & 0xff;
                 break;
             }
         else
             // Word data
             switch (reg) {
             case AX: //  0b000: // AX
-                al = val & 0xff;
-                ah = val >>> 8 & 0xff;
+                ax.setX(val);
+                //al = val & 0xff;
+                //ah = val >>> 8 & 0xff;
                 break;
             case CX: //  0b001: // CX
-                cl = val & 0xff;
-                ch = val >>> 8 & 0xff;
+                cx.setX(val);
+                //cl = val & 0xff;
+                //ch = val >>> 8 & 0xff;
                 break;
             case DX: //  0b010: // DX
-                dl = val & 0xff;
-                dh = val >>> 8 & 0xff;
+                dx.setX(val);
+                //dl = val & 0xff;
+                //dh = val >>> 8 & 0xff;
                 break;
             case BX: //  0b011: // BX
-                bl = val & 0xff;
-                bh = val >>> 8 & 0xff;
+                bx.setX(val);
+                //bl = val & 0xff;
+                //bh = val >>> 8 & 0xff;
                 break;
             case SP: //  0b100: // SP
                 stack.setSp(val & 0xffff);      //  sp = val & 0xffff;
@@ -1650,7 +1654,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * reverse.
              */
             case XLAT_SOURCE_TABLE:     // 0xd7: // XLAT SOURCE-TABLE
-                al = getMem(B, getAddr(os, getReg(W, BX) + al));
+                ax.setL(getMem(B, getAddr(os, getReg(W, BX) + ax.getL())));  // al = getMem(B, getAddr(os, getReg(W, BX) + al));
                 clocks += instruction.getClocks();      //  11;
                 break;
 
@@ -1798,7 +1802,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * assembly language programs to run on an 8086.
              */
             case LAHF: //  0x9f: // LAHF
-                ah = flags.getData() & 0xff;
+                ax.setH(flags.getData() & 0xff);        //  ah = flags.getData() & 0xff;
                 clocks += instruction.getClocks();      //  4;
                 break;
 
@@ -1812,7 +1816,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * 8080/8085 compatibility.
              */
             case SAHF: //  0x9e: // SAHF
-                flags.setData(flags.getData() & 0xff00 | ah);
+                flags.setData(flags.getData() & 0xff00 | ax.getH());
                 clocks += instruction.getClocks();      //  4;
                 break;
 
@@ -2074,16 +2078,16 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * ZF is undefined following execution of AAA.
              */
             case AAA: //  0x37: // AAA
-                if ((al & 0xf) > 9 || getFlag(AF)) {
-                    al += 6;
-                    ah = ah + 1 & 0xff;
+                if ((ax.getL() & 0xf) > 9 || getFlag(AF)) {
+                    ax.incL(6);           //  al += 6;
+                    ax.setH(ax.getH()+1&0xff);  //  ah = ah + 1 & 0xff;
                     flags.setFlag(CF, true);
                     flags.setFlag(AF, true);
                 } else {
                     flags.setFlag(CF, false);
                     flags.setFlag(AF, false);
                 }
-                al &= 0xf;
+                ax.setL(ax.getL() & 0xf);       //  al &= 0xf;
                 clocks += instruction.getClocks();          //  4;
                 break;
 
@@ -2099,22 +2103,22 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case DAA:  //  0x27:  // DAA
             {
-                final int oldAL = al;
+                final int oldAL = ax.getL();        //  al;
                 final boolean oldCF = getFlag(CF);
                 flags.setFlag(CF, false);
-                if ((al & 0xf) > 9 || getFlag(AF)) {
-                    al += 6;
-                    flags.setFlag(CF, oldCF || al < 0);
-                    al &= 0xff;
+                if ((ax.getL() & 0xf) > 9 || getFlag(AF)) {
+                    ax.incL(6);             //  al += 6;
+                    flags.setFlag(CF, oldCF || ax.getL() < 0);
+                    ax.setL(ax.getL()&0xff);        //  al &= 0xff;
                     flags.setFlag(AF, true);
                 } else
                     flags.setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    al = al + 0x60 & 0xff;
+                    ax.setL(ax.getL() + 0x60 & 0xff);   // al = al + 0x60 & 0xff;
                     flags.setFlag(CF, true);
                 } else
                     flags.setFlag(CF, false);
-                flags.setFlags(B, al);
+                flags.setFlags(B, ax.getL());
                 clocks += instruction.getClocks();          //  4;
                 break;
             }
@@ -2322,16 +2326,16 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * AAS.
              */
             case AAS: //  0x3f: // AAS
-                if ((al & 0xf) > 9 || getFlag(AF)) {
-                    al -= 6;
-                    ah = ah - 1 & 0xff;
+                if ((ax.getL() & 0xf) > 9 || getFlag(AF)) {
+                    ax.incL(-6);           //  al -= 6;
+                    ax.setH(ax.getH()-1 & 0xff);    //  ah = ah - 1 & 0xff;
                     flags.setFlag(CF, true);
                     flags.setFlag(AF, true);
                 } else {
                     flags.setFlag(CF, false);
                     flags.setFlag(AF, false);
                 }
-                al &= 0xf;
+                ax.setL(ax.getL() & 0xf);       //  al &= 0xf;
                 clocks += instruction.getClocks();          //  4;
                 break;
 
@@ -2347,22 +2351,22 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case DAS: //  0x2f: // DAS
             {
-                final int oldAL = al;
+                final int oldAL = ax.getL();        //  al;
                 final boolean oldCF = getFlag(CF);
                 flags.setFlag(CF, false);
-                if ((al & 0xf) > 9 || getFlag(AF)) {
-                    al -= 6;
-                    flags.setFlag(CF, oldCF || (al & 0xff) > 0);
-                    al &= 0xff;
+                if ((ax.getL() & 0xf) > 9 || getFlag(AF)) {
+                    ax.incL(-6);    //  al -= 6;
+                    flags.setFlag(CF, oldCF || (ax.getL() & 0xff) > 0);
+                    ax.setL(ax.getL() & 0xff);     //  al &= 0xff;
                     flags.setFlag(AF, true);
                 } else
                     flags.setFlag(AF, false);
                 if (oldAL > 0x99 || oldCF) {
-                    al = al - 0x60 & 0xff;
+                    ax.setL(ax.getL()-0x60 & 0xff); //  al = al - 0x60 & 0xff;
                     flags.setFlag(CF, true);
                 } else
                     flags.setFlag(CF, false);
-                setFlags(B, al);
+                setFlags(B, ax.getL());
                 clocks += instruction.getClocks();              //  4;
                 break;
             }
@@ -2419,8 +2423,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 if (src == 0)
                     callInt(0);
                 else {
-                    ah = al / src & 0xff;
-                    al = al % src & 0xff;
+                    ax.setH(ax.getL() / src & 0xff);        //  ah = al / src & 0xff;
+                    ax.setL(ax.getL() % src & 0xff);        //  al = al % src & 0xff;
                     setFlags(W, getReg(W, AX));
                     clocks += instruction.getClocks();      //  83;
                 }
@@ -2488,9 +2492,9 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case AAD: //  0xd5: // AAD
                 src = instruction.immediate;            //  getMem(B);
-                al = ah * src + al & 0xff;
-                ah = 0;
-                setFlags(B, al);
+                ax.setL(ax.getH()*src+ax.getL() & 0xff); // al = ah * src + al & 0xff;
+                ax.setH(0);                              // ah = 0;
+                setFlags(B, ax.getL());
                 clocks += instruction.getClocks();      //  60;
                 break;
 
@@ -2503,10 +2507,10 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * from a byte prior to performing byte division.
              */
             case CBW: //  0x98: // CBW
-                if ((al & 0x80) == 0x80)
-                    ah = 0xff;
+                if ((ax.getL() & 0x80) == 0x80)
+                    ax.setH(0xff);      //  ah = 0xff;
                 else
-                    ah = 0x00;
+                    ax.setH(0x00);      //  ah = 0x00;
                 clocks += instruction.getClocks();              //  2
                 break;
 
@@ -2519,7 +2523,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              * dividend from a word prior to performing word division.
              */
             case CWD: //  0x99: // CWD
-                if ((ah & 0x80) == 0x80)
+                if ((ax.getH() & 0x80) == 0x80)
                     setReg(W, DX, 0xffff);
                 else
                     setReg(W, DX, 0x0000);
@@ -4012,7 +4016,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             {
                 //decode2();
                 dst = getRM(w, mod, rm, disp);
-                src = op == 0xd0 || op == 0xd1 ? 1 : cl;
+                src = op == 0xd0 || op == 0xd1 ? 1 : cx.getL();
                 boolean tempCF;
                 switch (reg) {
                 case MOD_ROL: //  0b000: // ROL
@@ -4144,10 +4148,10 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     break;
                 case MOD_MUL: //   0b100: // MUL
                     if (w == B) {
-                        dst = al;
+                        dst = ax.getL();        //  al;
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ah > 0) {
+                        if (ax.getH() > 0) {
                             flags.setFlag(CF, true);
                             flags.setFlag(OF, true);
                         } else {
@@ -4173,11 +4177,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 case MOD_IMUL: //   0b101: // IMUL
                     if (w == B) {
                         src = signconv(B, src);
-                        dst = al;
+                        dst = ax.getL();        //  al;
                         dst = signconv(B, dst);
                         res = dst * src & 0xffff;
                         setReg(W, AX, res);
-                        if (ah > 0x00 && ah < 0xff) {
+                        if (ax.getH() > 0x00 && ax.getH() < 0xff) {
                             flags.setFlag(CF, true);
                             flags.setFlag(OF, true);
                         } else {
@@ -4187,7 +4191,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                         clocks += mod == 0b11 ? (98 - 80) / 2 : (154 - 128) / 2;
                     } else {
                         src = signconv(W, src);
-                        dst = ah << 8 | al;
+                        dst = ax.getX();        // ah << 8 | al;
                         dst = signconv(W, dst);
                         final long lres = (long) dst * (long) src & 0xffffffff;
                         setReg(W, AX, (int) lres);
@@ -4207,13 +4211,13 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                     if (src == 0)
                         callInt(0);
                     else if (w == B) {
-                        dst = ah << 8 | al;
+                        dst = ax.getX();            //  ah << 8 | al;
                         res = dst / src & 0xffff;
                         if (res > 0xff)
                             callInt(0);
                         else {
-                            al = res & 0xff;
-                            ah = dst % src & 0xff;
+                            ax.setL(res & 0xff);        //  al = res & 0xff;
+                            ax.setH(dst % src & 0xff);  //  ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (90 - 80) / 2 : (96 - 86) / 2;
                     } else {
@@ -4240,8 +4244,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                         if (res > 0x007f && res < 0xff81)
                             callInt(0);
                         else {
-                            al = res & 0xff;
-                            ah = dst % src & 0xff;
+                            ax.setL(res & 0xff);            //  al = res & 0xff;
+                            ax.setH(dst % src & 0xff);      //  ah = dst % src & 0xff;
                         }
                         clocks += mod == 0b11 ? (112 - 101) / 2 : (118 - 107) / 2;
                     } else {

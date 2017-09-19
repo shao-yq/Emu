@@ -24,6 +24,13 @@ public class DividableRegister extends GeneralRegister{
         return data;
     }
 
+    public int getX(){
+        return getData();
+    }
+    public void setX(int vv){
+        data = vv &0xffff;
+    }
+
     public int getH(){
         switch(dataWidth){
             case 2:
@@ -51,6 +58,8 @@ public class DividableRegister extends GeneralRegister{
                 break;
         }
     }
+
+
     public void setL(int v){
         switch(dataWidth) {
             case 2:
