@@ -167,7 +167,7 @@ public class Decoder8086 extends IntelDecoder {
         for(int i=0; i<instructions.length; i++){
             if(instructions[i].hasOpcode(queue, startIndex)){
                 instr = (IntelInstruction) instructions[i].clone();
-                instr.decode(queue, startIndex);
+                instr.decodeMe(queue, startIndex);
                 break;
             }
         }

@@ -125,7 +125,7 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
 //        execute(executionUnit, null);
 //    }
 
-    protected int raw[] = null;
+    protected int rawData[] = null;
     protected int prefixes[] = null;
     protected int prefixCount=0;
     public boolean hasPrefix(){
@@ -138,7 +138,7 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
         return prefixes[ind];
     }
 
-    public abstract void decode(int[] raw, int startIndex);
+    public abstract void decodeMe(int[] raw, int startIndex);
 
     public Object clone(){
         IntelInstruction o = null;
@@ -161,10 +161,10 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
                 instruction.prefixes[i] = prefixes[i];
             }
         }
-        if(raw!=null) {
-            instruction.raw = new int[raw.length];
-            for(int i=0; i<raw.length; i++){
-                instruction.raw[i] = raw[i];
+        if(rawData!=null) {
+            instruction.rawData = new int[rawData.length];
+            for(int i=0; i<rawData.length; i++){
+                instruction.rawData[i] = rawData[i];
             }
         }
     }

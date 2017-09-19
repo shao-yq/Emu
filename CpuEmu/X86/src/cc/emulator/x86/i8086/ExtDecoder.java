@@ -84,7 +84,7 @@ public class ExtDecoder implements Intel8086InstructionSet{
                 break;
         }
         if(instr!=null)
-            instr.decode(raw, startIndex);
+            instr.decodeMe(raw, startIndex);
 
         return instr;
     }
