@@ -46,10 +46,13 @@ import cc.emulator.x86.intel.IntelInstruction;
  *
  */
 public  class Instruction8086 extends IntelInstruction {
+    public Instruction8086(){}
 
     public Instruction8086(int[] raw, int startIndex) {
         // Decode First byte
-        this(raw,1, startIndex);
+        //this(raw,1, startIndex);
+
+        decode(raw, startIndex);
     }
 
     public Instruction8086(int[] raw) {
@@ -59,6 +62,43 @@ public  class Instruction8086 extends IntelInstruction {
 
     int startIndex=0;
     protected Instruction8086(int[] raw, int cnt, int startIndex) {
+        decode( raw,  cnt,  startIndex);
+//        this.startIndex=startIndex;
+//        switch(cnt){
+//            case 2:
+//                decodeByte1(raw[1+startIndex]);
+//
+//            case 1:
+//                decodeByte0(raw[startIndex]);
+//                break;
+//        }
+//
+//        setLength(cnt+startIndex);
+//        // Copy the prefix(es)
+//        if(startIndex>0) {
+//            prefixCount = startIndex;
+//            prefixes = new int[prefixCount];
+//            for (int i = 0; i < startIndex; i++) {
+//                prefixes[i] = raw[i];
+//            }
+//        }
+    }
+
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
+    }
+
+    @Override
+    public boolean hasOpcode(int[] queue, int startIndex) {
+        return true;
+    }
+
+//    @Override
+//    public boolean canDecode(int[] queue, int startIndex) {
+//        return false;
+//    }
+
+    public void decode(int[] raw, int cnt, int startIndex) {
         this.startIndex=startIndex;
         switch(cnt){
             case 2:

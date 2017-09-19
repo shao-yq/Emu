@@ -1,8 +1,6 @@
 package cc.emulator.x86.intel;
 
-import cc.emulator.core.cpu.ExecutionUnit;
 import cc.emulator.core.cpu.Instruction;
-import cc.emulator.core.cpu.Stack;
 import cc.emulator.x86.i8086.Intel8086InstructionSet;
 
 /**
@@ -29,7 +27,7 @@ import cc.emulator.x86.i8086.Intel8086InstructionSet;
  * @author Shao Yongqing
  * Date: 2017/7/27.
  */
-public abstract class IntelInstruction implements Instruction, Intel8086InstructionSet {
+public abstract class IntelInstruction implements Instruction, Intel8086InstructionSet, Cloneable {
 
     /** Operation (Instruction) code , 6 bits: opcodeDW*/
     public int                op;
@@ -127,7 +125,8 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
 //        execute(executionUnit, null);
 //    }
 
-    protected int prefixes[];
+    protected int raw[] = null;
+    protected int prefixes[] = null;
     protected int prefixCount=0;
     public boolean hasPrefix(){
         return prefixCount>0;
@@ -138,4 +137,37 @@ public abstract class IntelInstruction implements Instruction, Intel8086Instruct
     public int getPrefix(int ind){
         return prefixes[ind];
     }
+
+    public abstract void decode(int[] raw, int startIndex);
+
+    public Object clone(){
+        IntelInstruction o = null;
+        try{
+            o = (IntelInstruction)super.clone();
+        }catch(CloneNotSupportedException e){
+            e.printStackTrace();
+        }
+
+        // copy other ohjects(prefixes, raw data, etc.) if available
+        copyOthers(o);
+
+        return o;
+    }
+
+    private void copyOthers(IntelInstruction instruction) {
+        if(prefixes!=null) {
+            instruction.prefixes = new int[prefixes.length];
+            for(int i=0; i<prefixes.length; i++){
+                instruction.prefixes[i] = prefixes[i];
+            }
+        }
+        if(raw!=null) {
+            instruction.raw = new int[raw.length];
+            for(int i=0; i<raw.length; i++){
+                instruction.raw[i] = raw[i];
+            }
+        }
+    }
+
+    public abstract boolean hasOpcode(int[] queue, int startIndex);
 }

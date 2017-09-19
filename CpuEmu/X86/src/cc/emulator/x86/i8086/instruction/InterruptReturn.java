@@ -16,11 +16,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * activated by hardware or software.
  */
 public class InterruptReturn extends Instruction8086{
+    public InterruptReturn(){}
     public InterruptReturn(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

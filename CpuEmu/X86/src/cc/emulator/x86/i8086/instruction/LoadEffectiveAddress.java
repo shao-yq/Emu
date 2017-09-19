@@ -19,16 +19,19 @@ import cc.emulator.x86.i8086.Instruction8086;
  * XLAT instruction).
  */
 public class LoadEffectiveAddress extends Instruction8086 {
+    public LoadEffectiveAddress(){}
     public LoadEffectiveAddress(int[] raw, int startIndex) {
-        super(raw, 2, startIndex);
+        super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
-
     public int getClocks(int c) {
         return 2;
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

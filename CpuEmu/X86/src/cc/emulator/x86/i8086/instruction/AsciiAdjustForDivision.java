@@ -19,14 +19,19 @@ import cc.emulator.x86.i8086.Instruction8086;
  * is undefined following execution of AAD.
  */
 public class AsciiAdjustForDivision extends Instruction8086 {
-
+    public AsciiAdjustForDivision(){}
     public AsciiAdjustForDivision(int[] raw, int startIndex) {
         super(raw, startIndex);
-        // 2nd byte
-        immediate = raw[1+startIndex];
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1,startIndex);
+        // 2nd byte
+        immediate = raw[1+startIndex];
+        incLength(1);
+    }
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

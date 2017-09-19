@@ -19,8 +19,12 @@ import cc.emulator.x86.i8086.Intel8086;
  * on the flags is covered in the description of each instruction.
  */
 public class Interrupt extends Instruction8086 {
+    public Interrupt(){}
     public Interrupt(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1,startIndex);
         if(op == INT_IMMED8){
             // DATA-8
             immediate = raw[1+startIndex];
@@ -28,7 +32,7 @@ public class Interrupt extends Instruction8086 {
         }
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

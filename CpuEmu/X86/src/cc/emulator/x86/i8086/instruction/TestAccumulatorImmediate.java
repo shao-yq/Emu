@@ -16,8 +16,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * there are any corresponding 1-bits in both operands.
  */
 public class TestAccumulatorImmediate extends Instruction8086 {
+    public TestAccumulatorImmediate(){}
     public TestAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        super.decode(raw, startIndex);
         immediate = raw[1+startIndex];
         incLength(1);
         if(op == ADD_AX_IMMED16){
@@ -25,8 +29,7 @@ public class TestAccumulatorImmediate extends Instruction8086 {
             incLength(1);
         }
     }
-
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

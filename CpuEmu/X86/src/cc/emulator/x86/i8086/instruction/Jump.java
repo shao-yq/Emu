@@ -41,27 +41,33 @@ import cc.emulator.x86.i8086.Instruction8086;
  * instruction replaces IP, and the second word replaces CS.
  */
 public class Jump extends Instruction8086{
+    public Jump(){}
     public Jump(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
         disp = 0;
         switch(op) {
             // Direct Intersegment
             case JMP_FAR: //   0xea: // JMP FAR-LABEL
                 immediate = raw[3+startIndex] | (raw[4+startIndex]<<8);
                 incLength(2);
-            // Direct within Segment
+                // Direct within Segment
             case JMP_NEAR: //   0xe9: // JMP NEAR-LABEL
                 // Near address
                 disp |= raw[2+startIndex]<<8;
                 incLength(1);
-            // Direct within Segment-Short
+                // Direct within Segment-Short
             case JMP_SHORT: //   0xeb: // JMP SHORT-LABEL
                 disp |= raw[1+startIndex];
                 incLength(1);
                 break;
         }
     }
-    public static boolean hasOpcode(int raw[], int startIndex) {
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

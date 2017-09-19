@@ -16,12 +16,16 @@ import cc.emulator.x86.i8086.Instruction8086;
  * means of storing temporary data on the stack.
  */
 public class PushGeneralRegister extends Instruction8086 {
+    public PushGeneralRegister(){}
     public PushGeneralRegister(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
         reg = op & 0b111;
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

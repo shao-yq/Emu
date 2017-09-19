@@ -5,8 +5,13 @@ package cc.emulator.x86.i8086.instruction;
  * Date: 2017/9/1.
  */
 public class TestRegisterMemoryImmediate extends TestRegisterMemory{
+    public TestRegisterMemoryImmediate(){}
     public TestRegisterMemoryImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+
+    public void decode(int[] raw, int startIndex) {
+        super.decode(raw, startIndex);
         //
         immediate = raw[length];
         incLength(1);
@@ -15,7 +20,7 @@ public class TestRegisterMemoryImmediate extends TestRegisterMemory{
             incLength(1);
         }
     }
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         switch(raw[startIndex]) {
             case EXT_0XF6:  // 0xf6:
                 // TEST REG8/MEM8,IMMED8

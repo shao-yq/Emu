@@ -7,12 +7,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class NegRegisterMemory extends Instruction8086 {
+    public NegRegisterMemory(){}
     public NegRegisterMemory(int[] raw, int startIndex) {
-        super(raw, 2, startIndex);
+        super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 2, startIndex);
         decodeDisplacement(raw);
     }
-
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         switch(raw[startIndex]) {
             case EXT_0XF6:  // 0xf6:
                 // TEST REG8/MEM8,IMMED8

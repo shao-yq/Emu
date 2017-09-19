@@ -18,12 +18,13 @@ import cc.emulator.x86.i8086.Intel8086;
  */
 public class AsciiAdjustForAddition extends Instruction8086 {
 
+    public AsciiAdjustForAddition(){}
 
     public AsciiAdjustForAddition(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

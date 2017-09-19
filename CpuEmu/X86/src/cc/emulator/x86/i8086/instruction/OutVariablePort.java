@@ -18,13 +18,18 @@ import cc.emulator.x86.i8086.Instruction8086;
  * value in DX) to ports numbered from 0 through 65,535.
  */
 public class OutVariablePort extends Instruction8086 {
+    public OutVariablePort(){}
     public OutVariablePort(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
         immediate = raw[1+startIndex];
         incLength(1);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

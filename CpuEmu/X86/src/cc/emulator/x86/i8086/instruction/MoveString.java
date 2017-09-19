@@ -17,11 +17,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * memory block transfer.
  */
 public class MoveString extends Instruction8086 {
+    public MoveString(){}
     public MoveString(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

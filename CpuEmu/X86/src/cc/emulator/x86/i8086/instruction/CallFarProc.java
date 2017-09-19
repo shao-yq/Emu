@@ -56,15 +56,19 @@ import cc.emulator.x86.i8086.Instruction8086;
  * pointer referenced by the instruction.
  */
 public class CallFarProc extends Instruction8086{
-
+    public CallFarProc(){}
     public CallFarProc(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
         // far address & segment
         disp = raw[1+startIndex]|(raw[2+startIndex]<<8);
         immediate = raw[3+startIndex]|(raw[4+startIndex]<<8);
         incLength(4);
     }
-    public static boolean hasOpcode(int raw[], int startIndex) {
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

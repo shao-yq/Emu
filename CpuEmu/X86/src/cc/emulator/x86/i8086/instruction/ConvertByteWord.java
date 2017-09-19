@@ -7,11 +7,13 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/30.
  */
 public class ConvertByteWord extends Instruction8086 {
+    public ConvertByteWord(){}
     public ConvertByteWord(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

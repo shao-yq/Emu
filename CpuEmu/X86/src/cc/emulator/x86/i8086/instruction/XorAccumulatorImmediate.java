@@ -7,8 +7,13 @@ import cc.emulator.x86.i8086.Instruction8086;
  * Date: 2017/8/20.
  */
 public class XorAccumulatorImmediate extends Instruction8086 {
+    public XorAccumulatorImmediate(){}
     public XorAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+
+    public void decode(int[] raw, int startIndex) {
+        super.decode(raw, startIndex);
         immediate = raw[1+startIndex];
         incLength(1);
         if(op == XOR_AX_IMMED16){
@@ -16,7 +21,8 @@ public class XorAccumulatorImmediate extends Instruction8086 {
             incLength(1);
         }
     }
-    public static boolean hasOpcode(int raw[], int startIndex) {
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

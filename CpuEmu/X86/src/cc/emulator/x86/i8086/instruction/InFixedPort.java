@@ -19,11 +19,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  *
  */
 public class InFixedPort extends Instruction8086 {
+    public InFixedPort(){}
     public InFixedPort(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

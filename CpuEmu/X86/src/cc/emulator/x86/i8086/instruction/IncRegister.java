@@ -18,11 +18,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * number. INC updates AF, OF, PF, SF and ZF; it does not affect CF.
  */
 public class IncRegister extends Instruction8086 {
+    public IncRegister(){}
     public IncRegister(int[] raw, int startIndex) {
         super(raw, startIndex);
+    }
+    public void decode(int[] raw, int startIndex) {
+        decode(raw, 1, startIndex);
         reg = op & 0b111;
     }
-    public static boolean hasOpcode(int raw[], int startIndex) {
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 

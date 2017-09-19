@@ -18,13 +18,14 @@ import cc.emulator.x86.i8086.Instruction8086;
  * AAS.
  */
 public class AsciiAdjustForSubstraction extends Instruction8086 {
-
+    public AsciiAdjustForSubstraction(){}
 
     public AsciiAdjustForSubstraction(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public static boolean hasOpcode(int raw[], int startIndex) {
+
+    public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
 
