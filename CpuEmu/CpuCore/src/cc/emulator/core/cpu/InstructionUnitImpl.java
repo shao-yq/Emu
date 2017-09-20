@@ -24,11 +24,36 @@ public abstract class InstructionUnitImpl implements InstructionUnit {
 
     @Override
     public DecodedInstructionQueue getDecodedInstructionQueue() {
+        if(decodedInstructionQueue==null)
+            decodedInstructionQueue = decodedInstructionQueue =createDecodedInstructionQueue();
         return decodedInstructionQueue;
     }
 
     @Override
     public Instruction decode(InstructionQueue queue) {
-        return decoder.decode(queue);
+        // Decode the raw data into instruction
+        Instruction instruction = decoder.decode(queue);
+        // Fill to the decodec queuq
+        if(instruction!=null){
+            try {
+                getDecodedInstructionQueue().fill(instruction);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return instruction;
+    }
+
+    @Override
+    public Instruction nextInstruction() {
+        Instruction instruction = null;
+
+        try {
+            instruction = getDecodedInstructionQueue().fetch();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return instruction;
     }
 }

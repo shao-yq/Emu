@@ -110,18 +110,31 @@ public abstract class Cpu {
 
     protected boolean pipelineExecute() {
         // Bus Unit to fetch instruction from memory
-        fetchInstructions();
+        fetchRawInstructions();
 
         // Instruction unit to decode the instruction from the raw instruction queue
-        Instruction instruction =  decodeInstruction();
+        decodeInstruction();
 
-        // Execution Unit to execute the instruction in the Decodec Instruction Queue
-        return executeInstruction(instruction);
+        // Fetch and exeute instruction
+        return executeInstruction();
     }
+
+    protected  boolean executeInstruction(){
+        Instruction instruction = fetchInstruction();
+        if(instruction!=null) {
+            // Execution Unit to execute the instruction in the Decodec Instruction Queue
+            return executeInstruction(instruction);
+        }
+
+        // If no instruction available, just return TRUE for next tick.
+        return true;
+    }
+
+    protected abstract Instruction fetchInstruction();
 
     protected abstract boolean executeInstruction(Instruction instruction);
 
     protected abstract Instruction decodeInstruction();
 
-    protected abstract void fetchInstructions();
+    protected abstract void fetchRawInstructions();
 }

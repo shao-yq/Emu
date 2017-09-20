@@ -69,6 +69,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new IntelAddressUnit();
     }
 
+    @Override
+    protected Instruction fetchInstruction() {
+        return instructionUnit.nextInstruction();
+    }
+
     /**
      * Entry point. For now it executes a little test program.
      */
@@ -168,20 +173,28 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
 
     @Override
-    public void fetchInstructions(){
-
+    public void fetchRawInstructions(){
         busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator);
     }
 
     @Override
     public Instruction decodeInstruction() {
         // Current instruction decoded
-        Instruction8086 instruction = (Instruction8086) instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
-        instructionLocator.incOffset(instruction.getLength());
+        Instruction instruction = instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
+
+        if(instruction!=null) {
+            instructionLocator.incOffset(instruction.getLength());
+        }
+
         return instruction;
     }
 
     public boolean executeInstruction(Instruction instruction){
+        // Validate the Instruction
+        if(instruction==null){
+            // If no instruction available, just return true for next tick
+            return true;
+        }
         return executionUnit.execute(instruction);
     }
 

@@ -8,4 +8,6 @@ public interface InstructionUnit {
     InstructionDecoder getDecoder();
     DecodedInstructionQueue getDecodedInstructionQueue();
     Instruction decode(InstructionQueue queue);
+
+    Instruction nextInstruction();
 }
