@@ -1,6 +1,5 @@
 package cc.emulator.arch.arm;
 
-import cc.emulator.arch.arm.instruction.ArmInstructionBase;
 import cc.emulator.arch.arm.instruction.Branch;
 import cc.emulator.arch.arm.instruction.BranchExchange;
 import cc.emulator.core.cpu.Instruction;
@@ -29,7 +28,7 @@ public class ArmDecoder implements InstructionDecoder {
         }
 
         if(instr == null){
-            instr =  ArmInstructionBase.createInstruction(queue);
+            instr =  ArmInstruction.createInstruction(queue);
         }
 
         return instr;

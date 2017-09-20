@@ -1,12 +1,13 @@
 package cc.emulator.arch.arm;
 
+import cc.emulator.core.cpu.AbstractInstruction;
 import cc.emulator.core.cpu.Instruction;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/8/17.
  */
-public interface ArmInstruction  extends Instruction {
+public  class ArmInstruction  extends AbstractInstruction {
 /**
  * ARM Instruction format (ARM7TDMI-S)
  *
@@ -194,4 +195,84 @@ public interface ArmInstruction  extends Instruction {
  *
  */
 
+    protected final int instruction;
+    protected final int cond;
+
+    protected  int opCode;
+    protected  int immediate;
+    protected  int length;
+    protected  int address;
+
+    protected  boolean writesPC;
+    protected  boolean fixedJump;
+
+    public int getInstruction() {
+        return instruction;
+    }
+
+    protected void setWritesPC(boolean writesPC) {
+        this.writesPC = writesPC;
+    }
+
+    protected void setFixedJump(boolean fixedJump) {
+        this.fixedJump = fixedJump;
+    }
+
+    public boolean isWritesPC() {
+        return writesPC;
+    }
+
+    public boolean isFixedJump(){
+        return fixedJump;
+    }
+
+    public ArmInstruction(int[] raw) {
+        // Save the instruction raw data
+        instruction = raw[0];
+        // Condition
+        cond = instruction >>> 28;
+    }
+
+    @Override
+    public int getOpCode() {
+        return opCode;
+    }
+
+    @Override
+    public int getOperand(int index) {
+        return 0;
+    }
+
+    @Override
+    public int getClocks() {
+        return 0;
+    }
+
+    @Override
+    public int getImmediate() {
+        return immediate;
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public int getAddress() {
+        return address;
+    }
+
+
+    protected void copyOthers(Instruction o) {
+    }
+
+    @Override
+    public boolean hasOpcode(int[] queue, int startIndex) {
+        return false;
+    }
+
+    public static Instruction createInstruction(int[] raw) {
+        return new ArmInstruction(raw);
+    }
 }

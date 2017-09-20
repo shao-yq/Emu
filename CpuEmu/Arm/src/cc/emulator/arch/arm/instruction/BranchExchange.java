@@ -17,7 +17,7 @@ import cc.emulator.core.cpu.ExecutionUnit;
 
  *
  */
-public class BranchExchange extends ArmInstructionBase {
+public class BranchExchange extends ArmInstruction {
 
     private static final int DECODE_MODE_THUMB = 0;
     private static final int DECODE_MODE_ARM = 1;

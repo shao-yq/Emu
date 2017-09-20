@@ -1,8 +1,9 @@
 package cc.emulator.arch.arm.instruction;
 
+import cc.emulator.arch.arm.ArmInstruction;
 import cc.emulator.core.cpu.Instruction;
 
-public class Branch extends ArmInstructionBase{
+public class Branch extends ArmInstruction {
     private final int link;
 
     public Branch(int[] queue) {

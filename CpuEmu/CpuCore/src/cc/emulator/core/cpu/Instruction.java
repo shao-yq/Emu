@@ -32,4 +32,7 @@ public interface Instruction {
     int getLength();
 
     int getAddress();
+
+    public Object clone();
+    public boolean hasOpcode(int[] queue, int startIndex);
 }

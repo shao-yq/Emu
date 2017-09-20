@@ -12,7 +12,7 @@ import cc.emulator.core.cpu.Instruction;
 public class Decoder8086 extends IntelDecoder {
 
     static Class instructionClasses[]=null;
-    static IntelInstruction instructions[]=null;
+    static Instruction instructions[]=null;
 
     static String instructionNames[]={
             "AdcAccumulatorImmediate",
