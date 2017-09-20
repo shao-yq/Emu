@@ -3,8 +3,7 @@ package cc.emulator.x86.i8086;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.bus.DataBus;
-import cc.emulator.x86.intel.IntelAddressGenerator;
-import cc.emulator.core.cpu.register.PointerIndexer;
+import cc.emulator.x86.intel.IntelAddressUnit;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
 import cc.emulator.x86.intel.IntelDataBus;
@@ -12,8 +11,8 @@ import cc.emulator.x86.intel.IntelMemoryAccessor;
 
 public class BIU8086 extends BusInterfaceUnitImpl {
 
-    public BIU8086(MemoryManager mm) {
-        super(mm);
+    public BIU8086(MemoryManager mm, AddressUnit addressUnit) {
+        super(mm, addressUnit);
     }
 
     @Override
@@ -39,11 +38,6 @@ public class BIU8086 extends BusInterfaceUnitImpl {
     }
 
     @Override
-    public AddressGenerator createAddressGenerator() {
-        return new IntelAddressGenerator();
-    }
-
-    @Override
     public InstructionQueue createInstructionQueue() {
         return new InstructionQueue8086();
     }
@@ -64,11 +58,11 @@ public class BIU8086 extends BusInterfaceUnitImpl {
         // Fetch instruction from memory.
         int seg = instructionLocator.getBase();
         int ip = instructionLocator.getOffset();
-        int address = getAddressGenerator().getAddr(seg, ip);
+        //int address = getAddressUnit().getAddr(seg, ip);
         instructionQueue.reset();
-        AddressGenerator ag= getAddressGenerator();
+        AddressUnit au= getAddressUnit();
         for (int i = 0; i < 6; ++i) {
-            int addr = ag.getAddr(seg, ip+i);
+            int addr = au.getAddr(seg, ip+i);
             int val = memoryAccessor.getMem(Intel8086InstructionSet.B,addr);
             instructionQueue.fillInstructionQueue(val);
             //queue[i] = memoryAccessor.getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));

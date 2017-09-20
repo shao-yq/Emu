@@ -2,12 +2,9 @@ package cc.emulator.x86.i8086;
 
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.cpu.*;
-import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
-import cc.emulator.x86.intel.IntelAddressGenerator;
-import cc.emulator.x86.intel.IntelDataBus;
-import cc.emulator.x86.intel.IntelMemoryAccessor;
+import cc.emulator.x86.intel.IntelAddressUnit;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -67,6 +64,11 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new IU8086();
     }
 
+    @Override
+    public AddressUnit createAddressUnit() {
+        return new IntelAddressUnit();
+    }
+
     /**
      * Entry point. For now it executes a little test program.
      */
@@ -121,7 +123,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
     @Override
     public ExecutionUnit createEU() {
         return new EU8086(instructionLocator,
-                getAddressGenerator(),
+                getAddressUnit(),
                 instructionUnit,
                 busInterfaceUnit,
                 memoryAccessor
@@ -130,7 +132,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     public BusInterfaceUnit createBIU() {
-        return new BIU8086(getMemoryManager());
+        return new BIU8086(getMemoryManager(), getAddressUnit());
     }
 
     @Override

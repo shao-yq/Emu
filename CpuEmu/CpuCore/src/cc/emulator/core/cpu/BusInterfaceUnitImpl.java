@@ -8,7 +8,7 @@ import cc.emulator.core.cpu.register.SegmentRegister;
 public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     protected SegmentRegister segmentRegisters[];
     protected ProgramCounter programCounter;
-    protected AddressGenerator addressGenerator;
+    protected AddressUnit addressUnit;
     protected InstructionQueue instructionQueue;
     protected MemoryAccessor memoryAccessor;
     protected MemoryManager memoryManager;
@@ -21,10 +21,10 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
         return programCounter;
     }
 
-    public BusInterfaceUnitImpl(MemoryManager mm){
+    public BusInterfaceUnitImpl(MemoryManager mm, AddressUnit addressUnit){
         this.memoryManager = mm;
+        this.addressUnit =  addressUnit;
 
-        addressGenerator=createAddressGenerator();
         instructionQueue=createInstructionQueue();
         segmentRegisters=createSegmentRegisters();
         programCounter =createProgramCounter();
@@ -34,7 +34,6 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
     protected abstract ProgramCounter createProgramCounter();
 
     public abstract SegmentRegister[] createSegmentRegisters();
-    public abstract AddressGenerator createAddressGenerator();
     public abstract InstructionQueue createInstructionQueue();
     protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
     protected abstract DataBus createDataBus();
@@ -46,8 +45,8 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
 
 
     @Override
-    public AddressGenerator getAddressGenerator() {
-        return addressGenerator;
+    public AddressUnit getAddressUnit() {
+        return addressUnit;
     }
 
     @Override
@@ -57,7 +56,7 @@ public abstract class BusInterfaceUnitImpl implements BusInterfaceUnit {
 
     @Override
     public void reset() {
-        addressGenerator.reset();
+        addressUnit.reset();
         instructionQueue.reset();
         for(SegmentRegister segmentRegister:segmentRegisters)
             segmentRegister.reset();

@@ -9,7 +9,7 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  */
 public abstract class Stack {
     MemoryAccessor memoryAccessor;
-    AddressGenerator addressGenerator;
+    AddressUnit addressUnit;
 
     protected RegisteredMemoryLocator memoryLocator;
     public Stack(SegmentRegister ss,PointerIndexer sp) {
@@ -71,7 +71,7 @@ public abstract class Stack {
     }
 
     private int getTopAddress() {
-        return addressGenerator.getAddr(memoryLocator.getBase(), memoryLocator.getOffset()); // addressGenerator.getAddr(ss.getData(), sp.getData());
+        return addressUnit.getAddr(memoryLocator.getBase(), memoryLocator.getOffset()); // addressUnit.getAddr(ss.getData(), sp.getData());
     }
 
 
@@ -79,8 +79,8 @@ public abstract class Stack {
         this.memoryAccessor = memoryAccessor;
     }
 
-    public void setAddressGenerator(AddressGenerator addressGenerator) {
-        this.addressGenerator = addressGenerator;
+    public void setAddressUnit(AddressUnit addressUnit) {
+        this.addressUnit = addressUnit;
     }
 
 
@@ -90,7 +90,7 @@ public abstract class Stack {
      * @return the value
      */
     public int pop() {
-        int address = getTopAddress();      // addressGenerator.getAddr(ss.getData(), sp.getData());
+        int address = getTopAddress();      // addressUnit.getAddr(ss.getData(), sp.getData());
         final int val = memoryAccessor.getMem(MemoryAccessor.BYTE2, address);
         //final int val = getMem(W, getAddr(ss, sp));
 

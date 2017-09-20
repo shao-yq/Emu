@@ -1,7 +1,5 @@
 package cc.emulator.core.cpu;
 
-import cc.emulator.core.MemoryManager;
-import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
 
@@ -11,7 +9,7 @@ import cc.emulator.core.cpu.register.SegmentRegister;
  */
 public interface BusInterfaceUnit {
     SegmentRegister[] getSegmentRegisters();
-    AddressGenerator getAddressGenerator();
+    AddressUnit getAddressUnit();
     InstructionQueue getInstructionQueue();
     ProgramCounter getProgramCounter();
 

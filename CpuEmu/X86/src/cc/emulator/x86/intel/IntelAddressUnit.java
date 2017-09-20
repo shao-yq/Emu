@@ -1,12 +1,12 @@
 package cc.emulator.x86.intel;
 
-import cc.emulator.core.cpu.AddressGenerator;
+import cc.emulator.core.cpu.AddressUnit;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/7/26.
  */
-public class IntelAddressGenerator implements AddressGenerator {
+public class IntelAddressUnit implements AddressUnit {
     protected int seg;
 
     @Override

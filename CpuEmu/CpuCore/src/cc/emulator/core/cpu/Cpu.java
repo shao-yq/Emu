@@ -4,7 +4,6 @@ import cc.emulator.core.ProgrammableInterruptController;
 import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.Peripheral;
-import cc.emulator.core.cpu.bus.DataBus;
 
 /**
  * @author Shao Yongqing
@@ -48,7 +47,7 @@ public abstract class Cpu {
      */
     public abstract boolean tick();
 
-    protected AddressGenerator addressGenerator;
+    protected AddressUnit addressUnit;
     protected MemoryAccessor memoryAccessor;
 
     protected InstructionUnit instructionUnit;
@@ -64,13 +63,13 @@ public abstract class Cpu {
 
     public Cpu(MemoryManager mm){
         this.memoryManager = mm;
+
+        addressUnit = createAddressUnit();
         busInterfaceUnit = createBIU();
         ////////////
-        addressGenerator =  busInterfaceUnit.getAddressGenerator();
         memoryAccessor =  busInterfaceUnit.getMemoryAccessor();
 
         instructionUnit =  createInstructionUnit();
-
         instructionLocator =  createInstructionLocator();
         //dataLocator =  createDataLocator();
         executionUnit = createEU();
@@ -80,11 +79,12 @@ public abstract class Cpu {
 
     protected abstract InstructionUnit createInstructionUnit();
 
+    public abstract AddressUnit createAddressUnit();
 
 
 
-    public AddressGenerator getAddressGenerator() {
-        return addressGenerator;
+    public AddressUnit getAddressUnit() {
+        return addressUnit;
     }
 
     public MemoryAccessor getMemoryAccessor() {

@@ -4,7 +4,7 @@ package cc.emulator.core.cpu;
  * @author Shao Yongqing
  * Date: 2017/7/26.
  */
-public interface AddressGenerator {
+public interface AddressUnit {
     /**
      * Gets the absolute address from a segment/selector and an offset.
      *

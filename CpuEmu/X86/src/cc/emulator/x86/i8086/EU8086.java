@@ -83,26 +83,26 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     private static final int[] SIGN   = new int[] { 0x80, 0x8000 };
 
     protected MemoryLocator instructionLocator;
-    protected AddressGenerator addressGenerator;
+    protected AddressUnit addressUnit;
     protected InstructionUnit instructionUnit;
     protected BusInterfaceUnit busInterfaceUnit;
     protected MemoryAccessor memoryAccessor;
 
 
     public EU8086(MemoryLocator instructionLocator,
-                  AddressGenerator addressGenerator,
+                  AddressUnit addressUnit,
                   InstructionUnit instructionUnit,
                   BusInterfaceUnit busInterfaceUnit,
                   MemoryAccessor memoryAccessor
             ){
         this.instructionLocator = instructionLocator;
-        this.addressGenerator = addressGenerator;
+        this.addressUnit = addressUnit;
         this.instructionUnit = instructionUnit;
         this.busInterfaceUnit = busInterfaceUnit;
         this.memoryAccessor = memoryAccessor;
 
         stack = createStack();
-        stack.setAddressGenerator(addressGenerator);
+        stack.setAddressUnit(addressUnit);
         stack.setMemoryAccessor(memoryAccessor);
         flags = (ProgramStatusWord) getStatusRegister();
     }
@@ -535,8 +535,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             instructionLocator.incOffset(1);    // ip = ip + 1 & 0xffff;
     }
 
-    public AddressGenerator getAddressGenerator() {
-        return addressGenerator;
+    public AddressUnit getAddressUnit() {
+        return addressUnit;
     }
 
 
@@ -550,7 +550,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * @return the value
      */
     private int getAddr(final int seg, final int off) {
-        int address = getAddressGenerator().getAddr(seg, off);
+        int address = getAddressUnit().getAddr(seg, off);
         return address;
 
         //return (seg << 4) + off;
