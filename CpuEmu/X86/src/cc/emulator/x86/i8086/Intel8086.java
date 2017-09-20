@@ -60,19 +60,7 @@ import java.io.InputStream;
  */
 public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
-    @Override
-    protected MemoryAccessor createMemoryAccessor(MemoryManager mm) {
-        return new IntelMemoryAccessor(mm, createDataBus());
-    }
 
-    protected DataBus createDataBus() {
-        return new IntelDataBus();
-    }
-
-    @Override
-    protected AddressGenerator createAddressGenerator() {
-        return new IntelAddressGenerator();
-    }
 
     @Override
     protected InstructionUnit createInstructionUnit() {
@@ -142,7 +130,7 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
 
     @Override
     public BusInterfaceUnit createBIU() {
-        return new BIU8086();
+        return new BIU8086(getMemoryManager());
     }
 
     @Override

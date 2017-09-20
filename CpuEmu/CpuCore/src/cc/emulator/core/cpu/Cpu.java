@@ -63,12 +63,11 @@ public abstract class Cpu {
     protected MemoryLocator dataLocator;
 
     public Cpu(MemoryManager mm){
-        busInterfaceUnit = createBIU();
-
-        ////////////
         this.memoryManager = mm;
+        busInterfaceUnit = createBIU();
+        ////////////
         addressGenerator =  busInterfaceUnit.getAddressGenerator();
-        memoryAccessor =  createMemoryAccessor(mm);
+        memoryAccessor =  busInterfaceUnit.getMemoryAccessor();
 
         instructionUnit =  createInstructionUnit();
 
@@ -82,10 +81,7 @@ public abstract class Cpu {
     protected abstract InstructionUnit createInstructionUnit();
 
 
-    protected abstract MemoryAccessor createMemoryAccessor(MemoryManager mm);
 
-    protected abstract AddressGenerator createAddressGenerator();
-    protected abstract DataBus createDataBus();
 
     public AddressGenerator getAddressGenerator() {
         return addressGenerator;

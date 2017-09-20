@@ -1,12 +1,20 @@
 package cc.emulator.x86.i8086;
 
+import cc.emulator.core.MemoryManager;
 import cc.emulator.core.cpu.*;
+import cc.emulator.core.cpu.bus.DataBus;
 import cc.emulator.x86.intel.IntelAddressGenerator;
 import cc.emulator.core.cpu.register.PointerIndexer;
 import cc.emulator.core.cpu.register.ProgramCounter;
 import cc.emulator.core.cpu.register.SegmentRegister;
+import cc.emulator.x86.intel.IntelDataBus;
+import cc.emulator.x86.intel.IntelMemoryAccessor;
 
 public class BIU8086 extends BusInterfaceUnitImpl {
+
+    public BIU8086(MemoryManager mm) {
+        super(mm);
+    }
 
     @Override
     protected ProgramCounter createProgramCounter() {
@@ -65,6 +73,14 @@ public class BIU8086 extends BusInterfaceUnitImpl {
             instructionQueue.fillInstructionQueue(val);
             //queue[i] = memoryAccessor.getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));
         }
+    }
+
+    @Override
+    protected MemoryAccessor createMemoryAccessor(MemoryManager mm) {
+        return new IntelMemoryAccessor(mm, createDataBus());
+    }
+    protected DataBus createDataBus() {
+        return new IntelDataBus();
     }
 
 }
