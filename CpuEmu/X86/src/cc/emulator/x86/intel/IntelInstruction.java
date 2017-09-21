@@ -126,7 +126,6 @@ public abstract class IntelInstruction extends AbstractInstruction implements  I
 //        execute(executionUnit, null);
 //    }
 
-    protected int rawData[] = null;
     protected int prefixes[] = null;
     protected int prefixCount=0;
     public boolean hasPrefix(){
@@ -138,9 +137,6 @@ public abstract class IntelInstruction extends AbstractInstruction implements  I
     public int getPrefix(int ind){
         return prefixes[ind];
     }
-
-    public abstract void decodeMe(int[] raw, int startIndex);
-
 
 
     protected void copyOthers(Instruction instruction) {

@@ -11,4 +11,9 @@ public  class DataProcessMisc extends ArmInstruction {
     public DataProcessMisc(int[] queue) {
         super(queue);
     }
+
+    @Override
+    public boolean hasOpcode(int[] queue, int startIndex) {
+        return false;
+    }
 }

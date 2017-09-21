@@ -34,5 +34,9 @@ public interface Instruction {
     int getAddress();
 
     public Object clone();
+
     public boolean hasOpcode(int[] queue, int startIndex);
+
+    public  void decodeMe(int[] raw, int startIndex);
+
 }

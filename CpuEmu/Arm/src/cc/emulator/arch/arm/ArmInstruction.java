@@ -4,11 +4,6 @@ import cc.emulator.core.cpu.AbstractInstruction;
 import cc.emulator.core.cpu.Instruction;
 
 /**
- * @author Shao Yongqing
- * Date: 2017/8/17.
- */
-public  class ArmInstruction  extends AbstractInstruction {
-/**
  * ARM Instruction format (ARM7TDMI-S)
  *
  ARM Instruction Set Format
@@ -30,7 +25,7 @@ public  class ArmInstruction  extends AbstractInstruction {
  表格中的op1、op字段中的x、-表示可以是0，也可以是1
 
 
-  -------------------------------------------------------------------------------------------------------------------------------
+ -------------------------------------------------------------------------------------------------------------------------------
  |31 30 29 28|27|26|25|24 23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|Instruction Type
  |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
  | Condition | 0| 0| I|  OPCODE   | S|     Rn    |   Rd      |           OPERAND‐2              | Data processing
@@ -66,6 +61,9 @@ public  class ArmInstruction  extends AbstractInstruction {
  |31 30 29 28|27|26|25|24 23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|Instruction Type
  -------------------------------------------------------------------------------------------------------------------------------
  *
+ *
+ * @author Shao Yongqing
+ * Date: 2017/8/17.
  */
 
 /**
@@ -84,7 +82,7 @@ public  class ArmInstruction  extends AbstractInstruction {
  CMN     | Compare Negative                      | CPSR flags := Rn + Op2    | 4.5
  CMP     | Compare                               | CPSR flags := Rn - Op2    | 4.5
  EOR     | Exclusive OR                          | Rd := (Rn AND NOT Op2)    | 4.5
-         |                                       |   OR (op2 AND NOT Rn)     |
+ |                                       |   OR (op2 AND NOT Rn)     |
  LDC     |Load coprocessor frommemory            | Coprocessor load          | 4.15
  LDM     | Load multiple registers               | Stack manipulation (Pop)  | 4.11
  LDR     | Load register from memory             | Rd := (address)           | 4.9, 4.10
@@ -93,7 +91,7 @@ public  class ArmInstruction  extends AbstractInstruction {
  MLA     | Multiply Accumulate                   | Rd := (Rm * Rs) + Rn      | 4.7, 4.8
  MOV     | Move register or constant             | Rd : = Op2                | 4.5
  MRC     | Move from coprocessor                 | Rn := cRn {<op>cRm}       | 4.16
-         | register to CPU register              |
+ | register to CPU register              |
  MRS     | Move PSR status/flags to register     | Rn := PSR                 | 4.6
  MSR     | Move register to PSR status/flags     | PSR := Rm                 | 4.6
  MUL     | Multiply                              | Rd := Rm * Rs             | 4.7, 4.8
@@ -195,19 +193,28 @@ public  class ArmInstruction  extends AbstractInstruction {
  *
  */
 
-    protected final int instruction;
-    protected final int cond;
+public  abstract class ArmInstruction  extends AbstractInstruction {
+    private  int startIndex;
+
+    public ArmInstruction(){}
+
+    public ArmInstruction(int[] raw) {
+        this(raw, 0);
+    }
+
+    protected  int rawInstruction;
+    protected  int cond;
 
     protected  int opCode;
     protected  int immediate;
-    protected  int length;
+
     protected  int address;
 
     protected  boolean writesPC;
     protected  boolean fixedJump;
 
-    public int getInstruction() {
-        return instruction;
+    public int getRawInstruction() {
+        return rawInstruction;
     }
 
     protected void setWritesPC(boolean writesPC) {
@@ -226,11 +233,8 @@ public  class ArmInstruction  extends AbstractInstruction {
         return fixedJump;
     }
 
-    public ArmInstruction(int[] raw) {
-        // Save the instruction raw data
-        instruction = raw[0];
-        // Condition
-        cond = instruction >>> 28;
+    public ArmInstruction(int[] raw, int startIndex) {
+        decodeMe(raw, startIndex);
     }
 
     @Override
@@ -253,10 +257,7 @@ public  class ArmInstruction  extends AbstractInstruction {
         return immediate;
     }
 
-    @Override
-    public int getLength() {
-        return length;
-    }
+
 
     @Override
     public int getAddress() {
@@ -267,12 +268,51 @@ public  class ArmInstruction  extends AbstractInstruction {
     protected void copyOthers(Instruction o) {
     }
 
+    /* Registers */
+    protected int rn = 0;
+    protected int rd = 0;
+    protected int rm = 0;
+    protected int rs = 0;
+    protected int imm = 0;
+    protected int amt = 0;
+
+    boolean I;
+    boolean P ;
+    boolean U ;
+    boolean B ;
+    boolean W ;
+    boolean S ;
+    boolean L ;
+
     @Override
-    public boolean hasOpcode(int[] queue, int startIndex) {
-        return false;
+    public void decode(int[] raw, int startIndex) {
+        // Save the rawInstruction raw data
+        this.startIndex = startIndex;
+        rawInstruction = raw[startIndex];
+        // Condition
+        cond = rawInstruction >>> 28;
+        opCode = raw[startIndex];
+
+         /* Registers */
+        rn = ((opCode >> 16) & 0xF);
+        rd = ((opCode >> 12) & 0xF);
+        rm = ((opCode >> 0) & 0xF);
+        rs = ((opCode >> 8) & 0xF);
+        imm = ((opCode >> 0) & 0xFF);
+        amt = rs << 1;
+
+            /* Flags */
+        boolean I = ((opCode >> 25) & 1) != 0;
+        boolean P = ((opCode >> 24) & 1) != 0;
+        boolean U = ((opCode >> 23) & 1) != 0;
+        boolean B = ((opCode >> 22) & 1) != 0;
+        boolean W = ((opCode >> 21) & 1) != 0;
+        boolean S = ((opCode >> 20) & 1) != 0;
+        boolean L = ((opCode >> 20) & 1) != 0;
+
     }
 
-    public static Instruction createInstruction(int[] raw) {
-        return new ArmInstruction(raw);
-    }
+//    public static Instruction createInstruction(int[] raw) {
+//        return new ArmInstruction(raw);
+//    }
 }

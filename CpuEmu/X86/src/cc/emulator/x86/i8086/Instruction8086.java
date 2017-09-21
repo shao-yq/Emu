@@ -71,19 +71,7 @@ public  class Instruction8086 extends IntelInstruction {
         return true;
     }
 
-    public void decodeMe(int[] raw, int startIndex){
-        // Decode opcode
-        decode(raw, startIndex);
-        // Save raw data
-        saveRaw(raw, length);
-    }
 
-    protected void saveRaw(int[] raw, int length) {
-        rawData =  new int[length];
-        for(int i=0; i<length; i++){
-            rawData[i] = raw[i];
-        }
-    }
 
     public void decode(int[] raw, int cnt, int startIndex) {
         this.startIndex=startIndex;
@@ -163,6 +151,7 @@ public  class Instruction8086 extends IntelInstruction {
     public boolean isRegisterToRegister() {
         return mod == MOD_REGISTER_TO_REGISTER;
     }
+
     public void decodeData(int[] queue) {
         if(isRegisterToRegister())
             return;
@@ -211,13 +200,6 @@ public  class Instruction8086 extends IntelInstruction {
 
     }
 
-    protected void setLength(int len) {
-        length = len;
-    }
-
-    protected void incLength(int delta){
-        length += delta;
-    }
 
 
     @Override
@@ -226,12 +208,6 @@ public  class Instruction8086 extends IntelInstruction {
     }
 
 
-    protected int length;
-
-    @Override
-    public int getLength(){
-        return length;
-    }
 
     @Override
     public int getAddress() {

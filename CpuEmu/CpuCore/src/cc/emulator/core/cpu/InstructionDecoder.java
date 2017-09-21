@@ -6,7 +6,6 @@ package cc.emulator.core.cpu;
  */
 public interface InstructionDecoder {
     Instruction decode(InstructionQueue queue);
-    Instruction decode2(InstructionQueue queue);
 
     void reset();
 }
