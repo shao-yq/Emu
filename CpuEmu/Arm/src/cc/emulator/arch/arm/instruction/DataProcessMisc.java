@@ -25,6 +25,7 @@ import cc.emulator.arch.arm.ArmInstruction;
     1 = set condition codes
  OPCODE: Operation Code
      0000 = AND - Rd:= Op1 AND Op2
+     0001 = EOR - Rd:= Op1 EOR Op2
      0010 = SUB - Rd:= Op1 - Op2
      0011 = RSB - Rd:= Op2 - Op1
      0100 = ADD - Rd:= Op1 + Op2
@@ -210,33 +211,122 @@ import cc.emulator.arch.arm.ArmInstruction;
 
  *
  */
-public  class DataProcessMisc extends ArmInstruction {
+public abstract class DataProcessMisc extends ArmInstruction {
+    protected int type;
+    protected  int opCode;
+
+    public final static int DATA_PROCESSING_PREFIX = 0b00;  //   
+                     
+    public final static int OpCode_AND = 0b0000;  // operand1 AND operand2                     0000 = AND - Rd:= Op1 AND Op2                     
+    public final static int OpCode_EOR = 0b0001;  // operand1 EOR operand2                     0001 = EOR - Rd:= Op1 EOR Op2                     
+    public final static int OpCode_SUB = 0b0010;  // operand1 - operand2                       0010 = SUB - Rd:= Op1 - Op2                       
+    public final static int OpCode_RSB = 0b0011;  // operand2 - operand1                       0011 = RSB - Rd:= Op2 - Op1                       
+    public final static int OpCode_ADD = 0b0100;  // operand1 + operand2                       0100 = ADD - Rd:= Op1 + Op2                       
+    public final static int OpCode_ADC = 0b0101;  // operand1 + operand2 + carry               0101 = ADC - Rd:= Op1 + Op2 + C                   
+    public final static int OpCode_SBC = 0b0110;  // operand1 - operand2 + carry - 1           0110 = SBC - Rd:= Op1 - Op2 + C                   
+    public final static int OpCode_RSC = 0b0111;  // operand2 - operand1 + carry - 1           0111 = RSC - Rd:= Op2 - Op1 + C                   
+    public final static int OpCode_TST = 0b1000;  // as AND, but result is not written         1000 = TST - set condition codes on Op1 AND Op2   
+    public final static int OpCode_TEQ = 0b1001;  // as EOR, but result is not written         1001 = TEQ - set condition codes on Op1 EOR Op2   
+    public final static int OpCode_CMP = 0b1010;  // as SUB, but result is not written         1010 = CMP - set condition codes on Op1 - Op2     
+    public final static int OpCode_CMN = 0b1011;  // as ADD, but result is not written         1011 = CMN - set condition codes on Op1 + Op2     
+    public final static int OpCode_ORR = 0b1100;  // operand1 OR operand2                      1100 = ORR - Rd:= Op1 OR Op2                      
+    public final static int OpCode_MOV = 0b1101;  // operand2(operand1 is ignored)             1101 = MOV - Rd:= Op2                             
+    public final static int OpCode_BIC = 0b1110;  // operand1 AND NOT operand2(Bit clear)      1110 = BIC - Rd:= Op1 AND NOT Op2                 
+    public final static int OpCode_MVN = 0b1111;  // NOT operand2(operand1 is ignored)         1111 = MVN - Rd:= NOT Op2                         
+
+    @Override
+    public int getOpCode() {
+        return opCode;
+    }
 
     public DataProcessMisc(int[] queue) {
         super(queue);
     }
 
     /**
-     *
-     -------------------------------------------------------------------------------------------------------------------------------
-     |31 30 29 28|27|26|25|24 23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|Instruction Type
-     |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
-     | Condition | 0| 0| I|  OPCODE   | S|     Rn    |   Rd      |           OPERAND‐2              | Data processing/PSR Transfer
-     |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
-
+     * Data Processing Instruction format
+     * -------------------------------------------------------------------------------------------------
+     * |31 30 29 28|27|26|25|24 23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|
+     * | Condition | 0| 0| I|  OPCODE   | S|     Rn    |   Rd      |           OPERAND‐2              |
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|
+     * 
      * @param raw
      * @param startIndex
      * @return
      */
     @Override
+    public void decode(int[] raw, int startIndex) {
+        super.decode(raw, startIndex);
+
+        setFlag = ((rawInstruction>>20)&0x1) == 1;
+
+        Rn = (rawInstruction>>16) & 0xf;
+        Rd = (rawInstruction>>12) & 0xf;
+
+        opCode = extractOpCode(rawInstruction);
+
+        extractOperand2();
+
+    }
+
+    @Override
     public boolean hasOpcode(int[] raw, int startIndex) {
         int rawData = raw[startIndex];
-        if(((rawData >> 26) & 0x3) ==0){
-            int opcode = (rawData >> 21) & 0xF;
-            switch (opcode){
+        if(((rawData >> 26) & 0b11) == DATA_PROCESSING_PREFIX){
+            return true;
+        }
 
+        return false;
+    }
+
+
+    public static final int BITWISE_NONE=0;
+    public static final int BITWISE_IMMEDIATE=1;
+    public static final int BITWISE_REGISTER=2;
+    public static final int BITWISE_REGISTER_SHIFTED=3;
+
+    int bitwiseMode = BITWISE_NONE;
+
+    protected void decodeBitwiseRegister(){
+        type = (rawInstruction>>5)  & 0x3;
+        int bit4 = (rawInstruction >> 4)  & 0b1;
+        if(bit4==0){
+            // 1. BITWISE (register)
+            // BITWISE{S}<c> <Rd>, <Rn>, <Rm>{, <shift>}
+            immediate= (rawInstruction>>7)  & 0x1f;     // Imme5
+            bitwiseMode = BITWISE_REGISTER;
+        } else {
+            int bit7 = (rawInstruction >> 7)  & 0b1;
+            if(bit7==0){
+                // 2. bitwise (register-shifted register)
+                //  BITWISE{S}<c> <Rd>, <Rn>, <Rm>, <type> <Rs>
+                Rs= (rawInstruction>>78)  & 0xf;        // Rs
+                bitwiseMode = BITWISE_REGISTER_SHIFTED;
             }
         }
-        return false;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+
+    int extractOpCode(int rawInstruction){
+        return (rawInstruction>>21) & 0xf;
+    }
+    void extractOperand2(){
+        // I flag
+        //   0 = operand 2 is a register
+        //   1 = operand 2 is an immediate value
+        boolean immFlag = ((rawInstruction>>25) & 0x1) == 1;
+        if(immFlag){
+            // 1 = operand 2 is an immediate value
+            immediate = (rawInstruction>>0)  & 0xfff;     //  imm12
+        } else {
+            //   0 = operand 2 is a register
+            decodeBitwiseRegister();
+        }
+
     }
 }

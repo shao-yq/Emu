@@ -476,6 +476,7 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
                 break;
             case 0b0001:
                 //  0001x   -   -       Bitwise Exclusive OR        EOR (register) on page A8-384
+                instruction = new EOR(raw);
                 break;
             case 0b0010:
                 //  0010x   -   -       Subtract                    SUB (register) on page A8-712

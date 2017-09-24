@@ -250,7 +250,6 @@ public  abstract class ArmInstruction  extends AbstractInstruction {
     protected  int rawInstruction;
     protected  int cond;
 
-    protected  int opCode;
     protected  int immediate;
 
     protected  int address;
@@ -282,10 +281,6 @@ public  abstract class ArmInstruction  extends AbstractInstruction {
         decodeMe(raw, startIndex);
     }
 
-    @Override
-    public int getOpCode() {
-        return opCode;
-    }
 
     @Override
     public int getOperand(int index) {
@@ -336,24 +331,23 @@ public  abstract class ArmInstruction  extends AbstractInstruction {
         rawInstruction = raw[startIndex];
         // Condition
         cond = rawInstruction >>> 28;
-        opCode = raw[startIndex];
 
          /* Registers */
-        Rn = ((opCode >> 16) & 0xF);
-        Rd = ((opCode >> 12) & 0xF);
-        Rm = ((opCode >> 0) & 0xF);
-        Rs = ((opCode >> 8) & 0xF);
-        imm = ((opCode >> 0) & 0xFF);
-        amt = rs << 1;
+        Rn = ((rawInstruction >> 16) & 0xF);
+        Rd = ((rawInstruction >> 12) & 0xF);
+        Rm = ((rawInstruction >> 0) & 0xF);
+        Rs = ((rawInstruction >> 8) & 0xF);
+        imm = ((rawInstruction >> 0) & 0xFF);
+        amt = Rs << 1;
 
             /* Flags */
-        boolean I = ((opCode >> 25) & 1) != 0;
-        boolean P = ((opCode >> 24) & 1) != 0;
-        boolean U = ((opCode >> 23) & 1) != 0;
-        boolean B = ((opCode >> 22) & 1) != 0;
-        boolean W = ((opCode >> 21) & 1) != 0;
-        boolean S = ((opCode >> 20) & 1) != 0;
-        boolean L = ((opCode >> 20) & 1) != 0;
+        boolean I = ((rawInstruction >> 25) & 1) != 0;
+        boolean P = ((rawInstruction >> 24) & 1) != 0;
+        boolean U = ((rawInstruction >> 23) & 1) != 0;
+        boolean B = ((rawInstruction >> 22) & 1) != 0;
+        boolean W = ((rawInstruction >> 21) & 1) != 0;
+        boolean S = ((rawInstruction >> 20) & 1) != 0;
+        boolean L = ((rawInstruction >> 20) & 1) != 0;
 
     }
 

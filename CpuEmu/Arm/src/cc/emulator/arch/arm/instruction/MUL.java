@@ -84,7 +84,7 @@ import cc.emulator.arch.arm.ArmInstruction;
  * @author Shao Yongqing
  * Date: 2017/9/22.
  */
-public class MUL extends ArmInstruction {
+public class MUL extends DataProcessMisc {
 
 
     public MUL(int rawInstruction[]) {
@@ -102,7 +102,7 @@ public class MUL extends ArmInstruction {
         int op1 = (raw >> 21) & 0b1111111;
         int op2 = (raw >> 4)  & 0b1111;
         
-        if((cond!=0xf) && (op1==0x0) && (op2==0x9))
+        if((cond!=0xf) && (op1==0x0) && (op2==0b1001))
             return true;
         
         return false;
@@ -129,7 +129,6 @@ public class MUL extends ArmInstruction {
         Rd = (rawInstruction>>16) & 0xf;
         Rm = (rawInstruction>>8)  & 0xf;
         Rn = (rawInstruction>>0)  & 0xf;
-
     }
 
 
