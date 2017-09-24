@@ -7,10 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="CpuEmu" />
-    <orderEntry type="module" module-name="X86" />
     <orderEntry type="module" module-name="CpuCore" />
-    <orderEntry type="module" module-name="PcCore" />
-    <orderEntry type="module" module-name="UiCore" />
   </component>
 </module>

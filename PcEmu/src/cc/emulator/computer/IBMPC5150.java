@@ -103,7 +103,7 @@ public class IBMPC5150 extends PersonalComputer {
 
     @Override
     public Display getDisplay() {
-        return null;
+        return display;
     }
 
     @Override

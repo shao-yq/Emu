@@ -16,4 +16,5 @@ public interface Computer {
     abstract void powerUp();
     abstract void powerDown();
     abstract void reset();
+    abstract void start();
 }

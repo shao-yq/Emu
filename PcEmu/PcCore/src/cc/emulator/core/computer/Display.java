@@ -14,4 +14,6 @@ public interface Display {
     int getCursorAttribute();
 
     int getCursorLocation();
+
+    void run();
 }

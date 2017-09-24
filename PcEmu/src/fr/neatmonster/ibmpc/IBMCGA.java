@@ -183,12 +183,9 @@ public class IBMCGA extends Display implements KeyListener {
 
         setBackground(Color.black);
         setForeground(Color.white);
-        final JFrame frame = new JFrame();
-        frame.add(this);
-        frame.addKeyListener(this);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public void run() {
         new Timer().scheduleAtFixedRate(new TimerTask() {
 
             @Override
@@ -196,6 +193,8 @@ public class IBMCGA extends Display implements KeyListener {
                 repaint();
             }
         }, 0, 1000 / 60); // Refresh at a 60 FPS rate.
+
+
     }
 
 

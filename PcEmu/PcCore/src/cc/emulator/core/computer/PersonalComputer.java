@@ -5,6 +5,8 @@ import cc.emulator.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Shao Yongqing
@@ -75,7 +77,8 @@ public abstract class PersonalComputer implements Computer {
 
     protected abstract DirectMemoryAccess createDmaController();
 
-    private void start() {
+    public void start() {
+        display.run();
         mainBoard.run();
     }
 
@@ -99,7 +102,6 @@ public abstract class PersonalComputer implements Computer {
         try {
             loadBios(getBiosBase(), getBiosResource());
             loadBootloader(getBootloaderBase(), getBootloaderResource());
-            start();
         } catch (Exception e) {
             e.printStackTrace();
         }
