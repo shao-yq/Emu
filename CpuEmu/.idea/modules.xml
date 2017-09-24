@@ -5,8 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/Arm/Arm.iml" filepath="$PROJECT_DIR$/Arm/Arm.iml" />
       <module fileurl="file://$PROJECT_DIR$/CpuCore/CpuCore.iml" filepath="$PROJECT_DIR$/CpuCore/CpuCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/CpuEmu.iml" filepath="$PROJECT_DIR$/CpuEmu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../EmuUI/EmuUI.iml" filepath="$PROJECT_DIR$/../EmuUI/EmuUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PcEmu/PcCore/PcCore.iml" filepath="$PROJECT_DIR$/../PcEmu/PcCore/PcCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PcEmu/PcEmu.iml" filepath="$PROJECT_DIR$/../PcEmu/PcEmu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../EmuUI/UiCore/UiCore.iml" filepath="$PROJECT_DIR$/../EmuUI/UiCore/UiCore.iml" />
       <module fileurl="file://$PROJECT_DIR$/X86/X86.iml" filepath="$PROJECT_DIR$/X86/X86.iml" />
     </modules>
   </component>
