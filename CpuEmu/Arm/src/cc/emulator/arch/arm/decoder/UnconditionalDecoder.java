@@ -97,11 +97,12 @@ public class UnconditionalDecoder  extends AbstractArmDecoder {
      *  Coprocessor
      * 
      *
-     * @param rawInstruction
+     * @param rawI
      * @return
      */
     @Override
-    public  Instruction decode(int rawInstruction){
+    public  Instruction decode(int raw[]){
+        int rawInstruction = raw[0];
         Instruction instruction = null;
         int op1 = (rawInstruction>>20) & 0xff;
         int rn = (rawInstruction>>16)&0xf;

@@ -8,6 +8,11 @@ import cc.emulator.arch.arm.ArmInstruction;
  */
 public class UnconditionalInstruction extends ArmInstruction{
     @Override
+    public int getOpCode() {
+        return 0;
+    }
+
+    @Override
     public boolean hasOpcode(int[] queue, int startIndex) {
         return false;
     }

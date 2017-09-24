@@ -54,4 +54,21 @@ public abstract class AbstractInstruction implements Instruction, Cloneable{
             rawData[i] = raw[i];
         }
     }
+
+
+    @Override
+    public String toAsm() {
+        return "Asm.";
+    }
+
+    @Override
+    public String toBinary() {
+        return "Bin.";
+    }
+
+    @Override
+    public String toHexadecimal() {
+        return "Hex.";
+    }
+
 }

@@ -71,9 +71,9 @@ public class ArmDecoder extends AbstractInstructionDecoder {
 
         int rawInstruction = raw[startIndex];
         if(unconditionalDecoder.hasInstruction(rawInstruction)){
-            instr = unconditionalDecoder.decode(rawInstruction);
+            instr = unconditionalDecoder.decode(raw);
         } else if(dataProcessingDecoder.hasOpcode(rawInstruction)){
-            instr = dataProcessingDecoder.decode(rawInstruction);
+            instr = dataProcessingDecoder.decode(raw);
         } else {
             // Other decoder
         }
