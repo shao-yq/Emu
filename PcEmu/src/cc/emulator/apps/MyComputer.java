@@ -3,10 +3,14 @@ package cc.emulator.apps;
 import cc.emulator.computer.IBMPC5150;
 import cc.emulator.core.computer.Computer;
 import cc.emulator.core.computer.swing.Display;
+import cc.emulator.core.cpu.Instruction;
+import cc.emulator.x86.i8086.instruction.MOV;
+import cc.emulator.x86.i8086.instruction.MovImmediateToRegister;
 import fr.neatmonster.ibmpc.IBMCGA;
 import cc.emulator.ui.swing.InstructionPane;
 
 import javax.swing.*;
+import java.util.Vector;
 
 /**
  * @author Shao Yongqing
@@ -41,6 +45,11 @@ public class MyComputer {
         InstructionPane instructinPane = new InstructionPane();
         instructinPane.initUi();
 
+         Vector<Instruction> instructions = new Vector<>();
+         MovImmediateToRegister mov = new MovImmediateToRegister();
+         mov.decodeMe(new int[]{0xB8,0x40,0x51},0);
+         instructions.add(mov);
+        instructinPane.setInstructions(instructions);
         //cpuFrame.add(instructinPane);
         cpuFrame.setContentPane(instructinPane);
         // cpuFrame.addKeyListener(instructinPane);

@@ -95,6 +95,24 @@ public  class Instruction8086 extends IntelInstruction {
         }
     }
 
+    @Override
+    public String toBinary() {
+        StringBuffer bin = new StringBuffer();
+        for(int i=0;i<rawData.length;i++){
+            bin.append(Integer.toBinaryString(rawData[i])+" ");
+        }
+        return bin.toString();
+    }
+
+    @Override
+    public String toHexadecimal() {
+        StringBuffer hex = new StringBuffer();
+        for(int i=0;i<rawData.length;i++){
+            hex.append(Integer.toHexString(rawData[i])+" ");
+        }
+        return hex.toString();
+    }
+
     public void decodeByte0(int raw){
         op = raw;
         d = op >>> 1 & 0b1;

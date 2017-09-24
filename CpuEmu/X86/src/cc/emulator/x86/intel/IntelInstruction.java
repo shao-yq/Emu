@@ -156,4 +156,19 @@ public abstract class IntelInstruction extends AbstractInstruction implements  I
     }
 
     public abstract boolean hasOpcode(int[] queue, int startIndex);
+
+    @Override
+    public String toAsm() {
+        return "Asm.";
+    }
+
+    @Override
+    public String toBinary() {
+        return "Bin.";
+    }
+
+    @Override
+    public String toHexadecimal() {
+        return "Hex.";
+    }
 }

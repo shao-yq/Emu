@@ -39,4 +39,9 @@ public interface Instruction {
 
     public  void decodeMe(int[] raw, int startIndex);
 
+    String toAsm();
+
+    String toBinary();
+
+    String toHexadecimal();
 }

@@ -5,6 +5,63 @@ package cc.emulator.x86.i8086.instruction;
  * Date: 2017/8/20.
  */
 public class MovImmediateToRegister extends MOV {
+    @Override
+    public String toAsm() {
+        StringBuffer asm = new StringBuffer("MOV");
+        switch (op) {
+            case MOV_AL_IMMED8: //  0xb0: // MOV AL,IMMED8
+                asm.append(" AL");
+                break;
+            case MOV_CL_IMMED8 : //  0xb1: // MOV CL,IMMED8
+                asm.append(" CL");
+                break;
+            case MOV_DL_IMMED8 : //  0xb2: // MOV DL,IMMED8
+                asm.append(" DL");
+                break;
+            case MOV_BL_IMMED8 : //  0xb3: // MOV BL,IMMED8
+                asm.append(" BL");
+                break;
+            case MOV_AH_IMMED8 : //  0xb4: // MOV AH,IMMED8
+                asm.append(" AH");
+                break;
+            case MOV_CH_IMMED8 : //  0xb5: // MOV CH,IMMED8
+                asm.append(" CH");
+                break;
+            case MOV_DH_IMMED8 : //  0xb6: // MOV DH,IMMED8
+                asm.append(" DH");
+                break;
+            case MOV_BH_IMMED8 : //  0xb7: // MOV BH,IMMED8
+                asm.append(" BH");
+                break;
+            case MOV_AX_IMMED16: //  0xb8: // MOV AX,IMMED16
+                asm.append(" AX");
+                break;
+            case MOV_CX_IMMED16: //  0xb9: // MOV CX,IMMED16
+                asm.append(" CX");
+                break;
+            case MOV_DX_IMMED16: //  0xba: // MOV DX,IMMED16
+                asm.append(" DX");
+                break;
+            case MOV_BX_IMMED16: //  0xbb: // MOV BX,IMMED16
+                asm.append(" BX");
+                break;
+            case MOV_SP_IMMED16: //  0xbc: // MOV SP,IMMED16
+                asm.append(" SP");
+                break;
+            case MOV_BP_IMMED16: //  0xbd: // MOV BP,IMMED16
+                asm.append(" BP");
+                break;
+            case MOV_SI_IMMED16: //  0xbe: // MOV SI,IMMED16
+                asm.append(" SI");
+                break;
+            case MOV_DI_IMMED16: //  0xbf: // MOV DI,IMMED16
+                asm.append(" DI");
+                break;
+        }
+        asm.append(", #"+immediate);
+        return asm.toString();
+    }
+
     public MovImmediateToRegister(){}
     public MovImmediateToRegister(int raw[], int startIndex) {
         super(raw, startIndex);
