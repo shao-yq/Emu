@@ -5,8 +5,6 @@ import cc.emulator.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Shao Yongqing
@@ -84,12 +82,18 @@ public abstract class PersonalComputer implements Computer {
 
 
     protected void loadBios(int base, String biosResource) throws Exception{
-        mainBoard.load(base, biosResource);
+        mainBoard.loadBios(base, biosResource);
     }
 
-    private void loadBootloader(int base, String res) throws Exception{
+    protected void loadBootloader(int base, String res) throws Exception{
         mainBoard.loadBootloader(base, res);
     }
+
+    @Override
+    public ProgramMemoryInfo getProgramMemoryInfo(String programName){
+        return mainBoard.getProgramMemoryInfo(programName);
+    }
+
 
     @Override
     public void powerDown() {

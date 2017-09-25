@@ -144,7 +144,7 @@ public class MemoryManager implements AddressBus{
         return memory;
     }
 
-    public void load(final int addr, final String path) throws IOException {
+    public int load(final int addr, final String path) throws IOException {
         final InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         final byte[] bin = new byte[is.available()];
         DataInputStream dis = null;
@@ -160,6 +160,8 @@ public class MemoryManager implements AddressBus{
         }
         for (int i = 0; i < bin.length; i++)
             memory[addr + i] = bin[i] & 0xff;
+
+        return bin.length;
     }
 
     public void reset() {

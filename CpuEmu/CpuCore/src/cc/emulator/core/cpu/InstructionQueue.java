@@ -5,4 +5,6 @@ public interface InstructionQueue {
     void fillInstructionQueue(int instruction);
 
     int[] getQueue();
+
+    int getQueueSize();
 }

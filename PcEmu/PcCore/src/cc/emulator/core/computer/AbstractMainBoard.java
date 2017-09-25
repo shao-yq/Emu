@@ -3,16 +3,60 @@ package cc.emulator.core.computer;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.cpu.Cpu;
 
+import java.util.HashMap;
+
 public abstract class AbstractMainBoard implements MainBoard{
-    private MemoryManager memory;
+    private MemoryManager memoryManager;
+    public final static String BIOS = "bios";
+    public final static String BOOTLOADER = "bootloader";
+
+    HashMap<String, ProgramMemoryInfo> programMemoryInfoMap = new HashMap<String, ProgramMemoryInfo>();
+
+
+    ProgramMemoryInfo biasInfo;
+    ProgramMemoryInfo bootloaderInfo;
 
     @Override
-    public void load(int base, String biosResource) throws Exception{
-        memory.load(base, biosResource);
+    public MemoryManager getMemoryManager(){
+        return memoryManager;
     }
-    public void loadBootloader(int base, String res) throws Exception{
-        memory.load(base, res);
+    @Override
+    public int load(int base, String resource) throws Exception{
+        return memoryManager.load(base, resource);
     }
+    public int load(ProgramMemoryInfo programMemoryInfo , int base, String resource) throws Exception{
+        programMemoryInfo.base = base;
+        programMemoryInfo.resource = resource;
+        programMemoryInfo.size = load(base, resource);
+
+        return programMemoryInfo.size;
+    }
+
+    @Override
+    public int loadBios(int base, String resource) throws Exception{
+        ProgramMemoryInfo programMemoryInfo =  programMemoryInfoMap.get(BIOS);
+        if(programMemoryInfo==null){
+            programMemoryInfo =  new ProgramMemoryInfo();
+            programMemoryInfoMap.put(BIOS, programMemoryInfo);
+        }
+
+        return load(programMemoryInfo, base, resource);
+    }
+
+    public int loadBootloader(int base, String resource) throws Exception{
+        ProgramMemoryInfo programMemoryInfo =  programMemoryInfoMap.get(BOOTLOADER);
+        if(programMemoryInfo==null){
+            programMemoryInfo =  new ProgramMemoryInfo();
+            programMemoryInfoMap.put(BOOTLOADER, programMemoryInfo);
+        }
+
+        return load(programMemoryInfo, base, resource);
+    }
+
+    public ProgramMemoryInfo getProgramMemoryInfo(String programName){
+        return programMemoryInfoMap.get(programName);
+    }
+
     @Override
     public Cpu getCpu() {
         return cpu;
@@ -27,15 +71,16 @@ public abstract class AbstractMainBoard implements MainBoard{
 
     @Override
     public void reset() {
-        memory =  createMemoryManager();
-        memory.reset();
-        cpu =  createCpu(memory);
+        memoryManager =  createMemoryManager();
+        memoryManager.reset();
+        cpu =  createCpu(memoryManager);
         cpu.reset();
         //cpu.setMemory(memory.getMemoryBase());
 
-        memory.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
+        memoryManager.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
     }
     protected abstract Cpu createCpu(MemoryManager mm);
     protected abstract MemoryManager createMemoryManager();
 
 }
+

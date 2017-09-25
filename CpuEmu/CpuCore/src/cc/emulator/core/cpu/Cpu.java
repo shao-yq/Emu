@@ -50,6 +50,10 @@ public abstract class Cpu {
     protected AddressUnit addressUnit;
     protected MemoryAccessor memoryAccessor;
 
+    public InstructionUnit getInstructionUnit() {
+        return instructionUnit;
+    }
+
     protected InstructionUnit instructionUnit;
 
     public MemoryManager getMemoryManager() {

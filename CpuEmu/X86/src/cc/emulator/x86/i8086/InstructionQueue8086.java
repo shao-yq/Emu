@@ -33,7 +33,8 @@ public class InstructionQueue8086 implements InstructionQueue {
      * fetch already in progress is completed before executing the EU's bus
      * request).
      */
-    private final int[]        queue       = new int[6];
+    final static int QUEUE_SIZE = 6;
+    private final int[]        queue       = new int[QUEUE_SIZE];
 
     @Override
     public void reset(){
@@ -51,6 +52,11 @@ public class InstructionQueue8086 implements InstructionQueue {
     @Override
     public int[] getQueue() {
         return queue;
+    }
+
+    @Override
+    public int getQueueSize(){
+        return QUEUE_SIZE;
     }
 
 }

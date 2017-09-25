@@ -35,7 +35,9 @@ public class InstructionPane extends JPanel{
     public void setInstructions(Vector<Instruction> instructions){
         this.instructions = instructions;
         // update ui
-        //updateUi();
+        //instructionList.updateUI();
+        updateUI();
+
     }
 
 //    private void updateUi() {

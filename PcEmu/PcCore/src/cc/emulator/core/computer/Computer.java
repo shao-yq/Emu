@@ -17,4 +17,6 @@ public interface Computer {
     abstract void powerDown();
     abstract void reset();
     abstract void start();
+
+    ProgramMemoryInfo getProgramMemoryInfo(String bios);
 }
