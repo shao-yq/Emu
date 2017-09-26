@@ -354,4 +354,9 @@ public  abstract class ArmInstruction  extends AbstractInstruction {
 //    public static Instruction createInstruction(int[] raw) {
 //        return new ArmInstruction(raw);
 //    }
+
+    @Override
+    public String getMnemonic() {
+        return "ARM";
+    }
 }

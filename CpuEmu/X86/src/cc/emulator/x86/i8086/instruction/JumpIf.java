@@ -163,4 +163,254 @@ public class JumpIf extends Instruction8086{
     public int getIpInc() {
         return disp;
     }
+
+
+
+    @Override
+    protected String getOperandPart() {
+        return " "+getIpInc();
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//           /*
+//             * JO
+//             *
+//             * Jump if overflow - OF=1.
+//             */
+//            case JO_SHORT: //   0x70: // JO SHORT-LABEL
+//            /*
+//             * JNO
+//             *
+//             * Jump if not overflow - OF=0.
+//             */
+//            case JNO_SHORT: //  0x71: // JNO SHORT-LABEL
+//            /*
+//             * JB/JNAE/JC
+//             *
+//             * Jump if below/not above nor equal/carry - CF=1.
+//             */
+//            case JB__JNAE__JC_SHORT: //   0x72: // JB/JNAE/JC SHORT-LABEL
+//            /*
+//             * JNE/JAE/JNC
+//             *
+//             * Jump if not below/above or equal/not carry - CF=0.
+//             */
+//            case JNB__JAE__JNC_SHORT: //  0x73: // JNB/JAE/JNC SHORT-LABEL
+//            /*
+//             * JE/JZ
+//             *
+//             * Jump if equal/zero - ZF=1.
+//             */
+//            case JE__JZ_SHORT: //  0x74: // JE/JZ SHORT-LABEL
+//            /*
+//             * JNE/JNZ
+//             *
+//             * Jump if not equal/not zero - ZF=0.
+//             */
+//            case JNE__JNZ_SHORT: //  0x75: // JNE/JNZ SHORT-LABEL
+//            /*
+//             * JBE/JNA
+//             *
+//             * Jump if below or equal/not above - (CF or ZF)=1.
+//             */
+//            case JBE__JNA_SHORT: //   0x76: // JBE/JNA SHORT-LABEL
+//            /*
+//             * JNBE/JA
+//             *
+//             * Jump if not below nor equal/above - (CF or ZF)=0.
+//             */
+//            case JNBE__JA_SHORT: //   0x77: // JNBE/JA SHORT-LABEL
+//            /*
+//             * JS
+//             *
+//             * Jump if sign - SF=1.
+//             */
+//            case JS_SHORT: //   0x78: // JS SHORT-LABEL
+//            /*
+//             * JNS
+//             *
+//             * Jump if not sign - SF=0.
+//             */
+//            case JNS_SHORT: //  0x79: // JNS SHORT-LABEL
+//            /*
+//             * JP/JPE
+//             *
+//             * Jump if parity/parity equal - PF=1.
+//             */
+//            case JP__JPE_SHORT: //  0x7a: // JP/JPE SHORT-LABEL
+//            /*
+//             * JNP/JPO
+//             *
+//             * Jump if not parity/parity odd - PF=0.
+//             */
+//            case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
+//            /*
+//             * JL/JNGE
+//             *
+//             * Jump if less/not greater nor equal - (SF xor OF)=1.
+//             */
+//            case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABEL
+//            /*
+//             * JNL/JGE
+//             *
+//             * Jump if not less/greater or equal - (SF xor OF)=0.
+//             */
+//            case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABEL
+//            /*
+//             * JLE/JNG
+//             *
+//             * Jump if less or equal/not greater - ((SF xor OF) or ZF)=1.
+//             */
+//            case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABEL
+//            /*
+//             * JNLE/JG
+//             *
+//             * Jump if not less nor equal/greater - ((SF xor OF) or ZF)=0.
+//             */
+//            case JNLE__JG_SHORT: //  0x7f: // JNLE/JG SHORT-LABEL
+//            /*
+//             * JCXZ short-label
+//             *
+//             * JCXZ (Jump If CX Zero) transfers control to the target operand if
+//             * CX is O. This instruction is useful at the beginning of a loop;
+//             * to bypass the loop if CX has a zero value, i.e., to execute the
+//             * loop zero times.
+//             */
+//            case JCXZ_SHORT: //  0xe3: // JCXZ SHORT-LABEL
+//                break;
+//        }
+//
+//        return asm.toString();
+    }
+
+
+    @Override
+    public String getMnemonic() {
+        switch (op) {
+           /*
+             * JO
+             *
+             * Jump if overflow - OF=1.
+             */
+            case JO_SHORT: //   0x70: // JO SHORT-LABEL
+                return "JO";
+            /*
+             * JNO
+             *
+             * Jump if not overflow - OF=0.
+             */
+            case JNO_SHORT: //  0x71: // JNO SHORT-LABEL
+                return "JNO";
+            /*
+             * JB/JNAE/JC
+             *
+             * Jump if below/not above nor equal/carry - CF=1.
+             */
+            case JB__JNAE__JC_SHORT: //   0x72: // JB/JNAE/JC SHORT-LABEL
+                return "JB";
+            /*
+             * JNE/JAE/JNC
+             *
+             * Jump if not below/above or equal/not carry - CF=0.
+             */
+            case JNB__JAE__JNC_SHORT: //  0x73: // JNB/JAE/JNC SHORT-LABEL
+                return "JNB";
+            /*
+             * JE/JZ
+             *
+             * Jump if equal/zero - ZF=1.
+             */
+            case JE__JZ_SHORT: //  0x74: // JE/JZ SHORT-LABEL
+                return "JE";
+            /*
+             * JNE/JNZ
+             *
+             * Jump if not equal/not zero - ZF=0.
+             */
+            case JNE__JNZ_SHORT: //  0x75: // JNE/JNZ SHORT-LABEL
+                return "JNE";
+            /*
+             * JBE/JNA
+             *
+             * Jump if below or equal/not above - (CF or ZF)=1.
+             */
+            case JBE__JNA_SHORT: //   0x76: // JBE/JNA SHORT-LABEL
+                return "JBE";
+            /*
+             * JNBE/JA
+             *
+             * Jump if not below nor equal/above - (CF or ZF)=0.
+             */
+            case JNBE__JA_SHORT: //   0x77: // JNBE/JA SHORT-LABEL
+                return "JNBE";
+            /*
+             * JS
+             *
+             * Jump if sign - SF=1.
+             */
+            case JS_SHORT: //   0x78: // JS SHORT-LABEL
+                return "JS";
+            /*
+             * JNS
+             *
+             * Jump if not sign - SF=0.
+             */
+            case JNS_SHORT: //  0x79: // JNS SHORT-LABEL
+                return "JNS";
+            /*
+             * JP/JPE
+             *
+             * Jump if parity/parity equal - PF=1.
+             */
+            case JP__JPE_SHORT: //  0x7a: // JP/JPE SHORT-LABEL
+                return "JP";
+            /*
+             * JNP/JPO
+             *
+             * Jump if not parity/parity odd - PF=0.
+             */
+            case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
+                return "J";
+            /*
+             * JL/JNGE
+             *
+             * Jump if less/not greater nor equal - (SF xor OF)=1.
+             */
+            case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABELNP
+                return "J";
+            /*
+             * JNL/JGE
+             *
+             * Jump if not less/greater or equal - (SF xor OF)=0.
+             */
+            case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABELL
+                return "J";
+            /*
+             * JLE/JNG
+             *
+             * Jump if less or equal/not greater - ((SF xor OF) or ZF)=1.
+             */
+            case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABELNL
+                return "J";
+            /*
+             * JNLE/JG
+             *
+             * Jump if not less nor equal/greater - ((SF xor OF) or ZF)=0.
+             */
+            case JNLE__JG_SHORT: //  0x7f: // JNLE/JG SHORT-LABELLE
+                return "JG";
+            /*
+             * JCXZ short-label
+             *
+             * JCXZ (Jump If CX Zero) transfers control to the target operand if
+             * CX is O. This instruction is useful at the beginning of a loop;
+             * to bypass the loop if CX has a zero value, i.e., to execute the
+             * loop zero times.
+             */
+            case JCXZ_SHORT: //  0xe3: // JCXZ SHORT-LABEL
+                return "JCXZ";
+        }
+
+        return "J";
+    }
+
 }

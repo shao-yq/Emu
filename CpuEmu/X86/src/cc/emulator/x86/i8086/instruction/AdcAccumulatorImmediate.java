@@ -51,4 +51,26 @@ public class AdcAccumulatorImmediate extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            case ADC_AL_IMMED8 : //  0x14: // ADC AL,IMMED8
+                asm.append(" AL");
+                break;
+            case ADC_AX_IMMED16: //  0X15: // ADC AX,IMMED16
+                asm.append(" AX");
+                break;
+        }
+        asm.append(", #"+immediate);
+
+        return asm.toString();
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "ADC";
+    }
 }

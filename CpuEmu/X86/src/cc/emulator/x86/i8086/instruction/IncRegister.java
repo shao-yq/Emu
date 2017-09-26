@@ -58,4 +58,46 @@ public class IncRegister extends Instruction8086 {
 //        res = ((ALU8086)(eu.getALU())).inc(W, src);
 //        eu.setReg(W, reg, res);
 //    }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Register
+            case INC_AX: //  0x40: // INC AX
+                asm.append(" AX");
+                break;
+            case INC_CX: //  0x41: // INC CX
+                asm.append(" CX");
+                break;
+            case INC_DX: //  0x42: // INC DX
+                asm.append(" DX");
+                break;
+            case INC_BX: //  0x43: // INC BX
+                asm.append(" BX");
+                break;
+            case INC_SP: //  0x44: // INC SP
+                asm.append(" SP");
+                break;
+            case INC_BP: //  0x45: // INC BP
+                asm.append(" BP");
+                break;
+            case INC_SI: //  0x46: // INC SI
+                asm.append(" SI");
+                break;
+            case INC_DI: //  0x47: // INC DI
+                asm.append(" DI");
+                break;
+        }
+
+        return asm.toString();
+    }
+
+
+    @Override
+    public String getMnemonic() {
+        return "INC";
+    }
+
 }

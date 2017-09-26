@@ -46,4 +46,39 @@ public class XorRegisterMemory extends Instruction8086 {
         else
             return mod == 0b11 ? 3 : 9;
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            case XOR_REG8__MEM8_REG8   : //    0x30: // XOR REG8/MEM8,REG8
+            case XOR_REG16__MEM16_REG16: //    0x31: // XOR REG16/MEM16,REG16
+
+                //dest
+                asm.append(" "+getRMFieldString(w, mod, reg, rm));
+
+                // src
+                asm.append(", "+getRegMnemonic(reg,w));
+
+                break;
+            case XOR_REG8_REG8__MEM8   : //    0x32: // XOR REG8,REG8/MEM8
+            case XOR_REG16_REG16__MEM16: //    0x33: // XOR REG16,REG16/MEM16
+                // dest
+                asm.append(" "+getRegMnemonic(reg,w));
+
+                //src
+                asm.append(", "+getRMFieldString(w, mod, reg, rm));
+                break;
+        }
+
+        return asm.toString();
+    }
+
+
+    @Override
+    public String getMnemonic() {
+        return "XOR";
+    }
+
 }

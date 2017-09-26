@@ -56,7 +56,7 @@ public class MyComputer {
          // prepare instructions dump from the computer's memory
          ProgramMemoryInfo programMemoryInfo = computer.getProgramMemoryInfo("bootloader");
          int memoryBase [] = computer.getMainBoard().getMemoryManager().getMemoryBase();
-         int count = 10;
+         int count = 20;
          Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
          instructinPane.setInstructions(instructions);
     }

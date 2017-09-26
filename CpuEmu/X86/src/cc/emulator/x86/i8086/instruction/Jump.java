@@ -107,4 +107,31 @@ public class Jump extends Instruction8086{
     public int getOffset() {
         return disp;
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Direct Intersegment
+            case JMP_FAR: //   0xea: // JMP FAR-LABEL
+                asm.append(" FAR "+getBase()+":"+getIpInc());
+                break;
+                // Direct within Segment
+            case JMP_NEAR: //   0xe9: // JMP NEAR-LABEL
+                asm.append(" NEAR #"+getIpInc());
+                break;
+                // Direct within Segment-Short
+            case JMP_SHORT: //   0xeb: // JMP SHORT-LABEL
+                asm.append(" SHORT #"+getIpInc());
+                break;
+        }
+
+        return asm.toString();
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "JMP";
+    }
 }

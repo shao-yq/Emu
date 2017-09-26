@@ -44,4 +44,6 @@ public interface Instruction {
     String toBinary();
 
     String toHexadecimal();
+
+    String getMnemonic();
 }

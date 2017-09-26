@@ -113,6 +113,11 @@ public  class Instruction8086 extends IntelInstruction {
         return hex.toString();
     }
 
+    @Override
+    public String getMnemonic() {
+        return "X86";
+    }
+
     public void decodeByte0(int raw){
         op = raw;
         d = op >>> 1 & 0b1;

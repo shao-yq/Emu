@@ -48,4 +48,44 @@ public class PopGeneralRegister extends Instruction8086 {
 //        src = stack.pop();         /// pop();
 //        ((EU8086)eu).setReg(W, reg, src);
 //    }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Register
+            case POP_AX: //  0x58: // POP AX
+                asm.append(" AX");
+                break;
+            case POP_CX: //  0x59: // POP CX
+                asm.append(" CX");
+                break;
+            case POP_DX: //  0x5a: // POP DX
+                asm.append(" DX");
+                break;
+            case POP_BX: //  0x5b: // POP BX
+                asm.append(" BX");
+                break;
+            case POP_SP: //  0x5c: // POP SP
+                asm.append(" SP");
+                break;
+            case POP_BP: //  0x5d: // POP BP
+                asm.append(" BP");
+                break;
+            case POP_SI: //  0x5e: // POP SI
+                asm.append(" SI");
+                break;
+            case POP_DI: //  0x5f: // POP DI
+                asm.append(" DI");
+                break;
+        }
+
+        return asm.toString();
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "POP";
+    }
 }

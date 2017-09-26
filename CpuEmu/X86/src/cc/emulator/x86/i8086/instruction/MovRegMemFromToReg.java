@@ -58,4 +58,38 @@ public class MovRegMemFromToReg extends MOV {
 //            //clocks +=  mod == 0b11 ? 2 : 8;
 //        }
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Register/Memory to/from Register
+            case MOV_REG8__MEM8_REG8: //   0x88: // MOV REG8/MEM8,REG8
+            case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
+                //dest
+                asm.append(" "+getRMFieldString(w, mod, reg, rm));
+
+                // src
+                asm.append(", "+getRegMnemonic(reg,w));
+
+                break;
+            case MOV_REG8_REG8__MEM8: //   0x8a: // MOV REG8,REG8/MEM8
+            case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
+                //dest
+                asm.append(" "+getRegMnemonic(reg,w));
+
+                //src
+                asm.append(", "+getRMFieldString(w, mod, reg, rm));
+                break;
+        }
+
+        return asm.toString();
+    }
+
+
+    @Override
+    public String getMnemonic() {
+        return "MOV";
+    }
 }

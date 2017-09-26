@@ -58,7 +58,14 @@ public abstract class AbstractInstruction implements Instruction, Cloneable{
 
     @Override
     public String toAsm() {
-        return "Asm.";
+        StringBuffer asm = new StringBuffer(getMnemonic());
+        asm.append(getOperandPart());
+
+        return asm.toString();
+    }
+
+    protected  String getOperandPart() {
+        return "";
     }
 
     @Override

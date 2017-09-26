@@ -94,4 +94,23 @@ public class CallFarProc extends Instruction8086{
     public int getOffset() {
         return disp;
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Direct Intersegment
+            case CALL_FAR_PROC: //   0x9a: // CALL FAR-PROC
+                asm.append(" FAR "+getBase()+":"+getOffset());
+                break;
+        }
+
+        return asm.toString();
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "CALL";
+    }
 }

@@ -5,9 +5,15 @@ package cc.emulator.x86.i8086.instruction;
  * Date: 2017/8/20.
  */
 public class MovImmediateToRegister extends MOV {
+
     @Override
-    public String toAsm() {
-        StringBuffer asm = new StringBuffer("MOV");
+    public String getMnemonic(){
+        return "MOV";
+    }
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
         switch (op) {
             case MOV_AL_IMMED8: //  0xb0: // MOV AL,IMMED8
                 asm.append(" AL");

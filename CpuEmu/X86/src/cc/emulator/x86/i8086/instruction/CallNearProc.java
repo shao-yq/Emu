@@ -90,4 +90,22 @@ public class CallNearProc extends Instruction8086{
     public int getIpInc() {
         return disp;
     }
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Direct Intersegment
+            case CALL_NEAR_PROC: //   0xe8: // CALL NEAR-PROC
+                asm.append(" NEAR #"+getIpInc());
+                break;
+        }
+
+        return asm.toString();
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "CALL";
+    }
 }

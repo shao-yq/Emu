@@ -53,4 +53,27 @@ public class CmpAccumulatorImmediate extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+
+
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            case CMP_AL_IMMED8 : //  0x3c: // CMP AL,IMMED8
+                asm.append(" AL");
+                break;
+            case CMP_AX_IMMED16: //  0x3d: // CMP AX,IMMED16
+                // dest
+                asm.append(" AX");
+                break;
+        }
+        asm.append(", "+immediate);
+        return asm.toString();
+    }
+
+
+    @Override
+    public String getMnemonic() {
+        return "CMP";
+    }
 }
