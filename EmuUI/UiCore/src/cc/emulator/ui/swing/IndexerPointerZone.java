@@ -1,63 +1,58 @@
 package cc.emulator.ui.swing;
 
-import cc.emulator.core.cpu.Instruction;
 import cc.emulator.core.cpu.register.DividableRegister;
+import cc.emulator.core.cpu.register.GeneralRegister;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-
 import java.util.Vector;
 
 /**
  * @author Shao Yongqing
  * Date: 2017/10/17.
  */
-public class AccumulatorZone extends JPanel {
+public class IndexerPointerZone extends JPanel {
     JTable regisgerList;
 
-    public AccumulatorZone(){
+    public IndexerPointerZone(){
 
     }
 
-    public void setDividableRegisters(Vector<DividableRegister> dividableRegisters) {
-        this.dividableRegisters = dividableRegisters;
+    public void setGeneralRegisters(Vector<GeneralRegister> registers) {
+        this.registers = registers;
         regisgerList.invalidate();
     }
 
-    Vector<DividableRegister> dividableRegisters;
+    Vector<GeneralRegister> registers;
     //创建表头
-    String[] columnNames = { "Reg", "H.", "L.", "X." };
+    String[] columnNames = { "Reg", "Value" , "HEX"};
     public void initUi(){
-        dividableRegisters = new Vector<>();
+        registers = new Vector<>();
         regisgerList = new JTable(new AbstractTableModel() {
             public String getColumnName(int col) {
                 return columnNames[col].toString();
             }
             public int getRowCount() {
-                return dividableRegisters.size();
+                return registers.size();
             }
             public int getColumnCount() { return columnNames.length; }
             public Object getValueAt(int row, int col) {
-                DividableRegister dividableRegister=dividableRegisters.get(row);
+                GeneralRegister register=registers.get(row);
                 String value = "";
                 switch (col){
                     case 0:
-                        value = dividableRegister.getName();
-
+                        value = register.getName();
                         break;
                     case 1:
                         //value = Integer.toHexString(dividableRegister.getH());
-                        value = String.format("%02x", dividableRegister.getH());
+                        value = String.format("%d", register.getData());
                         break;
                     case 2:
                         //value =  Integer.toHexString(dividableRegister.getL());
-                        value = String.format("%02x", dividableRegister.getL());
+                        value = String.format("%04x", register.getData());
                         break;
-                    case 3:
-                        //value =  Integer.toHexString(dividableRegister.getX());
-                        value = String.format("%04x", dividableRegister.getX());
-                        break;
+
                     default:
                         value =  "";
                         break;
@@ -68,19 +63,16 @@ public class AccumulatorZone extends JPanel {
             public boolean isCellEditable(int row, int col)
             { return false; }
             public void setValueAt(Object value, int row, int col) {
-                DividableRegister dividableRegister=dividableRegisters.get(row);
+                GeneralRegister register=registers.get(row);
                 int iv = 0;
                 switch (col){
                     case 0:
                         break;
                     case 1:
-                        dividableRegister.setH(iv);
+                        register.setData(iv);
                         break;
                     case 2:
-                        dividableRegister.setL(iv);
-                        break;
-                    case 3:
-                        dividableRegister.setX(iv);
+                        register.setData(iv);
                         break;
                     default:
                         break;

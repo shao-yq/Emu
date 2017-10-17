@@ -1,8 +1,10 @@
 package cc.emulator.ui.swing;
 
 import cc.emulator.core.cpu.register.DividableRegister;
+import cc.emulator.core.cpu.register.GeneralRegister;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Vector;
  */
 public class RegisterPane extends JPanel{
     AccumulatorZone accumulatorZone;
+    IndexerPointerZone indexerPointerZone;
+
     public RegisterPane(){
         initUi();
     }
@@ -18,9 +22,14 @@ public class RegisterPane extends JPanel{
     private void initUi(){
         accumulatorZone =  new AccumulatorZone();
         accumulatorZone.initUi();
+        this.setLayout(new BorderLayout());
+        this.add(accumulatorZone, BorderLayout.EAST);
+        indexerPointerZone =  new IndexerPointerZone();
+        indexerPointerZone.initUi();
+        this.add(indexerPointerZone, BorderLayout.WEST);
     }
 
-    public void setAccumulators(DividableRegister[] dividableRegisters) {
+     public void setAccumulators(DividableRegister[] dividableRegisters) {
         if(dividableRegisters==null)
             return;
 
@@ -29,6 +38,16 @@ public class RegisterPane extends JPanel{
             registers.add(dividableRegisters[i]);
         }
         accumulatorZone.setDividableRegisters(registers);
+    }
+    public void setIndexerPointers(GeneralRegister[] generalRegister) {
+        if(generalRegister==null)
+            return;
+
+        Vector<GeneralRegister> registers = new Vector<GeneralRegister>();
+        for(int i=0; i<generalRegister.length; i++){
+            registers.add(generalRegister[i]);
+        }
+        indexerPointerZone.setGeneralRegisters(registers);
     }
 
 }

@@ -160,6 +160,7 @@ public class MyComputer {
         registerPane =  new RegisterPane();
         contentPane.add(registerPane, BorderLayout.CENTER);
         registerPane.setAccumulators((DividableRegister[]) computer.getMainBoard().getCpu().getExecutionUnit().getGeneralRegisters());
+        registerPane.setIndexerPointers(computer.getMainBoard().getCpu().getExecutionUnit().getPointerIndexers());
 
         cpuFrame.setContentPane(contentPane);
         // cpuFrame.addKeyListener(instructinPane);
