@@ -22,6 +22,7 @@ public abstract class PersonalComputer implements Computer {
 
     public PersonalComputer(String configFile) {
         this.configFile = configFile;
+
     }
 
     protected void loadConfigProperties(String configFile) throws IOException {
@@ -38,7 +39,6 @@ public abstract class PersonalComputer implements Computer {
         } catch ( Exception e) {
             e.printStackTrace();
         }
-
         mainBoard =  createMainBoard();
         mainBoard.reset();
 

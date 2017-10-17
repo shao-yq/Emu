@@ -7,6 +7,9 @@ import cc.emulator.core.computer.swing.Display;
 import cc.emulator.core.cpu.Instruction;
 import cc.emulator.core.cpu.InstructionDecoder;
 import cc.emulator.core.cpu.InstructionQueue;
+import cc.emulator.core.cpu.register.DividableRegister;
+import cc.emulator.ui.swing.MemoryPane;
+import cc.emulator.ui.swing.RegisterPane;
 import cc.emulator.x86.i8086.Decoder8086;
 import cc.emulator.x86.i8086.instruction.MOV;
 import cc.emulator.x86.i8086.instruction.MovImmediateToRegister;
@@ -14,6 +17,7 @@ import fr.neatmonster.ibmpc.IBMCGA;
 import cc.emulator.ui.swing.InstructionPane;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -22,20 +26,28 @@ import java.util.Vector;
  */
 public class MyComputer {
     Computer computer ;
-    InstructionPane instructinPane;
-    public static void main(final String[] args) {
-        MyComputer myComputer = new MyComputer();
-        myComputer.initCpuEmuUi();
+    InstructionPane instructionPane;
+    MemoryPane memoryPane;
+    RegisterPane registerPane;
 
+    public static void main(final String[] args) {
         String configFile="/IBMPc.properties";
-        myComputer.initPcUi(configFile);
+        MyComputer myComputer = new MyComputer(configFile);
+
+        // myComputer.initPcUi(configFile);
+
+        myComputer.initCpuEmuUi();
 
     }
 
+    public MyComputer(String configFile){
+        initPcUi(configFile);
+    }
+
      void initPcUi(String configFile){
-        computer = new IBMPC5150(configFile);
-        // Power supply
-        computer.powerUp();
+         computer = new IBMPC5150(configFile);
+         // Power supply
+         computer.powerUp();
 
         IBMCGA display = (IBMCGA) computer.getDisplay();
 
@@ -53,12 +65,7 @@ public class MyComputer {
         }.start();
 
 
-         // prepare instructions dump from the computer's memory
-         ProgramMemoryInfo programMemoryInfo = computer.getProgramMemoryInfo("bootloader");
-         int memoryBase [] = computer.getMainBoard().getMemoryManager().getMemoryBase();
-         int count = 20;
-         Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
-         instructinPane.setInstructions(instructions);
+
     }
 
     private Vector<Instruction> decode(ProgramMemoryInfo programMemoryInfo, int[] memoryBase, int count) {
@@ -123,23 +130,44 @@ public class MyComputer {
     }
 
     void initCpuEmuUi(){
+        instructionPane = new InstructionPane();
+        instructionPane.initUi();
+        // prepare instructions dump from the computer's memory
+        ProgramMemoryInfo programMemoryInfo = computer.getProgramMemoryInfo("bootloader");
+        int memoryBase [] = computer.getMainBoard().getMemoryManager().getMemoryBase();
+        int count = 20;
+        Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
+        instructionPane.setInstructions(instructions);
+
         JFrame cpuFrame = new JFrame("CPU x86");
 
-        instructinPane = new InstructionPane();
-        instructinPane.initUi();
 
-         Vector<Instruction> instructions = new Vector<>();
-         MovImmediateToRegister mov = new MovImmediateToRegister();
-         mov.decodeMe(new int[]{0xB8,0x40,0x51},0);
-         instructions.add(mov);
-        instructinPane.setInstructions(instructions);
+
+
+//         Vector<Instruction> instructions = new Vector<>();
+//         MovImmediateToRegister mov = new MovImmediateToRegister();
+//         mov.decodeMe(new int[]{0xB8,0x40,0x51},0);
+//         instructions.add(mov);
+//        instructionPane.setInstructions(instructions);
         //cpuFrame.add(instructinPane);
-        cpuFrame.setContentPane(instructinPane);
+        JPanel contentPane = new JPanel();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(instructionPane, BorderLayout.WEST);
+
+        memoryPane =  new MemoryPane();
+        contentPane.add(memoryPane, BorderLayout.EAST);
+
+        registerPane =  new RegisterPane();
+        contentPane.add(registerPane, BorderLayout.CENTER);
+        registerPane.setAccumulators((DividableRegister[]) computer.getMainBoard().getCpu().getExecutionUnit().getGeneralRegisters());
+
+        cpuFrame.setContentPane(contentPane);
         // cpuFrame.addKeyListener(instructinPane);
         cpuFrame.pack();
-        cpuFrame.setVisible(true);
-        cpuFrame.setBounds(100, 100, 300, 200);
+        cpuFrame.setBounds(100, 100, 800, 600);
         cpuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        cpuFrame.setVisible(true);
+
     }
 
 }

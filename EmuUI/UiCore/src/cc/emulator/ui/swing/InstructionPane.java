@@ -37,6 +37,7 @@ public class InstructionPane extends JPanel{
         // update ui
         //instructionList.updateUI();
         updateUI();
+        instructionList.invalidate();
 
     }
 

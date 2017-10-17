@@ -125,7 +125,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 
     @Override
     protected GeneralRegister[] createGeneralRegisters() {
-        GeneralRegister regs[] = new GeneralRegister[4];
+        GeneralRegister regs[] = new DividableRegister8086[4];
         // Create general registers
         //ax = new DividableRegister8086("AX", 2);
         ax = new DividableRegister8086("AX",2);
