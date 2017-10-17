@@ -202,7 +202,7 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
     }
 
     /**
-     *
+     * Page A5-196 of Document:  DDI0406C_C_arm_architecture_reference_manual.pdf
      * -------------------------------------------------------------------------------------------------------------------------------
      * |31 30 29 28|27|26|25|24 23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|Instruction Type
      * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
@@ -244,7 +244,7 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
                 if((op1&0b10000) !=0){
                     // op   op1         op2     Instruction or instruction class 
                     // 0    1xxxx       1001    Synchronization primitives on page A5-205
-                    
+                    instruction = decodeSynchronizationPrimitives(rawData);
                 } else {
                     // MUL
                     // op   op1         op2     Instruction or instruction class 
@@ -255,11 +255,11 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
                 if((op1&0b10010) == 0b00010) {
                     // op    op1       op2     Instruction or instruction class  
                     // 0    0xx1x      1011    Extra load/store instructions, unprivileged on page A5-204
-                    
+                    instruction = decodeExtraLoadStoreInstruction(rawData);
                 } else {
                     // op    op1       op2     Instruction or instruction class  
                     // 0 not 0xx1x     1011    Extra load/store instructions on page A5-203
-                    
+                    instruction = decodeExtraLoadStoreInstruction(rawData);
                 }
 
             } else if((op2&0b1101) == 0b1101) {
@@ -267,17 +267,17 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
                     case 0b00010:
                         // op    op1       op2     Instruction or instruction class
                         // 0     0xx10     11x1    Extra load/store instructions on page A5-203
-                        
+                        instruction = decodeExtraLoadStoreInstruction(rawData);
                         break;
                     case 0b00011:
                         // op    op1       op2     Instruction or instruction class
                         // 0     0xx11     11x1    Extra load/store instructions, unprivileged on page A5-204
-                        
+                        instruction = decodeExtraLoadStoreInstruction(rawData);
                         break;
                     default:
                         // op     op1       op2     Instruction or instruction class
                         // 0 not 0xx1x      11x1    Extra load/store instructions on page A5-203
-                        
+                        instruction = decodeExtraLoadStoreInstruction(rawData);
                         break;
                 }
             } else {
@@ -332,6 +332,132 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
         }
 
 
+        return instruction;
+    }
+
+    /**
+     * A5.2.8 Extra load/store instructions
+     * The encoding of extra ARM load/store instructions is:
+     *
+     * -------------------------------------------------------------------------------------------------------------------------------
+     * |31 30 29 28|27|26|25|24|23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7| 6  5| 4| 3  2  1  0|Instruction Type
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
+     * | Condition | 0| 0| 0|     op1      |   Rn      |                      | 1|  op2 | 1|           | Extra load/store instructions
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
+     *
+     * If (op2 == 0b00), then see Data-processing and miscellaneous instructions on page A5-196.
+     * If ((op1 == 0b0xx10) && (op2 == 0b01)) or ((op1 == 0b0xx11) && (op2 != 0b00)) then see Extra load/store
+     * instructions, unprivileged on page A5-204.
+     * Otherwise, Table A5-10 shows the allocation of encodings in this space.
+     *
+     * op2  op1     Rn      Instruction         See                                     Variant
+     * ----------------------------------------------------------------------------------------
+     * 01   xx0x0   -       Store Halfword      STRH (register) on page A8-702          All
+     *      xx0x1   -       Load Halfword       LDRH (register) on page A8-446          All
+     *      xx1x0   -       Store Halfword      STRH (immediate, ARM) on page A8-700    All
+     *      xx1x1 not 1111  Load Halfword       LDRH (immediate, ARM) on page A8-442    All
+     *              1111    Load Halfword       LDRH (literal) on page A8-444           All
+     * ----------------------------------------------------------------------------------------
+     * 10   xx0x0   -       Load Dual           LDRD (register) on page A8-430          v5TE
+     *      xx0x1   -       Load Signed Byte    LDRSB (register) on page A8-454         All
+     *      xx1x0 not 1111  Load Dual           LDRD (immediate) on page A8-426         v5TE
+     *              1111    Load Dual           LDRD (literal) on page A8-428           v5TE
+     *      xx1x1 not 1111  Load Signed Byte    LDRSB (immediate) on page A8-450        All
+     *              1111    Load Signed Byte    LDRSB (literal) on page A8-452          All
+     * ----------------------------------------------------------------------------------------
+     * 11   xx0x0   -       Store Dual          STRD (register) on page A8-688          All
+     *      xx0x1   -       Load Signed Halfword LDRSH (register) on page A8-462        All
+     *      xx1x0   -       Store Dual          STRD (immediate) on page A8-686         All
+     *      xx1x1 not 1111  Load Signed Halfword LDRSH (immediate) on page A8-458       All
+     *              1111    Load Signed Halfword LDRSH (literal) on page A8-460         All
+     * =========================================================================================
+     *
+     * @param rawData
+     * @return
+     */
+    public  Instruction decodeExtraLoadStoreInstruction(int[] rawData) {
+        Instruction instruction = null;
+
+        return instruction;
+    }
+
+    /**
+     * Decode  Synchronization primitives
+     * -------------------------------------------------------------------------------------------------------------------------------
+     * |31 30 29 28|27|26|25|24|23 22 21|20|19 18 17 16|15 14 13 12|11 10  9  8| 7  6  5  4| 3  2  1  0|Instruction Type
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
+     * | Condition | 0| 0| 0| 1|  op       |                                   | 1  0  0  1|           | Synchronization primitives
+     * |-----------|--+--+--+-----------+--|-----------|-----------|-----------------------------------|------------------------------
+     *
+     *  Table A5-7 Multiply and multiply accumulate instructions
+     * Table A5-12 Synchronization primitives
+     *  op  Instruction                 See                                 Variant
+     * -------------------------------------------------------------------------------
+     * 0x00 Swap Word, Swap Byte        SWP, SWPB on page A8-722 a          All
+     * 1000 Store Register Exclusive    STREX on page A8-690                v6
+     * 1001 Load Register Exclusive     LDREX on page A8-432                v6
+     * 1010 Store Register Exclusive    Doubleword STREXD on page A8-694    v6K
+     * 1011 Load Register Exclusive     Doubleword LDREXD on page A8-436    v6K
+     * 1100 Store Register Exclusive    Byte STREXB on page A8-692          v6K
+     * 1101 Load Register Exclusive     Byte LDREXB on page A8-434          v6K
+     * 1110 Store Register Exclusive    Halfword STREXH on page A8-696      v6K
+     * 1111 Load Register Exclusive     Halfword LDREXH on page A8-438      v6K
+     * =========================================================================================
+     * a. ARM deprecates the use of these instructions.
+     *
+     * @param raw
+     * @return
+     */
+    public Instruction decodeSynchronizationPrimitives(int[] raw) {
+        Instruction instruction = null;
+        int rawInstruction = raw[0];
+        int op = (rawInstruction>>20) & 0xf;
+        switch (op) {
+            case 0b0000:
+                //  0x00 Swap Word, Swap Byte        SWP, SWPB on page A8-722 a          All
+                instruction =  new SWP(rawInstruction);
+                break;
+            case 0b0100:
+                //  0x00 Swap Word, Swap Byte        SWP, SWPB on page A8-722 a          All
+                instruction =  new SWPB(rawInstruction);
+                break;
+            case 0b1000:
+                //  1000 Store Register Exclusive    STREX on page A8-690                v6
+                instruction =  new STREX(rawInstruction);
+                break;
+
+            case 0b1001:
+                // 1001 Load Register Exclusive     LDREX on page A8-432                v6
+                instruction =  new LDREX(rawInstruction);
+                break;
+            case 0b1010:
+                //  1010 Store Register Exclusive    Doubleword STREXD on page A8-694    v6K
+                instruction =  new STREXD(rawInstruction);
+                break;
+
+            case 0b1011:
+                // 1011 Load Register Exclusive     Doubleword LDREXD on page A8-436    v6K
+                instruction =  new LDREXD(rawInstruction);
+                break;
+            case 0b1100:
+                //  1100 Store Register Exclusive    Byte STREXB on page A8-692          v6K
+                instruction =  new STREXB(rawInstruction);
+                break;
+
+            case 0b1101:
+                // 1101 Load Register Exclusive     Byte LDREXB on page A8-434          v6K
+                instruction =  new LDREXB(rawInstruction);
+                break;
+            case 0b1110:
+                //  1110 Store Register Exclusive    Halfword STREXH on page A8-696      v6K
+                instruction =  new STREXH(rawInstruction);
+                break;
+
+            case 0b1111:
+                // 1111 Load Register Exclusive     Halfword LDREXH on page A8-438      v6K
+                instruction =  new LDREXH(rawInstruction);
+                break;
+        }
         return instruction;
     }
 
@@ -457,7 +583,7 @@ public class DataProcessingDecoder extends AbstractArmDecoder {
      *  1111x   -   -       Bitwise NOT                 MVN (register) on page A8-506
      * 
      *
-     * @param rawData
+     * @param raw
      * @return
      */
     public Instruction decodeDataProcessingRegister(int[] raw) {

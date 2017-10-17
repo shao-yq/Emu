@@ -316,6 +316,9 @@ public  abstract class ArmInstruction  extends AbstractInstruction {
     protected int imm = 0;
     protected int amt = 0;
 
+    protected int Rt = 0;
+    protected int Rt2 = 0;
+
     boolean I;
     boolean P ;
     boolean U ;
