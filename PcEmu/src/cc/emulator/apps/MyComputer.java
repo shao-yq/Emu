@@ -132,9 +132,13 @@ public class MyComputer {
         instructionPane.setInstructions(instructions);
 
         JFrame cpuFrame = new JFrame("CPU x86");
-
+        JMenuBar menuBar = createMenuBar();
+        JToolBar toolBar = createToolBar();
+        cpuFrame.setJMenuBar(menuBar);
+        
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
+        contentPane.add(toolBar, BorderLayout.NORTH);
         contentPane.add(instructionPane, BorderLayout.WEST);
 
         memoryPane =  new MemoryPane();
@@ -163,6 +167,76 @@ public class MyComputer {
         cpuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         cpuFrame.setVisible(true);
 
+    }
+
+    JMenuBar createMenuBar(){
+        JPopupMenu pop;
+        JMenuItem item1;
+        JMenuItem item2;
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu1=new JMenu("菜单1");
+        JMenu menu2=new JMenu("菜单2");
+        JMenu menu3=new JMenu("菜单3");
+        JMenu menu4=new JMenu("菜单4");
+        JMenu menu5=new JMenu("菜单5");
+
+        menuBar.add(menu1);
+        menuBar.add(menu2);
+        menuBar.add(menu3);
+        menuBar.add(menu4);
+        menuBar.add(menu5);
+
+        item1=new JMenuItem("子菜单1");
+        item2=new JMenuItem("子菜单2");
+
+        JMenuItem item3=new JMenuItem("子菜单3");
+        JMenuItem item4=new JMenuItem("子菜单4");
+        JMenuItem item5=new JMenuItem("子菜单5");
+        JMenuItem item6=new JMenuItem("子菜单6");
+        JMenuItem item7=new JMenuItem("子菜单7");
+        JMenuItem item8=new JMenuItem("子菜单8");
+        JMenuItem item9=new JMenuItem("子菜单9");
+        JMenuItem item10=new JMenuItem("子菜单10");
+        JMenuItem item11=new JMenuItem("子菜单11");
+        JMenuItem item12=new JMenuItem("子菜单12");
+
+        menu1.add(item1);
+        menu1.addSeparator();
+        menu1.add(item2);
+        menu1.addSeparator();
+        menu1.add(item3);
+
+        menu2.add(item4);
+        menu2.addSeparator();
+        menu2.add(item5);
+
+        menu3.add(item6);
+        menu3.addSeparator();
+        menu3.add(item7);
+
+        menu4.add(item8);
+        menu4.addSeparator();
+        menu4.add(item9);
+        menu4.addSeparator();
+        menu4.add(item10);
+
+        menu5.add(item11);
+        menu5.addSeparator();
+        menu5.add(item12);
+
+        return menuBar;
+    }
+
+    JToolBar createToolBar(){
+        JToolBar toolBar = new JToolBar();
+        JButton button1 = new JButton("工具1");
+        JButton button2 = new JButton("工具2");
+        JButton button3 = new JButton("工具3");
+
+        toolBar.add(button1);
+        toolBar.add(button2);
+        toolBar.add(button3);
+        return toolBar;
     }
 
 }
