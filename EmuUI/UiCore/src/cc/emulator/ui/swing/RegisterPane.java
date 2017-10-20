@@ -29,14 +29,7 @@ public class RegisterPane extends JPanel{
         this.add(indexerPointerZone, BorderLayout.WEST);
     }
 
-     public void setAccumulators(DividableRegister[] dividableRegisters) {
-        if(dividableRegisters==null)
-            return;
-
-        Vector<DividableRegister> registers = new Vector<DividableRegister>();
-        for(int i=0; i<dividableRegisters.length; i++){
-            registers.add(dividableRegisters[i]);
-        }
+     public void setAccumulators(Vector<DividableRegister> registers) {
         accumulatorZone.setDividableRegisters(registers);
     }
     public void setIndexerPointers(GeneralRegister[] generalRegister) {

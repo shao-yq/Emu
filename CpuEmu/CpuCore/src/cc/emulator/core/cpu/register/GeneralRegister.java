@@ -9,4 +9,8 @@ public  class GeneralRegister extends RegisterImpl {
         super(name, dataWidth);
     }
 
+    public void inc(int df, int w) {
+        //si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+        data = (data + df * (1 + w)) & 0xffff;
+    }
 }

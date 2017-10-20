@@ -105,6 +105,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         stack.setAddressUnit(addressUnit);
         stack.setMemoryAccessor(memoryAccessor);
         flags = (ProgramStatusWord) getStatusRegister();
+
+        // Segment Register
+        ds = busInterfaceUnit.getSegmentRegister("DS");
+        es = busInterfaceUnit.getSegmentRegister("ES");
+
     }
 
     public Stack getStack() {
@@ -125,7 +130,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 
     @Override
     protected GeneralRegister[] createGeneralRegisters() {
-        GeneralRegister regs[] = new DividableRegister8086[4];
+        GeneralRegister regs[] = new GeneralRegister[4];
         // Create general registers
         //ax = new DividableRegister8086("AX", 2);
         ax = new DividableRegister8086("AX",2);
@@ -144,17 +149,17 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 
     @Override
     public PointerIndexer[] createPointerIndexers() {
-        PointerIndexer pniRegisters[] = new PointerIndexer[1];
+        PointerIndexer pniRegisters[] = new PointerIndexer[4];
         sp = new PointerIndexer("SP",2);
-//        bp = new PointerIndexer("BP",2);
-//        si = new PointerIndexer("SI",2);
-//        di = new PointerIndexer("DI",2);
+        bp = new PointerIndexer("BP",2);
+       si = new PointerIndexer("SI",2);
+       di = new PointerIndexer("DI",2);
 
         int i=0;
         pniRegisters[i++]=sp;
-//        pniRegisters[i++]=bp;
-//        pniRegisters[i++]=si;
-//        pniRegisters[i++]=di;
+        pniRegisters[i++]=bp;
+        pniRegisters[i++]=si;
+        pniRegisters[i++]=di;
 
         return pniRegisters;
     }
@@ -302,18 +307,18 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * SP(Stack Pointer)
      */
     PointerIndexer sp;
-//    /**
-//     * BP(Base Pointer)
-//     */
-//    PointerIndexer bp;
-//    /**
-//     * SI(Source Index)
-//     */
-//    PointerIndexer si;
-//    /**
-//     * DI(Destination Index)
-//     */
-//    PointerIndexer di;
+    /**
+     * BP(Base Pointer)
+     */
+    PointerIndexer bp;
+    /**
+     * SI(Source Index)
+     */
+    PointerIndexer si;
+    /**
+     * DI(Destination Index)
+     */
+    PointerIndexer di;
 
     /**
      * BP (base pointer)
@@ -324,7 +329,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * address data on the stack; BP can be sued, however, to access data in
      * any of the other currently addressable segments.
      */
-    private int                bp;
+    //private int                bp;
 
     /**
      * SI (source index)
@@ -334,7 +339,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * segment, but another currently addressable segment may be specified. Its
      * offset is taken from the register SI, the source index register.
      */
-    private int                si;
+    //private int                si;
 
     /**
      * DI (destination index)
@@ -344,7 +349,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * register. The string instructions automatically adjust SI and DI as they
      * process the string one byte or word at a time.
      */
-    private int                di;
+    //private int                di;
 
     /*
      * Segment Registers
@@ -373,8 +378,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * The DS register points to the current data segment; it generally
      * contains program variables.
      */
-    private int                ds;
-
+    //private int                ds;
+    SegmentRegister             ds;
     /**
      * SS (stack segment)
      *
@@ -389,7 +394,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
      * The ES register points to the current extra segment, which is also
      * typically used for data storage.
      */
-    private int                es;
+    //private int                es;
+    SegmentRegister             es;
 
     /**
      * OS (overridden segment)
@@ -725,27 +731,27 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         switch (rm) {
         case 0b000: // EA = (BX) + (SI) + DISP
             clocks += 7;
-            ea = bx.getX() + si + disp;         //  bh << 8 | bl + si + disp;
+            ea = bx.getX() + si.getData() + disp;         //  bh << 8 | bl + si + disp;
             break;
         case 0b001: // EA = (BX) + (DI) + DISP
             clocks += 8;
-            ea = bx.getX() + di + disp;         //  bh << 8 | bl + di + disp;
+            ea = bx.getX() + di.getData() + disp;         //  bh << 8 | bl + di + disp;
             break;
         case 0b010: // EA = (BP) + (SI) + DISP
             clocks += 8;
-            ea = bp + si + disp;
+            ea = bp.getData() + si.getData() + disp;
             break;
         case 0b011: // EA = (BP) + (DI) + DISP
             clocks += 7;
-            ea = bp + di + disp;
+            ea = bp.getData() + di.getData() + disp;
             break;
         case 0b100: // EA = (SI) + DISP
             clocks += 5;
-            ea = si + disp;
+            ea = si.getData() + disp;
             break;
         case 0b101: // EA = (DI) + DISP
             clocks += 5;
-            ea = di + disp;
+            ea = di.getData() + disp;
             break;
         case 0b110:
             if (mod == 0b00) {
@@ -755,7 +761,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             } else {
                 // EA = (BP) + DISP
                 clocks += 5;
-                ea = bp + disp;
+                ea = bp.getData() + disp;
             }
             break;
         case 0b111: // EA = (BX) + DISP
@@ -874,11 +880,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             case 0b100: // SP
                 return stack.getSp();   //  sp;
             case 0b101: // BP
-                return bp;
+                return bp.getData();
             case 0b110: // SI
-                return si;
+                return si.getData();    //  si
             case 0b111: // DI
-                return di;
+                return di.getData();    // di
             }
         return 0;
     }
@@ -925,13 +931,13 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     private int getSegReg(final int reg) {
         switch (reg) {
         case ES: // 0b00: // ES
-            return es;
+            return es.getData();    //  es;
         case CS: // 0b01: // CS
             return instructionLocator.getBase();        //  cs;
         case SS: // 0b10: // SS
             return stack.getSs();  // ss;
         case DS: // 0b11: // DS
-            return ds;
+            return ds.getData();    //   ds;
         }
         return 0;
     }
@@ -1021,9 +1027,9 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         instructionLocator.setOffset(0x0000);   //  ip = 0x0000;
         instructionLocator.setBase(0xffff);     //  cs = 0xffff;
 
-        ds = 0x0000;
+        ds.setData(0x0000);   //  ds = 0x0000;
         stack.setSs(0x0000); // ss = 0x0000;
-        es = 0x0000;
+        es.setData(0x0000);     //  es = 0x0000;
 
         clocks = 0;
     }
@@ -1159,13 +1165,13 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 stack.setSp(val & 0xffff);      //  sp = val & 0xffff;
                 break;
             case BP: //  0b101: // BP
-                bp = val & 0xffff;
+                bp.setData(val & 0xffff);   //  bp = val & 0xffff;
                 break;
             case SI: //  0b110: // SI
-                si = val & 0xffff;
+                si.setData(val & 0xffff);       //  si = val & 0xffff;
                 break;
             case DI: //  0b111: // DI
-                di = val & 0xffff;
+                di.setData(val & 0xffff);   //  di = val & 0xffff;
                 break;
             }
     }
@@ -1214,7 +1220,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
     private void setSegReg(final int reg, final int val) {
         switch (reg) {
         case ES: //  0b00: // ES
-            es = val & 0xffff;
+            es.setData(val & 0xffff);   //  es = val & 0xffff;
             break;
         case CS: //  0b01: // CS
             instructionLocator.setBase(val & 0xffff);   //  cs = val & 0xffff;
@@ -1223,7 +1229,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             stack.setSs(val & 0xffff);  // ss = val & 0xffff
             break;
         case DS: //  0b11: // DS
-            ds = val & 0xffff;
+            ds.setData(val & 0xffff);   //  ds = val & 0xffff;
             break;
         }
     }
@@ -1252,7 +1258,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         boolean prefix = true;
         switch (op) {
             case PREFIX_ES: //  0x26: // ES: (segment override prefix)
-                os = es;
+                os = es.getData();      //  es;
                 clocks += 2;
                 break;
             case PREFIX_CS: //  0x2e: // CS: (segment override prefix)
@@ -1264,7 +1270,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 clocks += 2;
                 break;
             case PREFIX_DS: //  0x3e: // DS: (segment override prefix)
-                os = ds;
+                os = ds.getData();      // ds;
                 clocks += 2;
                 break;
 
@@ -1413,7 +1419,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 
 
     public boolean execute(Instruction instruct){
-        os = ds;
+        os = ds.getData();      // ds;
 
         Instruction8086 instruction = (Instruction8086) instruct;
         //  Prefix processing
@@ -1763,7 +1769,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
 //                decode2();
                 src = getEA(mod, rm, disp);
                 setReg(w, reg, getMem(W, src));
-                ds = getMem(W, src + 2);
+                ds.setData(getMem(W, src + 2));     // ds = getMem(W, src + 2);
                 clocks += instruction.getClocks();      //  16;
                 break;
 
@@ -1785,7 +1791,7 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
                 //decode2();
                 src = getEA(mod, rm, disp);
                 setReg(w, reg, getMem(W, src));
-                es = getMem(W, src + 2);
+                es.setData(getMem(W, src + 2));     //  es = getMem(W, src + 2);
                 clocks += instruction.getClocks();      //  16;
                 break;
 
@@ -2944,10 +2950,10 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case MOVS_STR8_STR8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
             case MOVS_STR16_STR16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
-                src = getMem(w, getAddr(os, si));
-                setMem(w, getAddr(es, di), src);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                src = getMem(w, getAddr(os, si.getData()));
+                setMem(w, getAddr(es.getData(), di.getData()), src);
+                si.inc(getFlag(DF) ? -1 : 1, w);   //   si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di.inc(getFlag(DF) ? -1 : 1, w);   //   di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += instruction.getClocks();              //  17;
                 break;
 
@@ -2971,11 +2977,11 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case CMPS_STR8_STR8  : //   0xa6: // CMPS DEST-STR8,SRC-STR8
             case CMPS_STR16_STR16: //   0xa7: // CMPS DEST-STR16,SRC-STR16
-                dst = getMem(w, getAddr(es, di));
-                src = getMem(w, getAddr(os, si));
+                dst = getMem(w, getAddr(es.getData(), di.getData()));
+                src = getMem(w, getAddr(os, si.getData()));
                 alu.sub(w, src, dst);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si.inc(getFlag(DF) ? -1 : 1, w);    //  si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di.inc(getFlag(DF) ? -1 : 1, w);    //  di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
                 clocks += instruction.getClocks();              //  22;
@@ -3001,10 +3007,10 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case SCAS_STR8 : //   0xae: // SCAS DEST-STR8
             case SCAS_STR16: //   0xaf: // SCAS DEST-STR16
-                dst = getMem(w, getAddr(es, di));
+                dst = getMem(w, getAddr(es.getData(), di.getData()));
                 src = getReg(w, AX);
                 alu.sub(w, src, dst);
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                di.inc(getFlag(DF) ? -1 : 1, w);    //  di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 if (rep == 1 && !getFlag(ZF) || rep == 2 && getFlag(ZF))
                     rep = 0;
                 clocks += instruction.getClocks();                  //  15;
@@ -3024,9 +3030,9 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
              */
             case LODS_STR8 : //  0xac: // LODS SRC-STR8
             case LODS_STR16: //  0xad: // LODS SRC-STR16
-                src = getMem(w, getAddr(os, si));
+                src = getMem(w, getAddr(os, si.getData()));
                 setReg(w, AX, src);
-                si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                si.inc(getFlag(DF) ? -1 : 1, w);        //  si = si + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += instruction.getClocks();                  //  13;
                 break;
 
@@ -3042,8 +3048,8 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
             case STOS_STR8 : //   0xaa: // STOS DEST-STR8
             case STOS_STR16: //   0xab: // STOS DEST-STR16
                 src = getReg(w, AX);
-                setMem(w, getAddr(es, di), src);
-                di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
+                setMem(w, getAddr(es.getData(), di.getData()), src);
+                di.inc(getFlag(DF) ? -1 : 1, w);    //  di = di + (getFlag(DF) ? -1 : 1) * (1 + w) & 0xffff;
                 clocks += instruction.getClocks();                  //  10;
                 break;
 

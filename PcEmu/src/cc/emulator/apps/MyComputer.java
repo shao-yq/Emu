@@ -8,6 +8,7 @@ import cc.emulator.core.cpu.Instruction;
 import cc.emulator.core.cpu.InstructionDecoder;
 import cc.emulator.core.cpu.InstructionQueue;
 import cc.emulator.core.cpu.register.DividableRegister;
+import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.ui.swing.MemoryPane;
 import cc.emulator.ui.swing.RegisterPane;
 import cc.emulator.x86.i8086.Decoder8086;
@@ -159,7 +160,17 @@ public class MyComputer {
 
         registerPane =  new RegisterPane();
         contentPane.add(registerPane, BorderLayout.CENTER);
-        registerPane.setAccumulators((DividableRegister[]) computer.getMainBoard().getCpu().getExecutionUnit().getGeneralRegisters());
+
+        // Dividable Register list
+        GeneralRegister[] dividableRegisters = computer.getMainBoard().getCpu().getExecutionUnit().getGeneralRegisters();
+        Vector<DividableRegister> registers = new Vector<DividableRegister>();
+        for(int i=0; i<dividableRegisters.length; i++){
+            if(dividableRegisters[i] instanceof DividableRegister)
+                registers.add((DividableRegister)dividableRegisters[i]);
+        }
+
+        registerPane.setAccumulators(registers);
+
         registerPane.setIndexerPointers(computer.getMainBoard().getCpu().getExecutionUnit().getPointerIndexers());
 
         cpuFrame.setContentPane(contentPane);
