@@ -15,6 +15,14 @@ public abstract class AbstractMainBoard implements MainBoard{
 
     ProgramMemoryInfo biasInfo;
     ProgramMemoryInfo bootloaderInfo;
+    public AbstractMainBoard(){
+        initComponents();
+    }
+    void initComponents(){
+        memoryManager =  createMemoryManager();
+        cpu =  createCpu(memoryManager);
+        memoryManager.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
+    }
 
     @Override
     public MemoryManager getMemoryManager(){
@@ -71,13 +79,15 @@ public abstract class AbstractMainBoard implements MainBoard{
 
     @Override
     public void reset() {
-        memoryManager =  createMemoryManager();
+        if(memoryManager==null)
+            memoryManager = createMemoryManager();
         memoryManager.reset();
-        cpu =  createCpu(memoryManager);
+
+        if(cpu==null)
+            cpu = createCpu(memoryManager);
         cpu.reset();
         //cpu.setMemory(memory.getMemoryBase());
 
-        memoryManager.addDataListener(cpu.getMemoryAccessor().getDataTemporaryRegister());
     }
     protected abstract Cpu createCpu(MemoryManager mm);
     protected abstract MemoryManager createMemoryManager();

@@ -32,8 +32,6 @@ public class MyComputer {
         String configFile="/IBMPc.properties";
         MyComputer myComputer = new MyComputer(configFile);
 
-        // myComputer.initPcUi(configFile);
-
         myComputer.initCpuEmuUi();
 
     }
@@ -61,8 +59,6 @@ public class MyComputer {
                 computer.start();
             }
         }.start();
-
-
 
     }
 
@@ -122,8 +118,6 @@ public class MyComputer {
             if(current==count)
                 break;
         }
-
-
         return instructions;
     }
 
@@ -139,15 +133,6 @@ public class MyComputer {
 
         JFrame cpuFrame = new JFrame("CPU x86");
 
-
-
-
-//         Vector<Instruction> instructions = new Vector<>();
-//         MovImmediateToRegister mov = new MovImmediateToRegister();
-//         mov.decodeMe(new int[]{0xB8,0x40,0x51},0);
-//         instructions.add(mov);
-//        instructionPane.setInstructions(instructions);
-        //cpuFrame.add(instructinPane);
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(instructionPane, BorderLayout.WEST);

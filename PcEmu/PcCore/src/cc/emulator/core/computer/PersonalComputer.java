@@ -22,6 +22,18 @@ public abstract class PersonalComputer implements Computer {
 
     public PersonalComputer(String configFile) {
         this.configFile = configFile;
+        initComponents();
+    }
+
+    void initComponents(){
+        properties =  new Properties();
+        try {
+            loadConfigProperties(configFile);
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
+        mainBoard =  createMainBoard();
+        createPeripherals();
 
     }
 
@@ -33,16 +45,9 @@ public abstract class PersonalComputer implements Computer {
 
     @Override
     public void reset() {
-        properties =  new Properties();
-        try {
-            loadConfigProperties(configFile);
-        } catch ( Exception e) {
-            e.printStackTrace();
-        }
-        mainBoard =  createMainBoard();
+
         mainBoard.reset();
 
-        createPeripherals();
     }
 
     protected abstract MainBoard createMainBoard();
