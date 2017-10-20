@@ -3,7 +3,6 @@ package cc.emulator.apps;
 import cc.emulator.computer.IBMPC5150;
 import cc.emulator.core.computer.Computer;
 import cc.emulator.core.computer.ProgramMemoryInfo;
-import cc.emulator.core.computer.swing.Display;
 import cc.emulator.core.cpu.Instruction;
 import cc.emulator.core.cpu.InstructionDecoder;
 import cc.emulator.core.cpu.InstructionQueue;
@@ -12,8 +11,6 @@ import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.ui.swing.MemoryPane;
 import cc.emulator.ui.swing.RegisterPane;
 import cc.emulator.x86.i8086.Decoder8086;
-import cc.emulator.x86.i8086.instruction.MOV;
-import cc.emulator.x86.i8086.instruction.MovImmediateToRegister;
 import fr.neatmonster.ibmpc.IBMCGA;
 import cc.emulator.ui.swing.InstructionPane;
 
@@ -171,7 +168,8 @@ public class MyComputer {
 
         registerPane.setAccumulators(registers);
 
-        registerPane.setIndexerPointers(computer.getMainBoard().getCpu().getExecutionUnit().getPointerIndexers());
+        registerPane.setPointerIndexers(computer.getMainBoard().getCpu().getExecutionUnit().getPointerIndexers());
+        registerPane.setSegmentRegisters(computer.getMainBoard().getCpu().getBusInterfaceUnit().getSegmentRegisters());
 
         cpuFrame.setContentPane(contentPane);
         // cpuFrame.addKeyListener(instructinPane);

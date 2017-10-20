@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -90,14 +91,16 @@ public class AccumulatorZone extends JPanel {
             }
         });//new JTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(regisgerList);
+        scrollPane.setPreferredSize(new Dimension(200, 100));
+
         TableColumn column = null;
         for (int i = 0; i < columnNames.length; i++) {
             column = regisgerList.getColumnModel().getColumn(i);
-            if (i == 0) {
-                column.setPreferredWidth(40);
-            } else {
-                column.setPreferredWidth(50);
-            }
+//            if (i == 0) {
+//                column.setPreferredWidth(40);
+//            } else {
+//                column.setPreferredWidth(50);
+//            }
         }
         this.add(scrollPane);
     }
