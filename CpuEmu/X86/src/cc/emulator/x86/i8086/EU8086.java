@@ -1251,6 +1251,21 @@ public class EU8086 extends ExecutionUnitImpl implements Intel8086InstructionSet
         }
     }
 
+    @Override
+    public void toggleStep() {
+//        boolean tf = getFlag(TF);
+//        setFlag(TF,!tf);
+        //flags.setFlag(TF);
+        stepMode = !stepMode;
+    }
+
+    boolean stepMode = false;
+
+    @Override
+    public boolean isStepMode() {
+        return stepMode;
+    }
+
 
     //            // Segment prefix check.
     boolean checkSegmentPrefix(int op){

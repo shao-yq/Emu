@@ -119,7 +119,7 @@ public class IBMPC5150 extends PersonalComputer {
     @Override
     public void reset() {
         super.reset();
-        Cpu cpu = getMainBoard().getCpu();
+        Cpu cpu = getMainBoard().getCpu(0);
         peripherals = new Peripheral[] { dma, pic, pit, ppi, crtc };
         cpu.setPeripherals(peripherals);
         cpu.setPic(pic);

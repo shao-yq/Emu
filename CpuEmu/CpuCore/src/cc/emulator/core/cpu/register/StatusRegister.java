@@ -33,14 +33,12 @@ public abstract class StatusRegister implements Register {
     }
 
     public void setFlag( int flag){
-        flags |= flag;
+        flags = flags | flag;
     }
 
     public void clearFlag( int flag){
         flags &= ~flag;
     }
-
-
 
     /**
      * Sets or clears a flag.

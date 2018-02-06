@@ -6,6 +6,9 @@ package cc.emulator.core.cpu;
  */
 public interface InstructionUnit {
     InstructionDecoder getDecoder();
+
+    InstructionDecoder createDecoder();
+
     DecodedInstructionQueue getDecodedInstructionQueue();
     Instruction decode(InstructionQueue queue);
 

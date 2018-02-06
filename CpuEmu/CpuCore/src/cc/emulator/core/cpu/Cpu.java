@@ -4,6 +4,10 @@ import cc.emulator.core.ProgrammableInterruptController;
 import cc.emulator.core.ProgrammableIntervalTimer;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.Peripheral;
+import cc.emulator.core.cpu.register.PointerIndexer;
+import cc.emulator.core.cpu.register.ProgramCounter;
+import cc.emulator.core.cpu.register.SegmentRegister;
+import cc.emulator.core.cpu.register.StatusRegister;
 
 /**
  * @author Shao Yongqing
@@ -27,6 +31,18 @@ public abstract class Cpu {
         return busInterfaceUnit;
     }
 
+    public SegmentRegister[] getSegmentRegisters(){
+        return getBusInterfaceUnit().getSegmentRegisters();
+    }
+
+    public PointerIndexer[] getPointerIndexers(){
+        return getExecutionUnit().getPointerIndexers();
+    }
+
+    public ProgramCounter getProgramCounter(){
+        return getBusInterfaceUnit().getProgramCounter();
+    }
+
     /**
      * Execute all instructions.
      */
@@ -34,18 +50,27 @@ public abstract class Cpu {
         while (tick());
     }
 
-    //public abstract void setMemory(int[] memory) ;
     /**
      * Resets the CPU to its default state.
      */
-    public abstract void reset();
+    public void reset() {
+        executionUnit.reset();
+    }
+
 
     /**
      * Fetches and executes an instruction.
      *
      * @return true if instructions remain, false otherwise
      */
-    public abstract boolean tick();
+    public boolean tick() {
+        // Single-step mode.
+        executionUnit.trySingleStepMode();
+        // External maskable interrupts.
+        executionUnit.tryExternalMaskabkeInterrupts(pic);
+
+        return pipelineExecute();
+    }
 
     protected AddressUnit addressUnit;
     protected MemoryAccessor memoryAccessor;
@@ -134,11 +159,71 @@ public abstract class Cpu {
         return true;
     }
 
-    protected abstract Instruction fetchInstruction();
+    protected Instruction fetchInstruction() {
+        return instructionUnit.nextInstruction();
+    }
 
-    protected abstract boolean executeInstruction(Instruction instruction);
+    protected abstract void waitStepCommand();
 
-    protected abstract Instruction decodeInstruction();
+    protected boolean executeInstruction(Instruction instruction){
+        // Validate the Instruction
+        if(instruction==null){
+            // If no instruction available, just return true for next tick
+            return true;
+        }
+        if(executionUnit.isStepMode()) {
+            notifyStepModeListener();
 
-    protected abstract void fetchRawInstructions();
+            // wait for next step confirmation
+            waitStepCommand();
+        }
+        return executionUnit.execute(instruction);
+    }
+
+
+    protected Instruction decodeInstruction() {
+        // Current instruction decoded
+        Instruction instruction = instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
+
+        if(instruction!=null) {
+            instructionLocator.incOffset(instruction.getLength());
+        }
+
+        return instruction;
+    }
+
+    public void fetchRawInstructions(int offset, InstructionQueue instructionQueue){
+        busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator, offset, instructionQueue);
+    }
+
+    protected void fetchRawInstructions(){
+        busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator);
+    }
+
+    public StatusRegister getStatusRegister() {
+        return getExecutionUnit().getStatusRegister();
+    }
+
+    public void toggleStep() {
+        executionUnit.toggleStep();
+    }
+
+
+    public void setStepModeListener(StepModeListener stepModeListener){
+        this.stepModeListener = stepModeListener;
+    }
+
+    StepModeListener stepModeListener;
+
+    public void notifyStepModeListener(){
+        if (stepModeListener !=null) {
+            stepModeListener.onStepping(this);
+        }
+    }
+
+    public abstract void nextStep();
+
+    public int currentAddress() {
+        return busInterfaceUnit.currentAddress(getMemoryAccessor(),instructionLocator);
+    }
 }

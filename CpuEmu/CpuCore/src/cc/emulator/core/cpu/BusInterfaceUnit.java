@@ -20,5 +20,7 @@ public interface BusInterfaceUnit {
     void reset();
 
     void fetchInstructions(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator);
+    void fetchInstructions(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator, int offset, InstructionQueue instructionQueue);
 
+    int currentAddress(MemoryAccessor memoryAccessor, MemoryLocator instructionLocator);
 }

@@ -5,6 +5,8 @@ import cc.emulator.core.cpu.Cpu;
 
 public interface MainBoard {
     void reset();
+    Cpu getCpu(int index);
+    // Default the first CPU
     Cpu getCpu();
 
     void run();

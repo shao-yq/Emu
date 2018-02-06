@@ -1,11 +1,10 @@
 package cc.emulator.apps;
 
 import cc.emulator.computer.IBMPC5150;
+import cc.emulator.core.MemoryManager;
 import cc.emulator.core.computer.Computer;
 import cc.emulator.core.computer.ProgramMemoryInfo;
-import cc.emulator.core.cpu.Instruction;
-import cc.emulator.core.cpu.InstructionDecoder;
-import cc.emulator.core.cpu.InstructionQueue;
+import cc.emulator.core.cpu.*;
 import cc.emulator.core.cpu.register.DividableRegister;
 import cc.emulator.core.cpu.register.GeneralRegister;
 import cc.emulator.ui.swing.MemoryPane;
@@ -16,6 +15,7 @@ import cc.emulator.ui.swing.InstructionPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Vector;
 
 /**
@@ -31,8 +31,45 @@ public class MyComputer {
     public static void main(final String[] args) {
         String configFile="/IBMPc.properties";
         MyComputer myComputer = new MyComputer(configFile);
+        myComputer.initUi();
+    }
+    void initUi(){
+        JFrame cpuFrame = new JFrame("CPU x86");
+        JPanel cpuContent = initCpuEmuUi();
 
-        myComputer.initCpuEmuUi();
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout());
+        contentPanel.add(cpuContent, BorderLayout.CENTER);
+        IBMCGA display = (IBMCGA) computer.getDisplay();
+//        cpuFrame.addKeyListener(display);
+//
+//        contentPanel.add(display,BorderLayout.EAST);
+
+        computer.getCpu().setStepModeListener(stepModeListener);
+
+        initAppUi(cpuFrame, contentPanel);
+
+        new Thread() {
+            @Override
+            public void run() {
+                computer.start();
+            }
+        }.start();
+
+
+    }
+    void initAppUi(JFrame cpuFrame,JPanel contentPane ){
+
+        JMenuBar menuBar = createMenuBar();
+        //JToolBar toolBar = createToolBar();
+        cpuFrame.setJMenuBar(menuBar);
+
+        cpuFrame.setContentPane(contentPane);
+        // cpuFrame.addKeyListener(instructinPane);
+        cpuFrame.pack();
+        cpuFrame.setBounds(100, 100, 800, 600);
+        cpuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        cpuFrame.setVisible(true);
 
     }
 
@@ -53,13 +90,57 @@ public class MyComputer {
         pcFrame.pack();
         pcFrame.setVisible(true);
         pcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        new Thread() {
-            @Override
-            public void run() {
-                computer.start();
-            }
-        }.start();
 
+    }
+    private Vector<Instruction> decode(Cpu cpu, ProgramMemoryInfo programMemoryInfo, int[] memoryBase, int count) {
+        Vector<Instruction> instructions = new Vector<Instruction>();
+        final int queueSize = cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize();
+        InstructionQueue instructionQueue = new InstructionQueue(){
+            int[] queue = new int[queueSize];
+            @Override
+            public void reset(){
+                //for (int i = 0; i < 6; i++)
+                //    queue[i] = 0;
+                current=0;
+            }
+            int current;
+            @Override
+            public void fillInstructionQueue(int instruction){
+                queue[current]=instruction;
+                current++;
+            }
+
+            @Override
+            public int[] getQueue() {
+                return queue;
+            }
+
+            @Override
+            public int getQueueSize() {
+                return queueSize;
+            }
+        };
+        int offset = 0;
+        int base = programMemoryInfo.getBase();
+        int programSize = programMemoryInfo.getSize();
+        int memoryUpper = base+programSize;
+
+        InstructionDecoder decoder= cpu.getInstructionUnit().createDecoder(); //new Decoder8086();
+        for(int i=0; i<count; i++) {
+            int currentAddr = cpu.currentAddress();
+            if(currentAddr+offset+cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize() >=memoryBase.length )
+                break;
+
+            // Featch raw instruction
+            cpu.fetchRawInstructions(offset, instructionQueue);
+            // Decode
+            Instruction instruction = decoder.decode(instructionQueue);
+            offset += instruction.getLength();
+
+            instructions.add(instruction);
+        }
+
+        return instructions;
     }
 
     private Vector<Instruction> decode(ProgramMemoryInfo programMemoryInfo, int[] memoryBase, int count) {
@@ -121,34 +202,46 @@ public class MyComputer {
         return instructions;
     }
 
-    void initCpuEmuUi(){
-        instructionPane = new InstructionPane();
-        instructionPane.initUi();
+    StepModeListener stepModeListener=null;
+
+    JPanel initCpuEmuUi(){
+        Cpu cpu = computer.getMainBoard().getCpu();
+
+
+        MemoryManager memoryManager = computer.getMainBoard().getMemoryManager();
         // prepare instructions dump from the computer's memory
         ProgramMemoryInfo programMemoryInfo = computer.getProgramMemoryInfo("bootloader");
-        int memoryBase [] = computer.getMainBoard().getMemoryManager().getMemoryBase();
+        int memoryBase [] = memoryManager.getMemoryBase();
         int count = 20;
-        Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
-        instructionPane.setInstructions(instructions);
 
-        JFrame cpuFrame = new JFrame("CPU x86");
-        JMenuBar menuBar = createMenuBar();
+        instructionPane = new InstructionPane(cpu, programMemoryInfo, memoryBase);
+        instructionPane.initUi();
+        instructionPane.refreshUI();
+
+        //Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
+
+        //Vector<Instruction> instructions = decode(cpu,programMemoryInfo, memoryBase, count);
+        //instructionPane.setInstructions(instructions);
+
+
+//        JFrame cpuFrame = new JFrame("CPU x86");
+//        JMenuBar menuBar = createMenuBar();
+//        cpuFrame.setJMenuBar(menuBar);
         JToolBar toolBar = createToolBar();
-        cpuFrame.setJMenuBar(menuBar);
-        
+
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(toolBar, BorderLayout.NORTH);
         contentPane.add(instructionPane, BorderLayout.WEST);
 
-        memoryPane =  new MemoryPane();
-        contentPane.add(memoryPane, BorderLayout.EAST);
+        memoryPane= new MemoryPane(memoryManager.getMemoryBase(),0, 20);
+        contentPane.add(memoryPane, BorderLayout.CENTER);
 
         registerPane =  new RegisterPane();
-        contentPane.add(registerPane, BorderLayout.CENTER);
+        contentPane.add(registerPane, BorderLayout.EAST);
 
         // Dividable Register list
-        GeneralRegister[] dividableRegisters = computer.getMainBoard().getCpu().getExecutionUnit().getGeneralRegisters();
+        GeneralRegister[] dividableRegisters = cpu.getExecutionUnit().getGeneralRegisters();
         Vector<DividableRegister> registers = new Vector<DividableRegister>();
         for(int i=0; i<dividableRegisters.length; i++){
             if(dividableRegisters[i] instanceof DividableRegister)
@@ -157,16 +250,47 @@ public class MyComputer {
 
         registerPane.setAccumulators(registers);
 
-        registerPane.setPointerIndexers(computer.getMainBoard().getCpu().getExecutionUnit().getPointerIndexers());
-        registerPane.setSegmentRegisters(computer.getMainBoard().getCpu().getBusInterfaceUnit().getSegmentRegisters());
 
-        cpuFrame.setContentPane(contentPane);
-        // cpuFrame.addKeyListener(instructinPane);
-        cpuFrame.pack();
-        cpuFrame.setBounds(100, 100, 800, 600);
-        cpuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        cpuFrame.setVisible(true);
+        registerPane.setPointerIndexers(cpu.getPointerIndexers());
+        registerPane.setSegmentRegisters(cpu.getSegmentRegisters());
+        registerPane.setProgramCounter(cpu.getProgramCounter());
+        registerPane.setStatusRegister(cpu.getStatusRegister());
 
+//        cpuFrame.setContentPane(contentPane);
+//        // cpuFrame.addKeyListener(instructinPane);
+//        cpuFrame.pack();
+//        cpuFrame.setBounds(100, 100, 800, 600);
+//        cpuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        cpuFrame.setVisible(true);
+
+        stepModeListener = new StepModeListener() {
+            @Override
+            public void onStepping(Cpu cpu) {
+                refreshUI();
+            }
+        };
+        return contentPane;
+    }
+
+    void refreshUI(){
+//        instructionPane.invalidate();
+//        memoryPane.invalidate();
+//        registerPane.invalidate();
+
+//        //  Update Instruction list
+//        ProgramMemoryInfo programMemoryInfo = computer.getProgramMemoryInfo("bootloader");
+//        int memoryBase [] = computer.getMainBoard().getMemoryManager().getMemoryBase();
+//        int count = 20;
+//        Vector<Instruction> instructions = decode(programMemoryInfo, memoryBase, count);
+//        instructionPane.setInstructions(instructions);
+
+        // Update memory
+
+        // Update registers
+
+        instructionPane.refreshUI();
+        memoryPane.repaint();
+        registerPane.repaint();
     }
 
     JMenuBar createMenuBar(){
@@ -174,17 +298,17 @@ public class MyComputer {
         JMenuItem item1;
         JMenuItem item2;
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu1=new JMenu("菜单1");
-        JMenu menu2=new JMenu("菜单2");
-        JMenu menu3=new JMenu("菜单3");
-        JMenu menu4=new JMenu("菜单4");
-        JMenu menu5=new JMenu("菜单5");
+        JMenu menuFile=new JMenu("File");
+        JMenu menuEdit=new JMenu("Edit");
+        JMenu menuRun=new JMenu("Run");
+        JMenu menuOption=new JMenu("Option");
+        JMenu menuWindow=new JMenu("Window");
 
-        menuBar.add(menu1);
-        menuBar.add(menu2);
-        menuBar.add(menu3);
-        menuBar.add(menu4);
-        menuBar.add(menu5);
+        menuBar.add(menuFile);
+        menuBar.add(menuEdit);
+        menuBar.add(menuRun);
+        menuBar.add(menuOption);
+        menuBar.add(menuWindow);
 
         item1=new JMenuItem("子菜单1");
         item2=new JMenuItem("子菜单2");
@@ -192,37 +316,66 @@ public class MyComputer {
         JMenuItem item3=new JMenuItem("子菜单3");
         JMenuItem item4=new JMenuItem("子菜单4");
         JMenuItem item5=new JMenuItem("子菜单5");
-        JMenuItem item6=new JMenuItem("子菜单6");
-        JMenuItem item7=new JMenuItem("子菜单7");
+        JMenuItem itemDebug=new JMenuItem("Step Mode");
+        JMenuItem itemNextStep=new JMenuItem("Next Step");
         JMenuItem item8=new JMenuItem("子菜单8");
         JMenuItem item9=new JMenuItem("子菜单9");
         JMenuItem item10=new JMenuItem("子菜单10");
         JMenuItem item11=new JMenuItem("子菜单11");
         JMenuItem item12=new JMenuItem("子菜单12");
 
-        menu1.add(item1);
-        menu1.addSeparator();
-        menu1.add(item2);
-        menu1.addSeparator();
-        menu1.add(item3);
+        itemDebug.setAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                computer.getMainBoard().getCpu().toggleStep();
+            }
 
-        menu2.add(item4);
-        menu2.addSeparator();
-        menu2.add(item5);
+            @Override
+            public Object getValue(String key) {
+                if (key.equalsIgnoreCase("Name"))
+                    return "Step Mode";
 
-        menu3.add(item6);
-        menu3.addSeparator();
-        menu3.add(item7);
+                return super.getValue(key);
+            }
+        });
 
-        menu4.add(item8);
-        menu4.addSeparator();
-        menu4.add(item9);
-        menu4.addSeparator();
-        menu4.add(item10);
+        itemNextStep.setAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                computer.getCpu().nextStep();
+            }
 
-        menu5.add(item11);
-        menu5.addSeparator();
-        menu5.add(item12);
+            @Override
+            public Object getValue(String key) {
+                if (key.equalsIgnoreCase("Name"))
+                    return "Next Step";
+
+                return super.getValue(key);
+            }
+        });
+        menuFile.add(item1);
+        menuFile.addSeparator();
+        menuFile.add(item2);
+        menuFile.addSeparator();
+        menuFile.add(item3);
+
+        menuEdit.add(item4);
+        menuEdit.addSeparator();
+        menuEdit.add(item5);
+
+        menuRun.add(itemDebug);
+        menuRun.addSeparator();
+        menuRun.add(itemNextStep);
+
+        menuOption.add(item8);
+        menuOption.addSeparator();
+        menuOption.add(item9);
+        menuOption.addSeparator();
+        menuOption.add(item10);
+
+        menuWindow.add(item11);
+        menuWindow.addSeparator();
+        menuWindow.add(item12);
 
         return menuBar;
     }

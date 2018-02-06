@@ -15,7 +15,6 @@ public abstract class InstructionUnitImpl implements InstructionUnit {
 
     protected abstract DecodedInstructionQueue createDecodedInstructionQueue();
 
-    protected abstract InstructionDecoder createDecoder();
 
     @Override
     public InstructionDecoder getDecoder() {

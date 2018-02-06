@@ -1,5 +1,7 @@
 package cc.emulator.core.computer;
 
+import cc.emulator.core.cpu.Cpu;
+
 /**
  * @author Shao Yongqing
  * Date: 2017/7/25.
@@ -19,4 +21,7 @@ public interface Computer {
     abstract void start();
 
     ProgramMemoryInfo getProgramMemoryInfo(String bios);
+
+    Cpu getCpu();
+    Cpu getCpu(int index);
 }

@@ -83,7 +83,7 @@ public class RegisterZone extends JPanel {
             }
         });//new JTable(data, columnNames);
 
-        JScrollPane scrollPane = new JScrollPane(regisgerList);
+        scrollPane = new JScrollPane(regisgerList);
         scrollPane.setPreferredSize(new Dimension(200, 100));
 
         TableColumn column = null;
@@ -97,4 +97,6 @@ public class RegisterZone extends JPanel {
         }
         this.add(scrollPane);
     }
+
+    JScrollPane scrollPane;
 }

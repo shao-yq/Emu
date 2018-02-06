@@ -32,4 +32,8 @@ public interface ExecutionUnit {
     void setPit(ProgrammableIntervalTimer pit);
 
     void setPeripherals(Peripheral[] peripherals);
+
+    void toggleStep();
+
+    boolean isStepMode();
 }

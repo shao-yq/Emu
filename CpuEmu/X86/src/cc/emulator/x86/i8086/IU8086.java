@@ -15,7 +15,7 @@ public class IU8086 extends IntelInstructionUnit {
     }
 
     @Override
-    protected InstructionDecoder createDecoder() {
+    public InstructionDecoder createDecoder() {
         return new Decoder8086();
     }
 

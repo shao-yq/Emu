@@ -1,6 +1,7 @@
 package cc.emulator.core.computer;
 
 import cc.emulator.core.*;
+import cc.emulator.core.cpu.Cpu;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -148,5 +149,15 @@ public abstract class PersonalComputer implements Computer {
         }
 
         return base;
+    }
+
+    @Override
+    public Cpu getCpu() {
+        return getCpu(0);
+    }
+
+    @Override
+    public Cpu getCpu(int index) {
+        return getMainBoard().getCpu(index);
     }
 }

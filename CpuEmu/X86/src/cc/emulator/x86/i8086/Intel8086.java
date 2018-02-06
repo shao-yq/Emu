@@ -69,10 +69,6 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         return new IntelAddressUnit();
     }
 
-    @Override
-    protected Instruction fetchInstruction() {
-        return instructionUnit.nextInstruction();
-    }
 
     /**
      * Entry point. For now it executes a little test program.
@@ -146,56 +142,30 @@ public class Intel8086 extends Cpu implements Intel8086InstructionSet {
         ProgramCounter pc = busInterfaceUnit.getProgramCounter();
         return new RegisteredMemoryLocator(cs,pc);
     }
-    /**
-     * Resets the CPU to its default state.
-     */
-    public void reset() {
-        executionUnit.reset();
-    }
-
-    /**
-     * Fetches and executes an instruction.
-     *
-     * @return true if instructions remain, false otherwise
-     */
-    public boolean tick() {
-        // Single-step mode.
-        executionUnit.trySingleStepMode();
-        // External maskable interrupts.
-        executionUnit.tryExternalMaskabkeInterrupts(pic);
-
-        return pipelineExecute();
-    }
 
     public Intel8086(MemoryManager mm){
         super(mm);
     }
 
 
-    @Override
-    public void fetchRawInstructions(){
-        busInterfaceUnit.fetchInstructions(getMemoryAccessor(),instructionLocator);
+
+
+    private boolean stepWaiting=true;
+
+    protected void waitStepCommand() {
+        while(stepWaiting && executionUnit.isStepMode()){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        stepWaiting = true;
     }
 
     @Override
-    public Instruction decodeInstruction() {
-        // Current instruction decoded
-        Instruction instruction = instructionUnit.decode(busInterfaceUnit.getInstructionQueue());
-
-        if(instruction!=null) {
-            instructionLocator.incOffset(instruction.getLength());
-        }
-
-        return instruction;
-    }
-
-    public boolean executeInstruction(Instruction instruction){
-        // Validate the Instruction
-        if(instruction==null){
-            // If no instruction available, just return true for next tick
-            return true;
-        }
-        return executionUnit.execute(instruction);
+    public void nextStep() {
+        stepWaiting = false;
     }
 
 }

@@ -1,6 +1,11 @@
 package cc.emulator.ui.swing;
 
+import cc.emulator.core.MemoryManager;
+import cc.emulator.core.computer.ProgramMemoryInfo;
+import cc.emulator.core.cpu.Cpu;
 import cc.emulator.core.cpu.Instruction;
+import cc.emulator.core.cpu.InstructionDecoder;
+import cc.emulator.core.cpu.InstructionQueue;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -13,8 +18,9 @@ import java.util.Vector;
  * Date: 2017/9/24.
  */
 public class InstructionPane extends JPanel{
+
     JTable instructionList;
-    Vector<Instruction> instructions;
+    Vector<Instruction> instructions = new Vector<>() ;
     //创建表头
     String[] columnNames = { "No.", "Asm.", "Bin.", "Hex." };
     //Vector<String> columnNames = new Vector<String>();
@@ -26,11 +32,18 @@ public class InstructionPane extends JPanel{
             {"3", "ddd", "3333"},
     };
     //Vector data = new Vector();
+    Cpu cpu;
+    ProgramMemoryInfo programMemoryInfo;
+    private final int[] memoryBase;
 
-    public InstructionPane(){
+    public InstructionPane(Cpu cpu, ProgramMemoryInfo programMemoryInfo, int[] memoryBase){
         super(new BorderLayout());
-
+        this.cpu = cpu;
+        this.programMemoryInfo = programMemoryInfo;
+        this.memoryBase = memoryBase;
     }
+
+
 
     public void setInstructions(Vector<Instruction> instructions){
         this.instructions = instructions;
@@ -41,30 +54,60 @@ public class InstructionPane extends JPanel{
 
     }
 
-//    private void updateUi() {
-////        data = updateData();
-//    }
+    private Vector<Instruction> decode(Cpu cpu, ProgramMemoryInfo programMemoryInfo, int[] memoryBase, int count) {
+        Vector<Instruction> instructions = new Vector<Instruction>();
+        final int queueSize = cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize();
+        InstructionQueue instructionQueue = new InstructionQueue(){
+            int[] queue = new int[queueSize];
+            @Override
+            public void reset(){
+                //for (int i = 0; i < 6; i++)
+                //    queue[i] = 0;
+                current=0;
+            }
+            int current;
+            @Override
+            public void fillInstructionQueue(int instruction){
+                queue[current]=instruction;
+                current++;
+            }
 
-//    private Vector updateData() {
-//        data.clear();
-//        // No.(int), Asm.(String), Bin.(int), Hex.(String)
-//        data.add()
-//    }
+            @Override
+            public int[] getQueue() {
+                return queue;
+            }
 
-//    private Object[][] updateData() {
-//
-//        Object tempData[][] = new Object[instructions.length][];
-//        for(int i=0; i<instructions.length; i++) {
-//            tempData[i] = new Object[2];
-//            tempData[i][0] = ""+i;
-//            //tempData[i][1] = instructions[i].getAssembleString();
-//        }
-//
-//        return tempData;
-//    }
+            @Override
+            public int getQueueSize() {
+                return queueSize;
+            }
+        };
+        int offset = 0;
+        int base = programMemoryInfo.getBase();
+        int programSize = programMemoryInfo.getSize();
+        int memoryUpper = base+programSize;
+
+        InstructionDecoder decoder= cpu.getInstructionUnit().createDecoder(); //new Decoder8086();
+        for(int i=0; i<count; i++) {
+            int currentAddr = cpu.currentAddress();
+            if(currentAddr+offset+cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize() >=memoryBase.length )
+                break;
+
+            // Featch raw instruction
+            cpu.fetchRawInstructions(offset, instructionQueue);
+            // Decode
+            Instruction instruction = decoder.decode(instructionQueue);
+            offset += instruction.getLength();
+
+            instructions.add(instruction);
+        }
+
+        return instructions;
+    }
 
     public void initUi(){
-        instructions = new Vector<>();
+        MemoryManager memoryManager = cpu.getMemoryManager();
+
         instructionList = new JTable(new AbstractTableModel() {
             public String getColumnName(int col) {
                 return columnNames[col].toString();
@@ -109,5 +152,9 @@ public class InstructionPane extends JPanel{
         }
         this.add(scrollPane);
     }
-
+    int instructionCount = 10;
+    public void refreshUI() {
+        instructions = decode(cpu,programMemoryInfo, memoryBase, instructionCount);
+        repaint();
+    }
 }

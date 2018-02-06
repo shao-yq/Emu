@@ -66,8 +66,12 @@ public abstract class AbstractMainBoard implements MainBoard{
     }
 
     @Override
-    public Cpu getCpu() {
+    public Cpu getCpu(int index) {
         return cpu;
+    }
+    @Override
+    public Cpu getCpu() {
+        return getCpu(0);
     }
 
     @Override
@@ -75,6 +79,7 @@ public abstract class AbstractMainBoard implements MainBoard{
         cpu.run();
     }
 
+    // Single CPU for the time being, would be extended to multi-cpu later
     private Cpu cpu;
 
     @Override
