@@ -94,7 +94,7 @@ public class Intel8237 implements DirectMemoryAccess {
         return val;
     }
 
-    void outData(int chan, int val){
+    void putData(int chan, int val){
         if (!flipflop[chan]) {
             flipflop[chan] = true;
             addr[chan] = addr[chan] & 0xff00 | val;
@@ -123,14 +123,14 @@ public class Intel8237 implements DirectMemoryAccess {
         case 0x04: // ADDR2
         case 0x06: // ADDR3
             chan = port / 2;
-            outData(chan, val);
+            putData(chan, val);
             break;
         case 0x01: // CNT0
         case 0x03: // CNT1
         case 0x05: // CNT2
         case 0x07: // CNT3
             chan = (port - 1) / 2;
-            outData(chan, val);
+            putData(chan, val);
             break;
         }
     }

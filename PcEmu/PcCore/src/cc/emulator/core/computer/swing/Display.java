@@ -1,6 +1,7 @@
 package cc.emulator.core.computer.swing;
 
 import cc.emulator.core.FontInfo;
+import cc.emulator.core.computer.VideoAdapter;
 
 import javax.swing.JPanel;
 import java.awt.Graphics;
@@ -10,6 +11,10 @@ import java.awt.Graphics;
  * Date: 2017/8/16.
  */
 public abstract class Display extends JPanel implements cc.emulator.core.computer.Display {
+    protected VideoAdapter videoAdapter;
+    public Display(VideoAdapter videoAdapter) {
+        this.videoAdapter = videoAdapter;
+    }
 
     /**
      * (non-Javadoc)
@@ -20,8 +25,8 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
     protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
 
-        final int curAttr = getCursorAttribute();   //  crtc.getRegister(0xa) >> 4;
-        final int curLoc = getCursorLocation();     //  crtc.getRegister(0xf) | crtc.getRegister(0xe) << 8;
+        final int curAttr = getCursorAttribute();   //  videoAdapter.getRegister(0xa) >> 4;
+        final int curLoc = getCursorLocation();     //  videoAdapter.getRegister(0xf) | videoAdapter.getRegister(0xe) << 8;
         int memory[] = getMemoryBase();             //  cpu.getMemoryManager().getMemoryBase();
         int screenColumn = getScreenColumn();
         int screenRow = getScreenRow();

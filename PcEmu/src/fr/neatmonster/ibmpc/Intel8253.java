@@ -201,6 +201,7 @@ public class Intel8253 implements ProgrammableIntervalTimer {
     /**
      * Update all 3 counters.
      */
+    @Override
     public void tick() {
         for (int sc = 0b00; sc < 0b11; ++sc)
             if (enabled[sc])

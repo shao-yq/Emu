@@ -67,6 +67,7 @@ public class Intel8259 implements ProgrammableInterruptController {
      * @param line
      *            the line
      */
+    @Override
     public void callIRQ(final int line) {
         irr |= 1 << line;
     }
@@ -76,6 +77,7 @@ public class Intel8259 implements ProgrammableInterruptController {
      *
      * @return true if there is one, false otherwise
      */
+    @Override
     public boolean hasInt() {
         return (irr & ~imr) > 0;
     }
@@ -97,6 +99,7 @@ public class Intel8259 implements ProgrammableInterruptController {
      *
      * @return the interrupt-type
      */
+    @Override
     public int nextInt() {
         final int bits = irr & ~imr;
         for (int i = 0; i < 8; ++i) {

@@ -57,26 +57,54 @@ public abstract class PersonalComputer implements Computer {
     protected ProgrammableInterruptController pic;
     protected ProgrammableIntervalTimer pit;
     protected ProgrammablePeripheralInterface ppi;
-    protected DisplayController crtc;
-    protected   Display display;//         = new IBMCGA(this, ppi, crtc);
-    protected  KeyBoard keyBoard;
+    protected NetworkAdapter networkAdapter;
+    protected AudioAdapter audioAdapter;
+    protected VideoAdapter videoAdapter;
+    protected Display display;
+    protected KeyBoard keyBoard;
 
     protected void createPeripherals() {
         dma = createDmaController();
         pic = createProgrammableInterruptController();
         pit = createProgrammableIntervalTimer(pic);
         ppi = createProgrammablePeripheralInterface(pic);
-        crtc = createDisplayController();
+        videoAdapter = createVideoAdapter();
         display =  createDisplay();
 
         keyBoard = createKeyBoard();
+    }
+    @Override
+    public VideoAdapter getVideoAdapter() {
+        return videoAdapter;
+    }
+    @Override
+    public KeyBoard getKeyBoard() {
+        return keyBoard;
+    }
+    @Override
+    public Display getDisplay() {
+        return display;
+    }
+
+    @Override
+    public MainBoard getMainBoard() {
+        return mainBoard;
+    }
+    @Override
+    public AudioAdapter getAudioAdapter() {
+        return audioAdapter;
+    }
+
+    @Override
+    public NetworkAdapter getNetworkAdapter() {
+        return networkAdapter;
     }
 
     protected abstract Display createDisplay();
 
     protected abstract KeyBoard createKeyBoard();
 
-    protected abstract DisplayController createDisplayController();
+    protected abstract VideoAdapter createVideoAdapter();
 
     protected abstract ProgrammablePeripheralInterface createProgrammablePeripheralInterface(ProgrammableInterruptController pic);
 

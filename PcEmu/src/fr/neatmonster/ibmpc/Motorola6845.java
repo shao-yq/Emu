@@ -33,6 +33,7 @@ public class Motorola6845 implements VideoAdapter {
      *            the index
      * @return the value
      */
+    @Override
     public int getRegister(final int index) {
         return registers[index];
     }

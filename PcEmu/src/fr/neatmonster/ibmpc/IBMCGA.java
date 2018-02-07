@@ -1,20 +1,16 @@
 package fr.neatmonster.ibmpc;
 
+import cc.emulator.core.computer.VideoAdapter;
 import cc.emulator.core.computer.swing.Display;
 import cc.emulator.core.cpu.Cpu;
-import cc.emulator.x86.i8086.Intel8086;
 import cc.emulator.core.FontInfo;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.JFrame;
 
 /**
  * IBM Color/Graphics Monitor Adapter
@@ -159,7 +155,7 @@ public class IBMCGA extends Display  {
      *
      * @see Motorola6845
      */
-    private final Motorola6845   crtc;
+
 
     /**
      * Instantiates a new display.
@@ -167,13 +163,14 @@ public class IBMCGA extends Display  {
      * @param cpu
      *            the cpu
 
-     * @param crtc
-     *            the crtc
+     * @param videoAdapter
+     *            the videoAdapter
      */
-    public IBMCGA(final Cpu cpu, final Motorola6845 crtc) {
+    public IBMCGA(final Cpu cpu, final VideoAdapter videoAdapter) {
+        super(videoAdapter);
         this.cpu = cpu;
 
-        this.crtc = crtc;
+
         initDisplayParameters();
 
         setBackground(Color.black);
@@ -241,11 +238,11 @@ public class IBMCGA extends Display  {
 
     @Override
     public int getCursorAttribute() {
-        return crtc.getRegister(0xa) >> 4;
+        return videoAdapter.getRegister(0xa) >> 4;
     }
     @Override
     public int getCursorLocation() {
-        return crtc.getRegister(0xf) | crtc.getRegister(0xe) << 8;
+        return videoAdapter.getRegister(0xf) | videoAdapter.getRegister(0xe) << 8;
     }
 }
 

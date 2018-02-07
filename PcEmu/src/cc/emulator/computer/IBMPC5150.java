@@ -4,7 +4,6 @@ import cc.emulator.core.*;
 import cc.emulator.core.computer.*;
 import cc.emulator.core.computer.swing.Keyboard;
 import cc.emulator.core.cpu.Cpu;
-import cc.emulator.x86.i8086.Intel8086;
 
 import fr.neatmonster.ibmpc.*;
 
@@ -56,7 +55,7 @@ public class IBMPC5150 extends PersonalComputer {
      *  new a DisplayController
      * @return DisplayController Motorola 6845 - Cathode Ray Tube Controller
      */
-    protected DisplayController createDisplayController(){
+    protected VideoAdapter createVideoAdapter(){
         return new Motorola6845();
     }
 
@@ -65,7 +64,7 @@ public class IBMPC5150 extends PersonalComputer {
      * @return Display , IBMCGA - Color Graphics Adapter
      */
     protected Display createDisplay(){
-        return new IBMCGA( getMainBoard().getCpu(), (Motorola6845) crtc);
+        return new IBMCGA( getMainBoard().getCpu(), videoAdapter);
     }
 
     /**
@@ -81,37 +80,8 @@ public class IBMPC5150 extends PersonalComputer {
      * The CGA, technically a peripheral, interacts directly with the CPU in
      * this implementation and by doing so does not use the I/O space.
      */
-    private  cc.emulator.core.Peripheral[] peripherals ;  // = new Peripheral[] { dma, pic, pit, ppi, crtc };
+    private  cc.emulator.core.Peripheral[] peripherals ;  // = new Peripheral[] { dma, pic, pit, ppi, videoAdapter };
 
-    @Override
-    public MainBoard getMainBoard() {
-        return mainBoard;
-    }
-
-    @Override
-    public KeyBoard getKeyBoard() {
-        return keyBoard;
-    }
-
-    @Override
-    public VideoAdapter getVideoAdapter() {
-        return null;
-    }
-
-    @Override
-    public AudioAdapter getAudioAdapter() {
-        return null;
-    }
-
-    @Override
-    public NetworkAdapter getNetworkAdapter() {
-        return null;
-    }
-
-    @Override
-    public Display getDisplay() {
-        return display;
-    }
 
     @Override
     public Box getBox() {
@@ -127,7 +97,7 @@ public class IBMPC5150 extends PersonalComputer {
     public void reset() {
         super.reset();
         Cpu cpu = getMainBoard().getCpu(0);
-        peripherals = new Peripheral[] { dma, pic, pit, ppi, crtc };
+        peripherals = new Peripheral[] { dma, pic, pit, ppi, videoAdapter};
         cpu.setPeripherals(peripherals);
         cpu.setPic(pic);
         cpu.setPit(pit);
@@ -142,7 +112,5 @@ public class IBMPC5150 extends PersonalComputer {
         super(configFile);
 
     }
-
-
 
 }
