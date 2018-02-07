@@ -42,4 +42,20 @@ public class InFixedPort extends Instruction8086 {
 
         return clock;
     }
+    protected  String getOperandPart() {
+        switch (op) {
+            // Fixed Port
+            case IN_AL_DX: //  0xec: // IN AL,DX
+                return "AL,DX";
+            case IN_AX_DX: //  0xed: // IN AX,DX
+                return "AX,DX";
+        }
+        return "";
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "IN";
+    }
+
 }

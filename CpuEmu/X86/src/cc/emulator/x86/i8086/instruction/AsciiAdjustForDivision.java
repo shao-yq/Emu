@@ -48,4 +48,8 @@ public class AsciiAdjustForDivision extends Instruction8086 {
     public int getClocks() {
         return 60;
     }
+    @Override
+    public String getMnemonic() {
+        return "AAD";
+    }
 }

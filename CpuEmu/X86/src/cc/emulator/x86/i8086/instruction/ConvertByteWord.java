@@ -54,4 +54,16 @@ public class ConvertByteWord extends Instruction8086 {
 
         return 2;
     }
+
+    @Override
+    public String getMnemonic() {
+        switch(op) {
+            case CBW: //  0x98: // CBW
+                return "CBW";
+            case CWD: //  0x99: // CWD
+                return "CWD";
+        }
+
+        return super.getMnemonic();
+    }
 }

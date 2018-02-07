@@ -45,4 +45,8 @@ public class DecimalAdjustForSubstraction extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+    @Override
+    public String getMnemonic() {
+        return "DAS";
+    }
 }

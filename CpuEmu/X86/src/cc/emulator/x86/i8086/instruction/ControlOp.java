@@ -69,4 +69,47 @@ public class ControlOp extends Instruction8086 {
         else
             return 3;
     }
+
+    @Override
+    public String getMnemonic() {
+        switch (op) {
+            /*
+             * External Synchronization
+             */
+            /*
+             * HLT
+             *
+             * HLT (Halt) causes the 8086 to enter the halt state. The processor
+             * leaves the halt state upon activation of the RESET line, upon
+             * receipt of a non-maskable interrupt request on NMI, or, if
+             * interrupts are enabled, upon receipt of a maskable interrupt
+             * request on INTR. HLT does not affect any flags. It may be used as
+             * an alternative to an endless software loop in situations where a
+             * program must wait for an interrupt.
+             */
+            case HLT : //  0xf4: // HLT
+                return "HLT";
+            /*
+             * No Operation
+             */
+            /*
+             * NOP
+             *
+             * NOP (No Operation) causes the CPU to do nothing. NOP does not
+             * affect any flags.
+             */
+            case NOP : //  0x90: // NOP
+                return "NOP";
+            /*
+             * WAIT
+             *
+             * WAIT causes the CPU to enter the wait state while its /TEST line
+             * is not active. WAIT does not affect any flags.
+             */
+            case WAIT : //  0x9b: // WAIT
+
+                return "WAIT";
+        }
+        return "Control:"+op;
+    }
 }

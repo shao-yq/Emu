@@ -83,5 +83,26 @@ public class Interrupt extends Instruction8086 {
         }
         return false;
     }
+    protected  String getOperandPart() {
+        switch (op) {
+            case INT_3: //  0xcc: // INT 3
+                return "3";
+            case INT_IMMED8: //  0xcd: // INT IMMED8
+                return ""+immediate;
+        }
 
+        return "";
+    }
+    @Override
+    public String getMnemonic() {
+        switch(op) {
+            case INT_3: //  0xcc: // INT 3
+            case INT_IMMED8: //  0xcd: // INT IMMED8
+                return "INT";
+
+            case INTO:
+                return "INTO";
+        }
+        return "INT";
+    }
 }

@@ -6,16 +6,16 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class AndRegisterMemory extends Instruction8086 {
+public class AndRegisterMemory extends OpRegisterMemory {
     public AndRegisterMemory(){}
 
     public AndRegisterMemory(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 2, startIndex);
-        decodeDisplacement(raw);
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        decode(raw, 2, startIndex);
+//        decodeDisplacement(raw);
+//    }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
@@ -40,11 +40,49 @@ public class AndRegisterMemory extends Instruction8086 {
         }
         return false;
     }
+//    @Override
+//    public int getClocks() {
+//        if (d == 0b0)
+//            return mod == 0b11 ? 3 : 16;
+//        else
+//            return mod == 0b11 ? 3 : 9;
+//    }
+
+
+//    @Override
+//    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            case AND_REG8__MEM8_REG8   : //   0x20: // AND REG8/MEM8,REG8
+//            case AND_REG16__MEM16_REG16: //   0x21: // AND REG16/MEM16,REG16
+//
+//                //dest
+//                asm.append(" "+getRMFieldString(w, mod, reg, rm));
+//
+//                // src
+//                asm.append(", "+getRegMnemonic(reg,w));
+//
+//                break;
+//            case AND_REG8_REG8__MEM8   : //   0x22: // AND REG8,REG8/MEM8
+//            case AND_REG16_REG16__MEM16: //   0x23: // AND REG16,REG16/MEM16
+//                // dest
+//                asm.append(" "+getRegMnemonic(reg,w));
+//
+//                //src
+//                asm.append(", "+getRMFieldString(w, mod, reg, rm));
+//                break;
+//        }
+//
+//        return asm.toString();
+//    }
+
     @Override
-    public int getClocks() {
-        if (d == 0b0)
-            return mod == 0b11 ? 3 : 16;
-        else
-            return mod == 0b11 ? 3 : 9;
+    int oprandMode(int op) {
+        return op-AND_REG8__MEM8_REG8;
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "AND";
     }
 }

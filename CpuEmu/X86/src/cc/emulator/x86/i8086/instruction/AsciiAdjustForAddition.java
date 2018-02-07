@@ -41,4 +41,8 @@ public class AsciiAdjustForAddition extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+    @Override
+    public String getMnemonic() {
+        return "AAA";
+    }
 }

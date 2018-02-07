@@ -6,15 +6,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class CmpRegisterMemory extends Instruction8086 {
+public class CmpRegisterMemory extends OpRegisterMemory {
     public CmpRegisterMemory(){}
     public CmpRegisterMemory(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 2, startIndex);
-        decodeDisplacement(raw);
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        decode(raw, 2, startIndex);
+//        decodeDisplacement(raw);
+//    }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
@@ -47,5 +47,13 @@ public class CmpRegisterMemory extends Instruction8086 {
     @Override
     public int getClocks() {
         return mod == 0b11 ? 3 : 9;
+    }
+    @Override
+    int oprandMode(int op) {
+        return op-CMP_REG8__MEM8_REG8;
+    }
+    @Override
+    public String getMnemonic() {
+        return "CMP";
     }
 }

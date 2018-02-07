@@ -6,15 +6,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class SubRegisterMemory extends Instruction8086 {
+public class SubRegisterMemory extends OpRegisterMemory {
     public SubRegisterMemory(){}
     public SubRegisterMemory(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        super.decode(raw, 2, startIndex);
-        decodeDisplacement(raw);
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        super.decode(raw, 2, startIndex);
+//        decodeDisplacement(raw);
+//    }
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
@@ -38,11 +38,21 @@ public class SubRegisterMemory extends Instruction8086 {
         }
         return false;
     }
+//    @Override
+//    public int getClocks() {
+//        if (d == 0b0)
+//            return mod == 0b11 ? 3 : 16;
+//        else
+//            return mod == 0b11 ? 3 : 9;
+//    }
+
     @Override
-    public int getClocks() {
-        if (d == 0b0)
-            return mod == 0b11 ? 3 : 16;
-        else
-            return mod == 0b11 ? 3 : 9;
+    int oprandMode(int op) {
+        return op-SUB_REG8__MEM8_REG8;
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "SUB";
     }
 }

@@ -14,15 +14,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * in the result is set if either or both corresponding bits of the
  * original operands are set; otherwise the result bit is cleared.
  */
-public class OrRegisterMemory extends Instruction8086 {
+public class OrRegisterMemory extends OpRegisterMemory {
     public OrRegisterMemory(){}
     public OrRegisterMemory(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 2, startIndex);
-        decodeDisplacement(raw);
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        decode(raw, 2, startIndex);
+//        decodeDisplacement(raw);
+//    }
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
@@ -39,42 +39,46 @@ public class OrRegisterMemory extends Instruction8086 {
         }
         return false;
     }
+//    @Override
+//    public int getClocks() {
+//        if (d == 0b0)
+//            return mod == 0b11 ? 3 : 16;
+//        else
+//            return mod == 0b11 ? 3 : 9;
+//    }
+
+
+//    @Override
+//    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            case OR_REG8__MEM8_REG8   : //  0x08: // OR REG8/MEM8,REG8
+//            case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
+//
+//                //dest
+//                asm.append(" "+getRMFieldString(w, mod, reg, rm));
+//
+//                // src
+//                asm.append(", "+getRegMnemonic(reg,w));
+//
+//                break;
+//            case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
+//            case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
+//                // dest
+//                asm.append(" "+getRegMnemonic(reg,w));
+//
+//                //src
+//                asm.append(", "+getRMFieldString(w, mod, reg, rm));
+//                break;
+//        }
+//
+//        return asm.toString();
+//    }
+
     @Override
-    public int getClocks() {
-        if (d == 0b0)
-            return mod == 0b11 ? 3 : 16;
-        else
-            return mod == 0b11 ? 3 : 9;
+    int oprandMode(int op) {
+        return op-OR_REG8__MEM8_REG8;
     }
-
-
-    @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            case OR_REG8__MEM8_REG8   : //  0x08: // OR REG8/MEM8,REG8
-            case OR_REG16__MEM16_REG16: //  0x09: // OR REG16/MEM16,REG16
-
-                //dest
-                asm.append(" "+getRMFieldString(w, mod, reg, rm));
-
-                // src
-                asm.append(", "+getRegMnemonic(reg,w));
-
-                break;
-            case OR_REG8_REG8__MEM8   : //  0x0a: // OR REG8,REG8/MEM8
-            case OR_REG16_REG16__MEM16: //  0x0b: // OR REG16,REG16/MEM16
-                // dest
-                asm.append(" "+getRegMnemonic(reg,w));
-
-                //src
-                asm.append(", "+getRMFieldString(w, mod, reg, rm));
-                break;
-        }
-
-        return asm.toString();
-    }
-
 
     @Override
     public String getMnemonic() {

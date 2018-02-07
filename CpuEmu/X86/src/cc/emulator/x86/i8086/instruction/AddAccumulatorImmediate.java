@@ -48,4 +48,23 @@ public class AddAccumulatorImmediate extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            // Immediate to Accumulator
+            case ADD_AL_IMMED8 : //  0x04: // ADD AL,IMMED8
+                asm.append("AL");
+                break;
+            case ADD_AX_IMMED16: //  0x05: // ADD AX,IMMED16
+                asm.append("AX");
+        }
+        asm.append(", "+immediate);
+
+        return asm.toString();
+    }
+    @Override
+    public String getMnemonic() {
+        return "ADD";
+    }
 }

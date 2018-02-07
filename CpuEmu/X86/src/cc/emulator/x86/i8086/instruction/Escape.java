@@ -52,4 +52,8 @@ public class Escape extends Instruction8086{
     public int getClocks() {
         return mod == 0b11 ? 2 : 8;
     }
+    @Override
+    public String getMnemonic() {
+        return "ESC";
+    }
 }

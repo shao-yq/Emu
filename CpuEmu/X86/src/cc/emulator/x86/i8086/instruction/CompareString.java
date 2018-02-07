@@ -50,4 +50,8 @@ public class CompareString extends Instruction8086 {
     public int getClocks() {
         return 22;
     }
+    @Override
+    public String getMnemonic() {
+        return "CMPS";
+    }
 }
