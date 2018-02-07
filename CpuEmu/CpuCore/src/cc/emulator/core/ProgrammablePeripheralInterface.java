@@ -5,4 +5,5 @@ package cc.emulator.core;
  * Date: 2017/7/27.
  */
 public interface ProgrammablePeripheralInterface extends Peripheral{
+    void keyTyped(int scanCode);
 }

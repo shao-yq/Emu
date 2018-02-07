@@ -59,6 +59,7 @@ public abstract class PersonalComputer implements Computer {
     protected ProgrammablePeripheralInterface ppi;
     protected DisplayController crtc;
     protected   Display display;//         = new IBMCGA(this, ppi, crtc);
+    protected  KeyBoard keyBoard;
 
     protected void createPeripherals() {
         dma = createDmaController();
@@ -67,9 +68,13 @@ public abstract class PersonalComputer implements Computer {
         ppi = createProgrammablePeripheralInterface(pic);
         crtc = createDisplayController();
         display =  createDisplay();
+
+        keyBoard = createKeyBoard();
     }
 
     protected abstract Display createDisplay();
+
+    protected abstract KeyBoard createKeyBoard();
 
     protected abstract DisplayController createDisplayController();
 

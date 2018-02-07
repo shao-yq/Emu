@@ -2,6 +2,7 @@ package cc.emulator.computer;
 
 import cc.emulator.core.*;
 import cc.emulator.core.computer.*;
+import cc.emulator.core.computer.swing.Keyboard;
 import cc.emulator.core.cpu.Cpu;
 import cc.emulator.x86.i8086.Intel8086;
 
@@ -50,23 +51,29 @@ public class IBMPC5150 extends PersonalComputer {
         return new Intel8255(pic);
     }
 
+
     /**
-     * Motorola 6845 - Cathode Ray Tube Controller
-     *
-     * @see Motorola6845
+     *  new a DisplayController
+     * @return DisplayController Motorola 6845 - Cathode Ray Tube Controller
      */
     protected DisplayController createDisplayController(){
         return new Motorola6845();
     }
+
     /**
-     * IBMCGA - Color Graphics Adapter
      *
-     * @see IBMCGA
+     * @return Display , IBMCGA - Color Graphics Adapter
      */
-    @SuppressWarnings("unused")
-    //protected   Display display;//         = new IBMCGA(this, ppi, crtc);
     protected Display createDisplay(){
-        return new IBMCGA((Intel8086) getMainBoard().getCpu(), (Intel8255) ppi, (Motorola6845) crtc);
+        return new IBMCGA( getMainBoard().getCpu(), (Motorola6845) crtc);
+    }
+
+    /**
+     *
+     * @return keyboard instance
+     */
+    protected KeyBoard createKeyBoard() {
+        return new Keyboard(ppi);
     }
     /**
      * An array containing all peripherals.
@@ -83,7 +90,7 @@ public class IBMPC5150 extends PersonalComputer {
 
     @Override
     public KeyBoard getKeyBoard() {
-        return null;
+        return keyBoard;
     }
 
     @Override

@@ -1,4 +1,5 @@
 package cc.emulator.core.computer;
 
-public class KeyBoard {
+public interface KeyBoard {
+    public  int getScanCode(final int keyCode, final int keyLocation);
 }

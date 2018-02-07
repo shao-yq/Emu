@@ -53,6 +53,15 @@ public class Intel8237 implements DirectMemoryAccess {
         return port >= 0x00 && port < 0x20;
     }
 
+    int fetchData(int chan){
+        if (!flipflop[chan]) {
+            flipflop[chan] = true;
+            return addr[chan] & 0xff;
+        } else {
+            flipflop[chan] = false;
+            return addr[chan] >>> 8 & 0xff;
+        }
+    }
     /**
      * Write output to the specified CPU port.
      *
@@ -65,33 +74,34 @@ public class Intel8237 implements DirectMemoryAccess {
     @Override
     public int portIn(final int w, final int port) {
         int chan;
+        int val = 0;
         switch (port) {
         case 0x00: // ADDR0
         case 0x02: // ADDR1
         case 0x04: // ADDR2
         case 0x06: // ADDR3
             chan = port / 2;
-            if (!flipflop[chan]) {
-                flipflop[chan] = true;
-                return addr[chan] & 0xff;
-            } else {
-                flipflop[chan] = false;
-                return addr[chan] >>> 8 & 0xff;
-            }
+            val = fetchData(chan);
+            break;
         case 0x01: // CNT0
         case 0x03: // CNT1
         case 0x05: // CNT2
         case 0x07: // CNT3
             chan = (port - 1) / 2;
-            if (!flipflop[chan]) {
-                flipflop[chan] = true;
-                return cnt[chan] & 0xff;
-            } else {
-                flipflop[chan] = false;
-                return cnt[chan] >>> 8 & 0xff;
-            }
+            val = fetchData(chan);
+            break;
         }
-        return 0;
+        return val;
+    }
+
+    void outData(int chan, int val){
+        if (!flipflop[chan]) {
+            flipflop[chan] = true;
+            addr[chan] = addr[chan] & 0xff00 | val;
+        } else {
+            flipflop[chan] = false;
+            addr[chan] = val << 8 | addr[chan] & 0xff;
+        }
     }
 
     /**
@@ -113,26 +123,14 @@ public class Intel8237 implements DirectMemoryAccess {
         case 0x04: // ADDR2
         case 0x06: // ADDR3
             chan = port / 2;
-            if (!flipflop[chan]) {
-                flipflop[chan] = true;
-                addr[chan] = addr[chan] & 0xff00 | val;
-            } else {
-                flipflop[chan] = false;
-                addr[chan] = val << 8 | addr[chan] & 0xff;
-            }
+            outData(chan, val);
             break;
         case 0x01: // CNT0
         case 0x03: // CNT1
         case 0x05: // CNT2
         case 0x07: // CNT3
             chan = (port - 1) / 2;
-            if (!flipflop[chan]) {
-                flipflop[chan] = true;
-                cnt[chan] = cnt[chan] & 0xff00 | val;
-            } else {
-                flipflop[chan] = false;
-                cnt[chan] = val << 8 | cnt[chan] & 0xff;
-            }
+            outData(chan, val);
             break;
         }
     }

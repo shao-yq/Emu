@@ -12,6 +12,7 @@ import cc.emulator.ui.swing.RegisterPane;
 import cc.emulator.x86.i8086.Decoder8086;
 import fr.neatmonster.ibmpc.IBMCGA;
 import cc.emulator.ui.swing.InstructionPane;
+import cc.emulator.core.computer.swing.Keyboard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,9 +85,11 @@ public class MyComputer {
 
         IBMCGA display = (IBMCGA) computer.getDisplay();
 
+        Keyboard keyBoard = (Keyboard) computer.getKeyBoard();
+
         JFrame pcFrame = new JFrame("IBMPC5150");
         pcFrame.add(display);
-        pcFrame.addKeyListener(display);
+        pcFrame.addKeyListener(keyBoard);
         pcFrame.pack();
         pcFrame.setVisible(true);
         pcFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
