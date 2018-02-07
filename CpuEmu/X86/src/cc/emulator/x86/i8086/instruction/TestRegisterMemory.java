@@ -42,4 +42,9 @@ public class TestRegisterMemory extends Instruction8086 {
     public int getClocks() {
         return  mod == 0b11 ? 3 : 9;
     }
+
+    @Override
+    public String getMnemonic() {
+        return "TEST";
+    }
 }

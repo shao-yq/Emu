@@ -369,28 +369,28 @@ public class JumpIf extends Instruction8086{
              * Jump if not parity/parity odd - PF=0.
              */
             case JNP__JPO_SHORT: //  0x7b: // JNP/JPO SHORT-LABEL
-                return "J";
+                return "JNP";
             /*
              * JL/JNGE
              *
              * Jump if less/not greater nor equal - (SF xor OF)=1.
              */
             case JL__JNGE_SHORT: //  0x7c: // JL/JNGE SHORT-LABELNP
-                return "J";
+                return "JL";
             /*
              * JNL/JGE
              *
              * Jump if not less/greater or equal - (SF xor OF)=0.
              */
             case JNL__JGE_SHORT: //  0x7d: // JNL/JGE SHORT-LABELL
-                return "J";
+                return "JNL";
             /*
              * JLE/JNG
              *
              * Jump if less or equal/not greater - ((SF xor OF) or ZF)=1.
              */
             case JLE__JNG_SHORT: //  0x7e: // JLE/JNG SHORT-LABELNL
-                return "J";
+                return "JLE";
             /*
              * JNLE/JG
              *

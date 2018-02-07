@@ -1,6 +1,7 @@
 package cc.emulator.x86.i8086.instruction;
 
 import cc.emulator.x86.i8086.Instruction8086;
+import cc.emulator.x86.i8086.IntelInstructionHelper;
 
 /**
  * @author Shao Yongqing
@@ -43,19 +44,19 @@ public abstract class OpRegisterMemory  extends Instruction8086 {
             case OP_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
 
                 //dest
-                asm.append(" "+getRMFieldString(w, mod, reg, rm));
+                asm.append(" "+ IntelInstructionHelper.getRMFieldString(w, mod, reg, rm, disp));
 
                 // src
-                asm.append(", "+getRegMnemonic(reg,w));
+                asm.append(", "+IntelInstructionHelper.getRegMnemonic(reg,w));
 
                 break;
             case OP_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
             case OP_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
                 // dest
-                asm.append(" "+getRegMnemonic(reg,w));
+                asm.append(" "+IntelInstructionHelper.getRegMnemonic(reg,w));
 
                 //src
-                asm.append(", "+getRMFieldString(w, mod, reg, rm));
+                asm.append(", "+IntelInstructionHelper.getRMFieldString(w, mod, reg, rm, disp));
                 break;
         }
 

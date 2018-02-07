@@ -15,4 +15,9 @@ public class MOV extends Instruction8086 {
     public void execute(){
 
     }
+
+    @Override
+    public String getMnemonic() {
+        return "MOV";
+    }
 }

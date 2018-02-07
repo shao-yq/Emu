@@ -47,5 +47,24 @@ public class InVariablePort extends Instruction8086 {
             clock += 4;
         return clock;
     }
+    protected  String getOperandPart() {
+        StringBuffer buff = new StringBuffer();
+        switch (op) {
+            // Fixed Port
+            case IN_AL_IMMED8: //  0xe4: // IN AL,IMMED8
+                buff.append("AL");
+                break;
+            case IN_AX_IMMED8: //  0xe5: // IN AX,IMMED8
+                buff.append("AX");
+                break;
+        }
+        buff.append(", "+immediate);
+        return "";
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "IN";
+    }
 
 }

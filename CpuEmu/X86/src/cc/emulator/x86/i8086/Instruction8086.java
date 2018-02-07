@@ -98,19 +98,32 @@ public  class Instruction8086 extends IntelInstruction {
     @Override
     public String toBinary() {
         StringBuffer bin = new StringBuffer();
+
         for(int i=0;i<rawData.length;i++){
-            bin.append(Integer.toBinaryString(rawData[i])+" ");
+            StringBuffer zero8= new StringBuffer("00000000");
+            String bits = Integer.toBinaryString(rawData[i]);
+            // replace(int start, int end, String str)
+            zero8.replace(8-bits.length(),8,bits);
+            bin.append(zero8);
+            if(i<rawData.length-1)
+                bin.append(" ");
         }
         return bin.toString();
     }
 
     @Override
     public String toHexadecimal() {
-        StringBuffer hex = new StringBuffer();
+        StringBuffer hexBuffer = new StringBuffer();
         for(int i=0;i<rawData.length;i++){
-            hex.append(Integer.toHexString(rawData[i])+" ");
+            String hexs = Integer.toHexString(rawData[i]);
+            if(hexs.length()==1){
+                hexBuffer.append("0");
+            }
+            hexBuffer.append(hexs);
+            if(i<rawData.length-1)
+                hexBuffer.append(" ");
         }
-        return hex.toString();
+        return hexBuffer.toString();
     }
 
     @Override

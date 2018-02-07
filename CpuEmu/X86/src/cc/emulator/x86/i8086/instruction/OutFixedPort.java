@@ -40,4 +40,21 @@ public class OutFixedPort extends Instruction8086 {
 
         return clock;
     }
+
+    protected  String getOperandPart() {
+        switch (op) {
+            // Fixed Port
+            case OUT_AL_DX: //  0xee: // OUT AL,DX
+                return "AL,DX";
+            case OUT_AX_DX: //  0xef: // OUT AX,DX
+                return "AX,DX";
+        }
+        return "";
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "OUT";
+    }
+
 }

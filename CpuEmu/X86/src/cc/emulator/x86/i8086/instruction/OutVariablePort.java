@@ -49,4 +49,24 @@ public class OutVariablePort extends Instruction8086 {
         return clock;
     }
 
+    protected  String getOperandPart() {
+        StringBuffer buff = new StringBuffer();
+        switch (op) {
+            // Fixed Port
+            case OUT_AL_IMMED8: //  0xe6: // OUT AL,IMMED8
+                buff.append("AL");
+                break;
+            case OUT_AX_IMMED8: //  0xe7: // OUT AX,IMMED8
+                buff.append("AX");
+                break;
+        }
+        buff.append(", "+immediate);
+        return "";
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "OUT";
+    }
+
 }
