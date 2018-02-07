@@ -1,4 +1,4 @@
 package cc.emulator.core.computer;
 
-public class Adapter {
+public interface Adapter {
 }

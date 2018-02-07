@@ -1,4 +1,6 @@
 package cc.emulator.core.computer;
 
-public class VideoAdapter extends Adapter {
+import cc.emulator.core.DisplayController;
+
+public interface VideoAdapter extends DisplayController, Adapter {
 }

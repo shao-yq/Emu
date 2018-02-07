@@ -1,4 +1,4 @@
 package cc.emulator.core.computer;
 
-public class AudioAdapter extends Adapter {
+public interface AudioAdapter extends Adapter {
 }
