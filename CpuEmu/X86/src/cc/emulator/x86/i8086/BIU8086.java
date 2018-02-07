@@ -70,6 +70,8 @@ public class BIU8086 extends BusInterfaceUnitImpl {
         AddressUnit au= getAddressUnit();
         for (int i = 0; i < instructionQueue.getQueueSize(); ++i) {
             int addr = au.getAddr(seg, ip+i);
+//            if(! memoryAccessor.isValidAddress(addr))
+//                break;
             int val = memoryAccessor.getMem(Intel8086InstructionSet.B,addr);
             instructionQueue.fillInstructionQueue(val);
             //queue[i] = memoryAccessor.getMem(B, addr);    // getMem(B, getAddr(cs, ip + i));

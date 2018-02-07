@@ -96,4 +96,6 @@ public abstract class MemoryAccessor {
 //            memory[addr + 1] = val >>> 8 & 0xff;
 //        }
     }
+
+    public abstract boolean isValidAddress(int addr);
 }

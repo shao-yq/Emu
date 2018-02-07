@@ -266,4 +266,7 @@ public class MemoryManager implements AddressBus{
         }
     }
 
+    public boolean isValidAddress(int addr) {
+        return addr<memory.length;
+    }
 }

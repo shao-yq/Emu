@@ -22,15 +22,15 @@ public class InstructionPane extends JPanel{
     JTable instructionList;
     Vector<Instruction> instructions = new Vector<>() ;
     //创建表头
-    String[] columnNames = { "No.", "Asm.", "Bin.", "Hex." };
+    String[] columnNames = { "Addr.", "Asm.", "Bin.", "Hex." };
     //Vector<String> columnNames = new Vector<String>();
-    //创建显示数据
-    Object[][] data = {
-            {"0", "Jmp #XXX", "C3A6"},
-            {"1", "bbb", "1111"},
-            {"2", "ccc", "2222"},
-            {"3", "ddd", "3333"},
-    };
+//    //创建显示数据
+//    Object[][] data = {
+//            {"0", "Jmp #XXX", "C3A6"},
+//            {"1", "bbb", "1111"},
+//            {"2", "ccc", "2222"},
+//            {"3", "ddd", "3333"},
+//    };
     //Vector data = new Vector();
     Cpu cpu;
     ProgramMemoryInfo programMemoryInfo;
@@ -41,6 +41,7 @@ public class InstructionPane extends JPanel{
         this.cpu = cpu;
         this.programMemoryInfo = programMemoryInfo;
         this.memoryBase = memoryBase;
+        currentAddress = cpu.currentAddress();
     }
 
 
@@ -55,6 +56,8 @@ public class InstructionPane extends JPanel{
     }
 
     private Vector<Instruction> decode(Cpu cpu, ProgramMemoryInfo programMemoryInfo, int[] memoryBase, int count) {
+        currentAddress = cpu.currentAddress();
+
         Vector<Instruction> instructions = new Vector<Instruction>();
         final int queueSize = cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize();
         InstructionQueue instructionQueue = new InstructionQueue(){
@@ -88,8 +91,8 @@ public class InstructionPane extends JPanel{
         int memoryUpper = base+programSize;
 
         InstructionDecoder decoder= cpu.getInstructionUnit().createDecoder(); //new Decoder8086();
+        int currentAddr = currentAddress;
         for(int i=0; i<count; i++) {
-            int currentAddr = cpu.currentAddress();
             if(currentAddr+offset+cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize() >=memoryBase.length )
                 break;
 
@@ -105,6 +108,15 @@ public class InstructionPane extends JPanel{
         return instructions;
     }
 
+    int currentAddress;
+    int getRowAddress(int row){
+        int rowAddress = currentAddress;    //  cpu.currentAddress();
+        for(int i=0; i<row; i++){
+            Instruction instruction=instructions.get(i);
+            rowAddress += instruction.getLength();
+        }
+        return rowAddress;
+    }
     public void initUi(){
         MemoryManager memoryManager = cpu.getMemoryManager();
 
@@ -120,9 +132,11 @@ public class InstructionPane extends JPanel{
             public Object getValueAt(int row, int col) {
                 //return data[row][col];
                 Instruction instruction=instructions.get(row);
+
                 switch (col){
                     case 0:
-                        return row;
+                        int rowAddress = getRowAddress(row);
+                        return Integer.toHexString(rowAddress);
                     case 1:
                         return instruction.toAsm();
                     case 2:
@@ -136,7 +150,7 @@ public class InstructionPane extends JPanel{
             public boolean isCellEditable(int row, int col)
             { return false; }
             public void setValueAt(Object value, int row, int col) {
-                data[row][col] = value;
+                //data[row][col] = value;
                 fireTableCellUpdated(row, col);
             }
         });//new JTable(data, columnNames);
@@ -154,7 +168,16 @@ public class InstructionPane extends JPanel{
     }
     int instructionCount = 10;
     public void refreshUI() {
-        instructions = decode(cpu,programMemoryInfo, memoryBase, instructionCount);
+        if(cpu!=null)
+            instructions = decode(cpu,programMemoryInfo, memoryBase, instructionCount);
         repaint();
+    }
+
+    @Override
+    public void invalidate() {
+//        if(cpu!=null)
+//            instructions = decode(cpu,programMemoryInfo, memoryBase, instructionCount);
+
+        super.invalidate();
     }
 }

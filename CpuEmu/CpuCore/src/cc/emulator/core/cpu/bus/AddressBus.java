@@ -8,4 +8,5 @@ import cc.emulator.core.cpu.Bus;
  */
 public interface AddressBus extends Bus {
      void putAddress(int address, DataBus dataBus);
+
 }
