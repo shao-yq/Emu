@@ -56,7 +56,7 @@ public class IBMPC5150 extends PersonalComputer {
      * @return DisplayController Motorola 6845 - Cathode Ray Tube Controller
      */
     protected VideoAdapter createVideoAdapter(){
-        return new Motorola6845();
+        return new Motorola6845(getMainBoard().getCpu().getMemoryManager().getMemoryBase());
     }
 
     /**
@@ -64,7 +64,7 @@ public class IBMPC5150 extends PersonalComputer {
      * @return Display , IBMCGA - Color Graphics Adapter
      */
     protected Display createDisplay(){
-        return new IBMCGA( getMainBoard().getCpu(), videoAdapter);
+        return new IBMCGA( videoAdapter);
     }
 
     /**

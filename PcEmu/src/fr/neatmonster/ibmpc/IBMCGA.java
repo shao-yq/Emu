@@ -144,32 +144,12 @@ public class IBMCGA extends Display  {
     };
 
     /**
-     * Cpu - Central Processing Unit
-     *
-     * @see Cpu
-     */
-    private final Cpu cpu;
-
-    /**
-     * Motorola 6845 - Cathode Ray Tube Controller
-     *
-     * @see Motorola6845
-     */
-
-
-    /**
      * Instantiates a new display.
-     *
-     * @param cpu
-     *            the cpu
-
      * @param videoAdapter
      *            the videoAdapter
      */
-    public IBMCGA(final Cpu cpu, final VideoAdapter videoAdapter) {
+    public IBMCGA(final VideoAdapter videoAdapter) {
         super(videoAdapter);
-        this.cpu = cpu;
-
 
         initDisplayParameters();
 
@@ -190,9 +170,8 @@ public class IBMCGA extends Display  {
 
 
     void initDisplayParameters(){
-        setScreenColumn(80);
-        setScreenRow(25);
-        setVideoBase(0xb8000);
+        videoAdapter.init();
+
         setFontInfo(new FontInfo(10,18,"cp437.ttf"));
 
         int screenWidth = getScreenColumn()*getFontWidth();
@@ -207,9 +186,15 @@ public class IBMCGA extends Display  {
             e.printStackTrace();
         }
     }
+
     @Override
-    public int[] getMemoryBase() {
-        return cpu.getMemoryManager().getMemoryBase();
+    public int getScreenColumn() {
+        return videoAdapter.getScreenColumn();
+    }
+
+    @Override
+    public int getScreenRow() {
+        return videoAdapter.getScreenRow();
     }
 
 

@@ -1,6 +1,5 @@
 package fr.neatmonster.ibmpc;
 
-import cc.emulator.core.DisplayController;
 import cc.emulator.core.computer.VideoAdapter;
 
 /**
@@ -18,25 +17,21 @@ import cc.emulator.core.computer.VideoAdapter;
  *
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
-public class Motorola6845 implements VideoAdapter {
+public class Motorola6845 extends VideoAdapter {
     /** The index of the register to access. */
     private int         index;
-    /** The registers accessed by the CPU. */
-    private final int[] registers = new int[0x10];
+
     /** Vertical/horizontal retracing. */
     private int         retrace;
 
-    /**
-     * Returns the value of the register with the specified index.
-     *
-     * @param index
-     *            the index
-     * @return the value
-     */
-    @Override
-    public int getRegister(final int index) {
-        return registers[index];
+    public Motorola6845(int[] memoryBase) {
+        super(memoryBase);
+        setVideoBase(VIDEO_BASE);
     }
+    protected int[] createRegister(){
+        return new int[0x10];
+    }
+
 
     /**
      * Returns if a peripheral is connected to the specified port.
@@ -96,8 +91,30 @@ public class Motorola6845 implements VideoAdapter {
             index = val;
             break;
         case 0x3d5: // Register
-            registers[index] = val;
+            setRegisterValue(index, val);   //  registers[index] = val;
             break;
         }
     }
+
+    final static int SCREEN_COLUMN = 80;
+    final static int SCREEN_ROW = 25;
+    final static int VIDEO_BASE = 0xb8000;
+
+
+
+    @Override
+    public void init(){
+        super.init();
+
+        setScreenColumn(SCREEN_COLUMN);
+        setScreenRow(SCREEN_ROW);
+
+        setVideoBase(VIDEO_BASE);
+    }
+
+
+
+
+
+
 }

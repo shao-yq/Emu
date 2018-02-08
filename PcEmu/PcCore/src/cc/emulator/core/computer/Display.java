@@ -9,8 +9,6 @@ public interface Display {
 
     int getScreenRow();
 
-    int[] getMemoryBase();
-
     int getCursorAttribute();
 
     int getCursorLocation();
