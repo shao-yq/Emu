@@ -71,4 +71,6 @@ public abstract class VideoAdapter implements DisplayController, Adapter {
         return memory;
     }
 
+    public abstract int getCursorAttribute();
+    public abstract int getCursorLocation();
 }

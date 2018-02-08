@@ -4,7 +4,7 @@ import cc.emulator.core.FontInfo;
 import cc.emulator.core.computer.VideoAdapter;
 
 import javax.swing.JPanel;
-import java.awt.Graphics;
+import java.awt.*;
 
 /**
  * @author Shao Yongqing
@@ -74,6 +74,63 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
 
     protected abstract void drawCursor(Graphics g, int curLoc, int curAttr, int x, int y, int character, int attribute);
 
-    protected abstract void drawChar(Graphics g, int x, int y, int character, int attribute);
+
+
+    @Override
+    public int getScreenColumn() {
+        return videoAdapter.getScreenColumn();
+    }
+
+    @Override
+    public int getScreenRow() {
+        return videoAdapter.getScreenRow();
+    }
+
+    @Override
+    public int getCursorAttribute() {
+        return videoAdapter.getCursorAttribute();
+    }
+    @Override
+    public int getCursorLocation() {
+        return videoAdapter.getCursorLocation();
+    }
+    protected abstract FontInfo createFontInfo();
+
+    protected void initDisplayParameters(){
+        videoAdapter.init();
+
+        setFontInfo(createFontInfo());
+
+        int screenWidth = getScreenColumn()*getFontWidth();
+        int screenHeight = getScreenRow()*getFontHeight();
+
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
+
+        try {
+            // Use CP437 TrueType font.
+            setFont(Font.createFont(Font.TRUETYPE_FONT, getClass()
+                    .getClassLoader().getResourceAsStream(getFontInfo().getName())).deriveFont((float)getFontHeight()));
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected abstract Color getBackgroundColor(int attribute);
+    protected abstract Color getForegroundColor(int attribute);
+    protected abstract char getMappingCharacter(int character);
+
+    protected void drawChar(Graphics g, int x, int y, int character, int attribute) {
+        int fontWidth = getFontWidth();
+        int fontHeight = getFontHeight();
+
+        // Draw background first.
+        g.setColor(getBackgroundColor(attribute));    //  g.setColor(colors[attribute >>> 4 & 0b111]);
+        g.fillRect(x * fontWidth, y * fontHeight, fontWidth, fontHeight);
+        // Then write foreground.
+        g.setColor(getForegroundColor(attribute)); //  g.setColor(colors[attribute & 0b1111]);
+        // And the character
+        g.drawString("" + getMappingCharacter(character), x * fontWidth, y * fontHeight + 9);
+    }
+
 }
 

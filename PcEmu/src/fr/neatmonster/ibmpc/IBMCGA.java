@@ -168,33 +168,8 @@ public class IBMCGA extends Display  {
 
     }
 
-
-    void initDisplayParameters(){
-        videoAdapter.init();
-
-        setFontInfo(new FontInfo(10,18,"cp437.ttf"));
-
-        int screenWidth = getScreenColumn()*getFontWidth();
-        int screenHeight = getScreenRow()*getFontHeight();
-
-        setPreferredSize(new Dimension(screenWidth, screenHeight));
-        try {
-            // Use CP437 TrueType font.
-            setFont(Font.createFont(Font.TRUETYPE_FONT, getClass()
-                    .getClassLoader().getResourceAsStream(getFontInfo().getName())).deriveFont((float)getFontHeight()));
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public int getScreenColumn() {
-        return videoAdapter.getScreenColumn();
-    }
-
-    @Override
-    public int getScreenRow() {
-        return videoAdapter.getScreenRow();
+    protected FontInfo createFontInfo() {
+        return new FontInfo(10,18,"cp437.ttf");
     }
 
 
@@ -207,27 +182,16 @@ public class IBMCGA extends Display  {
         //    g.drawString("" + mapping[character], x * 7, y * 12 + 9);
     }
 
-    @Override
-    protected void drawChar(Graphics g, int x, int y, int character, int attribute) {
-        int fontWidth = getFontWidth();
-        int fontHeight = getFontHeight();
 
-        // Draw background first.
-        g.setColor(colors[attribute >>> 4 & 0b111]);
-        g.fillRect(x * fontWidth, y * fontHeight, fontWidth, fontHeight);
-        // Then write foreground.
-        g.setColor(colors[attribute & 0b1111]);
-        // And the character
-        g.drawString("" + mapping[character], x * fontWidth, y * fontHeight + 9);
+    protected Color getBackgroundColor(int attribute) {
+        return colors[attribute >>> 4 & 0b111];
     }
 
-    @Override
-    public int getCursorAttribute() {
-        return videoAdapter.getRegister(0xa) >> 4;
+    protected Color getForegroundColor(int attribute) {
+        return colors[attribute & 0b1111];
     }
-    @Override
-    public int getCursorLocation() {
-        return videoAdapter.getRegister(0xf) | videoAdapter.getRegister(0xe) << 8;
+    protected char getMappingCharacter(int character) {
+        return mapping[character];
     }
 }
 

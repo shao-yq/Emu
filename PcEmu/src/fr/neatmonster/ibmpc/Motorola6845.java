@@ -114,7 +114,14 @@ public class Motorola6845 extends VideoAdapter {
 
 
 
-
+    @Override
+    public int getCursorAttribute() {
+        return getRegister(0xa) >> 4;
+    }
+    @Override
+    public int getCursorLocation() {
+        return getRegister(0xf) | getRegister(0xe) << 8;
+    }
 
 
 }
