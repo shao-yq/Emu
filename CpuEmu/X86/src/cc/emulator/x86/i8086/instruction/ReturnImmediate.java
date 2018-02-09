@@ -58,4 +58,25 @@ public class ReturnImmediate extends Instruction8086{
         }
         return 12;
     }
+    @Override
+    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            // Within Segment
+//            case RET_IMMED16_INTRASEG: //  0xc2: // RET IMMED16 (intraseg)
+//                asm.append(immediate);
+//                break;
+//            // Intersegment
+//            case RET_IMMED16_INTERSEGMENT: //  0xca: // RET IMMED16 (intersegment)
+//                asm.append(immediate);
+//                break;
+//        }
+//
+//        return asm.toString();
+        return ""+immediate;
+    }
+    @Override
+    public String getMnemonic() {
+        return "RET";
+    }
 }

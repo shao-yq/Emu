@@ -40,4 +40,14 @@ public class StoreString extends Instruction8086 {
     public int getClocks() {
         return 10;
     }
+    @Override
+    public String getMnemonic() {
+        switch (op) {
+            case STOS_STR8 : //   0xaa: // STOS DEST-STR8
+                return "STOSB";
+            case STOS_STR16: //   0xab: // STOS DEST-STR16
+                return "STOSW";
+        }
+        return "LODS";
+    }
 }

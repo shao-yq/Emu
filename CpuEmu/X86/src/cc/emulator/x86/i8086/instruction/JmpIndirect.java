@@ -35,4 +35,25 @@ public class JmpIndirect extends Instruction8086 {
         }
         return false;
     }
+
+    @Override
+    public String getMnemonic() {
+        return "JMP";
+    }
+    @Override
+    protected String getOperandPart() {
+        StringBuffer asm = new StringBuffer();
+        switch (op) {
+            case EXT_0XFF:  // 0xff:
+                switch(reg){
+                    case JMP_REG16__MEM16_INTRA: //  0b100: // JMP REG16/MEM16(intra)
+                        asm.append("REG16/MEM16(intra)");
+                        break;
+                    case JMP_MEM16_INTERSEGMENT: //  0b101: // JMP MEM16(intersegment)
+                        asm.append("MEM16(intersegment)");
+                        break;
+                }
+        }
+        return asm.toString();
+    }
 }

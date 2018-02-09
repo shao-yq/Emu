@@ -35,4 +35,23 @@ public class PopSegmentRegister extends Instruction8086 {
         return 8;
     }
 
+    protected  String getOperandPart() {
+        switch (op) {
+            case POP_ES: //  0x07: // POP ES
+                return "ES";
+            case POP_CS: //  0x0f: // POP CS
+                return "CS";
+            case POP_SS: //  0x17: // POP SS
+                return "SS";
+            case POP_DS: //  0x1f: // POP DS
+                return "DS";
+        }
+        return "";
+    }
+
+    @Override
+    public String getMnemonic() {
+        return "POP";
+    }
+
 }

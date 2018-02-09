@@ -44,4 +44,16 @@ public class LoadString extends Instruction8086 {
     public int getClocks() {
         return 13;
     }
+
+
+    @Override
+    public String getMnemonic() {
+        switch (op) {
+            case LODS_STR8 : //  0xac: // LODS SRC-STR8
+                return "LODSB";
+            case LODS_STR16: //  0xad: // LODS SRC-STR16
+                return "LODSW";
+        }
+        return "LODS";
+    }
 }

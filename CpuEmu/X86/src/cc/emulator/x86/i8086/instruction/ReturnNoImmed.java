@@ -58,23 +58,23 @@ public class ReturnNoImmed extends Instruction8086{
         return 8;
     }
 
-
-    @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            // Within Segment
-            case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
-                asm.append("(intrasegment)");
-                break;
-            // Intersegment
-            case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
-                asm.append("(intersegment)");
-                break;
-        }
-
-        return asm.toString();
-    }
+//
+//    @Override
+//    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            // Within Segment
+//            case RET_INTRASEGMENT: //  0xc3: // RET (intrasegment)
+//                asm.append("(intrasegment)");
+//                break;
+//            // Intersegment
+//            case RET_INTERSEGMENT: //  0xcb: // RET (intersegment)
+//                asm.append("(intersegment)");
+//                break;
+//        }
+//
+//        return asm.toString();
+//    }
 
     @Override
     public String getMnemonic() {
