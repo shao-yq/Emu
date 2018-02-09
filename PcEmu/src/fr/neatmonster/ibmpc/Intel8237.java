@@ -54,13 +54,16 @@ public class Intel8237 implements DirectMemoryAccess {
     }
 
     int fetchData(int chan){
+        int vv = 0;
         if (!flipflop[chan]) {
-            flipflop[chan] = true;
-            return addr[chan] & 0xff;
+            //flipflop[chan] = true;
+            vv = addr[chan] & 0xff;
         } else {
-            flipflop[chan] = false;
-            return addr[chan] >>> 8 & 0xff;
+            //flipflop[chan] = false;
+            vv = addr[chan] >>> 8 & 0xff;
         }
+        flipflop[chan] = !flipflop[chan];
+        return vv;
     }
     /**
      * Write output to the specified CPU port.
@@ -96,12 +99,13 @@ public class Intel8237 implements DirectMemoryAccess {
 
     void putData(int chan, int val){
         if (!flipflop[chan]) {
-            flipflop[chan] = true;
+            //flipflop[chan] = true;
             addr[chan] = addr[chan] & 0xff00 | val;
         } else {
-            flipflop[chan] = false;
+            //flipflop[chan] = false;
             addr[chan] = val << 8 | addr[chan] & 0xff;
         }
+        flipflop[chan] = !flipflop[chan];
     }
 
     /**

@@ -93,7 +93,7 @@ public class InstructionPane extends JPanel{
         InstructionDecoder decoder= cpu.getInstructionUnit().createDecoder(); //new Decoder8086();
         int currentAddr = currentAddress;
         for(int i=0; i<count; i++) {
-            if(currentAddr+offset+cpu.getBusInterfaceUnit().getInstructionQueue().getQueueSize() >=memoryBase.length )
+            if(currentAddr+offset+instructionQueue.getQueueSize() >=memoryBase.length )
                 break;
 
             // Featch raw instruction

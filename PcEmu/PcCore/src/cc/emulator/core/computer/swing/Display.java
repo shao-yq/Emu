@@ -5,6 +5,8 @@ import cc.emulator.core.computer.VideoAdapter;
 
 import javax.swing.JPanel;
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Shao Yongqing
@@ -130,6 +132,18 @@ public abstract class Display extends JPanel implements cc.emulator.core.compute
         g.setColor(getForegroundColor(attribute)); //  g.setColor(colors[attribute & 0b1111]);
         // And the character
         g.drawString("" + getMappingCharacter(character), x * fontWidth, y * fontHeight + 9);
+    }
+
+    @Override
+    public void run() {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                repaint();
+            }
+        }, 0, 1000 / 60); // Refresh at a 60 FPS rate.
+
     }
 
 }

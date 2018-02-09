@@ -157,16 +157,6 @@ public class IBMCGA extends Display  {
         setForeground(Color.white);
     }
 
-    public void run() {
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                repaint();
-            }
-        }, 0, 1000 / 60); // Refresh at a 60 FPS rate.
-
-    }
 
     protected FontInfo createFontInfo() {
         return new FontInfo(10,18,"cp437.ttf");
