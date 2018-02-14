@@ -41,35 +41,6 @@ public class AddRegisterMemory extends OpRegisterMemory {
     }
 
 
-
-//    @Override
-//    protected String getOperandPart() {
-//        StringBuffer asm = new StringBuffer();
-//        switch (op) {
-//            case ADD_REG8__MEM8_REG8   : //  0x00: // ADD REG8/MEM8,REG8
-//            case ADD_REG16__MEM16_REG16: //  0x01: // ADD REG16/MEM16,REG16
-//
-//                //dest
-//                asm.append(" "+getRMFieldString(w, mod, reg, rm));
-//
-//                // src
-//                asm.append(", "+getRegMnemonic(reg,w));
-//
-//                break;
-//            case ADD_REG8_REG8__MEM8   : //  0x02: // ADD REG8,REG8/MEM8
-//            case ADD_REG16_REG16__MEM16: //  0x03: // ADD REG16,REG16/MEM16
-//                // dest
-//                asm.append(" "+getRegMnemonic(reg,w));
-//
-//                //src
-//                asm.append(", "+getRMFieldString(w, mod, reg, rm));
-//                break;
-//        }
-//
-//        return asm.toString();
-//    }
-//
-
     @Override
     int oprandMode(int op) {
         return op-ADD_REG8__MEM8_REG8;

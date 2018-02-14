@@ -39,4 +39,9 @@ public class InterruptReturn extends Instruction8086{
         return 24;
 
     }
+
+    @Override
+    public String getMnemonic() {
+        return "IRET";
+    }
 }

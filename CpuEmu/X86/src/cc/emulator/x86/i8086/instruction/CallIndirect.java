@@ -6,7 +6,7 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Yongqing
  * Date: 2017/9/1.
  */
-public class CallIndirect extends Instruction8086 {
+public class CallIndirect extends Call {
     public CallIndirect(){}
     public CallIndirect(int[] raw, int startIndex) {
         super(raw, startIndex);

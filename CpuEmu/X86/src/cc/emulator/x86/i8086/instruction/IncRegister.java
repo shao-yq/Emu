@@ -17,15 +17,15 @@ import cc.emulator.x86.i8086.Instruction8086;
  * may be a byte or a word and is treated as an unsigned binary
  * number. INC updates AF, OF, PF, SF and ZF; it does not affect CF.
  */
-public class IncRegister extends Instruction8086 {
+public class IncRegister extends OpRegister {
     public IncRegister(){}
     public IncRegister(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 1, startIndex);
-        reg = op & 0b111;
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        decode(raw, 1, startIndex);
+//        reg = op & 0b111;
+//    }
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
@@ -60,39 +60,39 @@ public class IncRegister extends Instruction8086 {
 //    }
 
 
-    @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            // Register
-            case INC_AX: //  0x40: // INC AX
-                asm.append(" AX");
-                break;
-            case INC_CX: //  0x41: // INC CX
-                asm.append(" CX");
-                break;
-            case INC_DX: //  0x42: // INC DX
-                asm.append(" DX");
-                break;
-            case INC_BX: //  0x43: // INC BX
-                asm.append(" BX");
-                break;
-            case INC_SP: //  0x44: // INC SP
-                asm.append(" SP");
-                break;
-            case INC_BP: //  0x45: // INC BP
-                asm.append(" BP");
-                break;
-            case INC_SI: //  0x46: // INC SI
-                asm.append(" SI");
-                break;
-            case INC_DI: //  0x47: // INC DI
-                asm.append(" DI");
-                break;
-        }
-
-        return asm.toString();
-    }
+//    @Override
+//    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            // Register
+//            case INC_AX: //  0x40: // INC AX
+//                asm.append(" AX");
+//                break;
+//            case INC_CX: //  0x41: // INC CX
+//                asm.append(" CX");
+//                break;
+//            case INC_DX: //  0x42: // INC DX
+//                asm.append(" DX");
+//                break;
+//            case INC_BX: //  0x43: // INC BX
+//                asm.append(" BX");
+//                break;
+//            case INC_SP: //  0x44: // INC SP
+//                asm.append(" SP");
+//                break;
+//            case INC_BP: //  0x45: // INC BP
+//                asm.append(" BP");
+//                break;
+//            case INC_SI: //  0x46: // INC SI
+//                asm.append(" SI");
+//                break;
+//            case INC_DI: //  0x47: // INC DI
+//                asm.append(" DI");
+//                break;
+//        }
+//
+//        return asm.toString();
+//    }
 
 
     @Override

@@ -55,7 +55,7 @@ import cc.emulator.x86.i8086.Instruction8086;
  * is replaced by the content of the first word of the doubleword
  * pointer referenced by the instruction.
  */
-public class CallNearProc extends Instruction8086{
+public class CallNearProc extends Call{
     public CallNearProc(){}
     public CallNearProc(int[] raw, int startIndex) {
         super(raw, startIndex);
@@ -104,8 +104,5 @@ public class CallNearProc extends Instruction8086{
         return asm.toString();
     }
 
-    @Override
-    public String getMnemonic() {
-        return "CALL";
-    }
+
 }

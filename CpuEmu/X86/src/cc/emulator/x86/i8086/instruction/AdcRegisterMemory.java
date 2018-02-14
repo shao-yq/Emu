@@ -13,10 +13,6 @@ public class AdcRegisterMemory extends OpRegisterMemory {
         super(raw, startIndex);
     }
 
-//    public void decode(int[] raw, int startIndex) {
-//        decode(raw, 2, startIndex);
-//        decodeDisplacement(raw);
-//    }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
@@ -43,13 +39,6 @@ public class AdcRegisterMemory extends OpRegisterMemory {
         }
         return false;
     }
-//    @Override
-//    public int getClocks() {
-//        if (d == 0b0)
-//            return mod == 0b11 ? 3 : 16;
-//        else
-//            return mod == 0b11 ? 3 : 9;
-//    }
 
     @Override
     int oprandMode(int op) {
