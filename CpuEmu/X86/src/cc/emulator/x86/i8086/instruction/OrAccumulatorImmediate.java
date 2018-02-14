@@ -14,20 +14,20 @@ import cc.emulator.x86.i8086.Instruction8086;
  * in the result is set if either or both corresponding bits of the
  * original operands are set; otherwise the result bit is cleared.
  */
-public class OrAccumulatorImmediate extends Instruction8086 {
+public class OrAccumulatorImmediate extends OpAccumulatorImmediate {
     public OrAccumulatorImmediate(){}
     public OrAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 1, startIndex);
-        immediate = raw[1+startIndex];
-        incLength(1);
-        if(op == OR_AX_IMMED16){
-            immediate |= (raw[2+startIndex]<<8);
-            incLength(1);
-        }
-    }
+//    public void decode(int[] raw, int startIndex) {
+//        decode(raw, 1, startIndex);
+//        immediate = raw[1+startIndex];
+//        incLength(1);
+//        if(op == OR_AX_IMMED16){
+//            immediate |= (raw[2+startIndex]<<8);
+//            incLength(1);
+//        }
+//    }
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
@@ -42,8 +42,24 @@ public class OrAccumulatorImmediate extends Instruction8086 {
         return false;
     }
 
+//    @Override
+//    public int getClocks() {
+//        return 4;
+//    }
+
     @Override
-    public int getClocks() {
-        return 4;
+    public String getMnemonic() {
+        return "OR";
     }
+
+    @Override
+    protected boolean isAxImmed16(int op) {
+        return (op == OR_AX_IMMED16);
+    }
+
+    @Override
+    int oprandMode(int op) {
+        return op - OR_AL_IMMED8;
+    }
+
 }

@@ -6,19 +6,10 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class AndAccumulatorImmediate extends Instruction8086 {
+public class AndAccumulatorImmediate extends OpAccumulatorImmediate {
     public AndAccumulatorImmediate(){}
     public AndAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
-    }
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 1, startIndex);
-        immediate = raw[1+startIndex];
-        incLength(1);
-        if(op == AND_AX_IMMED16){
-            immediate |= (raw[2+startIndex]<<8);
-            incLength(1);
-        }
     }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
@@ -44,27 +35,19 @@ public class AndAccumulatorImmediate extends Instruction8086 {
     }
 
     @Override
-    public int getClocks() {
-        return 4;
-    }
-
-    @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            // Immediate to Accumulator
-            case AND_AL_IMMED8 : //  0x24: // AND AL,IMMED8
-                asm.append("AL");
-                break;
-            case AND_AX_IMMED16: //  0x25: // AND AX,IMMED16
-                asm.append("AX");
-        }
-        asm.append(", "+immediate);
-
-        return asm.toString();
-    }
-    @Override
     public String getMnemonic() {
         return "AND";
     }
+
+
+    @Override
+    protected boolean isAxImmed16(int op) {
+        return (op == AND_AX_IMMED16);
+    }
+
+    @Override
+    int oprandMode(int op) {
+        return op - AND_AL_IMMED8;
+    }
+
 }

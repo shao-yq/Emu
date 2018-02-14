@@ -10,7 +10,7 @@ import cc.emulator.x86.i8086.IntelInstructionHelper;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class MovRegMemFromToReg extends MOV {
+public class MovRegMemFromToReg extends OrRegisterMemory {
     public MovRegMemFromToReg(){}
     public MovRegMemFromToReg(int[] raw, int startIndex) {
         super(raw, startIndex);
@@ -60,33 +60,42 @@ public class MovRegMemFromToReg extends MOV {
 //        }
     }
 
+    @Override
+    public String getMnemonic() {
+        return "MOV";
+    }
 
     @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            // Register/Memory to/from Register
-            case MOV_REG8__MEM8_REG8: //   0x88: // MOV REG8/MEM8,REG8
-            case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
-                //dest
-                asm.append(" "+ IntelInstructionHelper.getRMFieldString(w, mod, reg, rm,disp));
-
-                // src
-                asm.append(", "+IntelInstructionHelper.getRegMnemonic(reg,w));
-
-                break;
-            case MOV_REG8_REG8__MEM8: //   0x8a: // MOV REG8,REG8/MEM8
-            case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
-                //dest
-                asm.append(" "+IntelInstructionHelper.getRegMnemonic(reg,w));
-
-                //src
-                asm.append(", "+IntelInstructionHelper.getRMFieldString(w, mod, reg, rm, disp));
-                break;
-        }
-
-        return asm.toString();
+    int oprandMode(int op) {
+        return op-MOV_REG8__MEM8_REG8;
     }
+//
+//    @Override
+//    protected String getOperandPart() {
+//        StringBuffer asm = new StringBuffer();
+//        switch (op) {
+//            // Register/Memory to/from Register
+//            case MOV_REG8__MEM8_REG8: //   0x88: // MOV REG8/MEM8,REG8
+//            case MOV_REG16__MEM16_REG16: //   0x89: // MOV REG16/MEM16,REG16
+//                //dest
+//                asm.append(" "+ IntelInstructionHelper.getRMFieldString(w, mod, reg, rm,disp));
+//
+//                // src
+//                asm.append(", "+IntelInstructionHelper.getRegMnemonic(reg,w));
+//
+//                break;
+//            case MOV_REG8_REG8__MEM8: //   0x8a: // MOV REG8,REG8/MEM8
+//            case MOV_REG16_REG16__MEM16: //   0x8b: // MOV REG16,REG16/MEM16
+//                //dest
+//                asm.append(" "+IntelInstructionHelper.getRegMnemonic(reg,w));
+//
+//                //src
+//                asm.append(", "+IntelInstructionHelper.getRMFieldString(w, mod, reg, rm, disp));
+//                break;
+//        }
+//
+//        return asm.toString();
+//    }
 
 
 

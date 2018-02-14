@@ -6,21 +6,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class CmpAccumulatorImmediate extends Instruction8086 {
+public class CmpAccumulatorImmediate extends OpAccumulatorImmediate {
     public CmpAccumulatorImmediate(){}
     public CmpAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
 
-    public void decode(int[] raw, int startIndex) {
-        decode(raw, 1, startIndex);
-        immediate = raw[1+startIndex];
-        incLength(1);
-        if(op == CMP_AX_IMMED16){
-            immediate |= (raw[2+startIndex]<<8);
-            incLength(1);
-        }
-    }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
@@ -49,31 +40,20 @@ public class CmpAccumulatorImmediate extends Instruction8086 {
         return false;
     }
 
-    @Override
-    public int getClocks() {
-        return 4;
-    }
-
-
-    @Override
-    protected String getOperandPart() {
-        StringBuffer asm = new StringBuffer();
-        switch (op) {
-            case CMP_AL_IMMED8 : //  0x3c: // CMP AL,IMMED8
-                asm.append(" AL");
-                break;
-            case CMP_AX_IMMED16: //  0x3d: // CMP AX,IMMED16
-                // dest
-                asm.append(" AX");
-                break;
-        }
-        asm.append(", "+immediate);
-        return asm.toString();
-    }
-
 
     @Override
     public String getMnemonic() {
         return "CMP";
     }
+
+    @Override
+    protected boolean isAxImmed16(int op) {
+        return (op == CMP_AX_IMMED16);
+    }
+
+    @Override
+    int oprandMode(int op) {
+        return op - CMP_AL_IMMED8;
+    }
+
 }

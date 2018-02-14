@@ -15,20 +15,12 @@ import cc.emulator.x86.i8086.Instruction8086;
  * a JNZ (jump if not zero) instruction, the jump will be taken if
  * there are any corresponding 1-bits in both operands.
  */
-public class TestAccumulatorImmediate extends Instruction8086 {
+public class TestAccumulatorImmediate extends OpAccumulatorImmediate {
     public TestAccumulatorImmediate(){}
     public TestAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
     }
-    public void decode(int[] raw, int startIndex) {
-        super.decode(raw, startIndex);
-        immediate = raw[1+startIndex];
-        incLength(1);
-        if(op == ADD_AX_IMMED16){
-            immediate |= (raw[2+startIndex]<<8);
-            incLength(1);
-        }
-    }
+
     public  boolean hasOpcode(int raw[], int startIndex) {
         return hasOpcode(raw[startIndex]);
     }
@@ -43,8 +35,15 @@ public class TestAccumulatorImmediate extends Instruction8086 {
         return false;
     }
 
+
     @Override
-    public int getClocks() {
-        return 4;
+    protected boolean isAxImmed16(int op) {
+        return (op == TEST_AX_IMMED16);
     }
+
+    @Override
+    int oprandMode(int op) {
+        return op - TEST_AL_IMMED8;
+    }
+
 }

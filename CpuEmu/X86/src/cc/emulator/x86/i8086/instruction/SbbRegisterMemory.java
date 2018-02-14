@@ -52,10 +52,10 @@ public class SbbRegisterMemory extends OpRegisterMemory {
 //            return mod == 0b11 ? 3 : 9;
 //    }
 
-@Override
-int oprandMode(int op) {
-    return op-SBB_REG8__MEM8_REG8;
-}
+    @Override
+    int oprandMode(int op) {
+        return op-SBB_REG8__MEM8_REG8;
+    }
 
     @Override
     public String getMnemonic() {

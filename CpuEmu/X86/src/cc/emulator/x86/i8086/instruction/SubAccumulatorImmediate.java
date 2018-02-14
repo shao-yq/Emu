@@ -6,20 +6,10 @@ import cc.emulator.x86.i8086.Instruction8086;
  * @author Shao Bofeng
  * Date: 2017/8/20.
  */
-public class SubAccumulatorImmediate extends Instruction8086 {
+public class SubAccumulatorImmediate extends OpAccumulatorImmediate {
     public SubAccumulatorImmediate(){}
     public SubAccumulatorImmediate(int[] raw, int startIndex) {
         super(raw, startIndex);
-    }
-
-    public void decode(int[] raw, int startIndex) {
-        super.decode(raw, startIndex);
-        immediate = raw[1+startIndex];
-        incLength(1);
-        if(op == SUB_AX_IMMED16){
-            immediate |= (raw[2+startIndex]<<8);
-            incLength(1);
-        }
     }
 
     public  boolean hasOpcode(int raw[], int startIndex) {
@@ -48,4 +38,15 @@ public class SubAccumulatorImmediate extends Instruction8086 {
     public int getClocks() {
         return 4;
     }
+
+    @Override
+    protected boolean isAxImmed16(int op) {
+        return (op == SUB_AX_IMMED16);
+    }
+
+    @Override
+    int oprandMode(int op) {
+        return op - SUB_AL_IMMED8;
+    }
+
 }
