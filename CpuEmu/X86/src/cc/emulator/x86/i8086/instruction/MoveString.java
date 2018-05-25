@@ -53,10 +53,12 @@ public class MoveString extends Instruction8086 {
     }
     @Override
     public String getMnemonic() {
-//        switch (op){
-//            case MOVS_STR8_STR8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
-//            case MOVS_STR16_STR16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
-//        }
+        switch (op){
+            case MOVS_STR8_STR8  : //   0xa4: // MOVS DEST-STR8,SRC-STR8
+                return "MOVSB";
+            case MOVS_STR16_STR16: //   0xa5: // MOVS DEST-STR16,SRC-STR16
+                return "MOVSW";
+        }
         return "MOVS";
     }
 }
