@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="CpuCore" />
+    <orderEntry type="module" module-name="PcEmu" />
   </component>
 </module>

@@ -10,168 +10,109 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/CpuEmu$MyComputer.coverage" NAME="MyComputer Coverage Results" MODIFIED="1508254430003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>cc.emulator.core.cc.emulator.computer.*</FILTER>
+    </SUITE>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="Intel8086.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086.java">
+      <file leaf-file-name="AddRegisterMemory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddRegisterMemory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="627">
-              <caret line="1336" column="20" lean-forward="true" selection-start-line="1336" selection-start-column="20" selection-end-line="1336" selection-end-column="20" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#8316#8317#0" expanded="true" />
-                <element signature="e#8341#8342#0" expanded="true" />
-                <element signature="e#8534#8535#0" expanded="true" />
-                <element signature="e#8575#8576#0" expanded="true" />
-                <element signature="e#8626#8627#0" expanded="true" />
-                <element signature="e#8665#8666#0" expanded="true" />
-                <element signature="e#8738#8739#0" expanded="true" />
-                <element signature="e#8788#8789#0" expanded="true" />
-                <element signature="e#9736#9737#0" expanded="true" />
-                <element signature="e#9783#9784#0" expanded="true" />
-                <marker date="1501066014304" expanded="false" signature="28440:28467" ph="/unused/" />
-                <marker date="1501066014304" expanded="false" signature="43330:43341" ph=" { " />
-                <marker date="1501066014304" expanded="false" signature="43367:43373" ph=" }" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="IBMCGA.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/IBMCGA.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="719">
-              <caret line="435" column="73" lean-forward="true" selection-start-line="435" selection-start-column="73" selection-end-line="435" selection-end-column="73" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="IntelAddressGenerator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelAddressGenerator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-              <folding>
-                <element signature="e#320#321#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="IntelMemoryAccessor.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelMemoryAccessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#384#385#0" expanded="true" />
-                <element signature="e#426#427#0" expanded="true" />
-                <element signature="e#532#533#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataRegister.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataRegister.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MemoryManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/MemoryManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="249" column="51" lean-forward="true" selection-start-line="249" selection-start-column="51" selection-end-line="249" selection-end-column="51" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#9015#9029#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MemoryAccessor.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/MemoryAccessor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="762">
-              <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-              <folding>
-                <element signature="e#248#249#0" expanded="true" />
-                <element signature="e#283#284#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataBusImpl.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataBusImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="303">
+            <state relative-caret-position="459">
               <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
               <folding>
-                <element signature="e#200#201#0" expanded="true" />
-                <element signature="e#232#233#0" expanded="true" />
-                <element signature="e#274#275#0" expanded="true" />
-                <element signature="e#301#302#0" expanded="true" />
-                <element signature="e#401#402#0" expanded="true" />
-                <element signature="e#454#455#0" expanded="true" />
-                <element signature="e#483#484#0" expanded="true" />
-                <element signature="e#558#559#0" expanded="true" />
-                <element signature="e#585#586#0" expanded="true" />
-                <element signature="e#635#636#0" expanded="true" />
-                <element signature="e#659#660#0" expanded="true" />
+                <element signature="e#412#413#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Cpu.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Cpu.java">
+      <file leaf-file-name="InFixedPort.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InFixedPort.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="57" column="14" lean-forward="false" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
+            <state relative-caret-position="81">
+              <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Interrupt.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Interrupt.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2781">
+              <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InterruptReturn.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InterruptReturn.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="999">
+              <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
               <folding>
-                <element signature="e#233#234#0" expanded="true" />
-                <element signature="e#263#264#0" expanded="true" />
-                <element signature="e#712#713#0" expanded="true" />
-                <element signature="e#748#749#0" expanded="true" />
-                <element signature="e#1376#1377#0" expanded="true" />
-                <element signature="e#1404#1405#0" expanded="true" />
-                <element signature="e#1457#1458#0" expanded="true" />
-                <element signature="e#1496#1497#0" expanded="true" />
-                <element signature="e#1545#1546#0" expanded="true" />
-                <element signature="e#1582#1583#0" expanded="true" />
+                <element signature="e#603#604#0" expanded="true" />
+                <element signature="e#641#642#0" expanded="true" />
+                <element signature="e#701#702#0" expanded="true" />
+                <element signature="e#750#751#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Stack.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Stack.java">
+      <file leaf-file-name="Jump.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Jump.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="22" column="18" lean-forward="true" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+            <state relative-caret-position="1134">
+              <caret line="42" column="13" lean-forward="false" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JmpIndirect.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/JmpIndirect.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="481">
+              <caret line="23" column="43" lean-forward="false" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
               <folding>
-                <element signature="e#308#309#0" expanded="true" />
-                <element signature="e#333#334#0" expanded="true" />
-                <element signature="e#359#360#0" expanded="true" />
-                <element signature="e#384#385#0" expanded="true" />
-                <element signature="e#417#418#0" expanded="true" />
-                <element signature="e#445#446#0" expanded="true" />
-                <element signature="e#478#479#0" expanded="true" />
-                <element signature="e#506#507#0" expanded="true" />
-                <element signature="e#947#948#0" expanded="true" />
-                <element signature="e#999#1000#0" expanded="true" />
-                <element signature="e#1073#1074#0" expanded="true" />
-                <element signature="e#1129#1130#0" expanded="true" />
+                <element signature="e#1253#1254#0" expanded="true" />
+                <element signature="e#1281#1282#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JumpIf.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/JumpIf.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="702">
+              <caret line="26" column="13" lean-forward="false" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndRegisterMemory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndRegisterMemory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="810">
+              <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CallFarProc.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallFarProc.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1863">
+              <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -186,6 +127,14 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>@Ov</find>
+      <find>queue[startIndex]</find>
+      <find />
+      <find>80</find>
+    </findStrings>
+  </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
       <projects_view />
@@ -194,42 +143,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/IBMPc.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/AbstractComputer.java" />
-        <option value="$PROJECT_DIR$/.idea/workspace.xml" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/Memory.java" />
-        <option value="$PROJECT_DIR$/resources/IBMPc.properties" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/Cpu.java" />
-        <option value="$PROJECT_DIR$/src/fr/neatmonster/ibmpc/Intel8086.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/MemoryManager.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/PersonalComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/MyComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/Computer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cc/emulator/computer/BaseComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/computer/Intel80876Instruction.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086Instruction.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/computer/MyComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/MemoryAccessor.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/AddressGenerator.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/AddressBus.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/DataBusImpl.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/DataReceiver.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/DataReadyListener.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelStack.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelAddressGenerator.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/MemoryAccessor.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelAddressBus.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelDataBus.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/DataBus.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelMemoryAccessor.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/computer/BaseComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/computer/PersonalComputer.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/computer/MemoryManager.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/DataRegister.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/Cpu.java" />
-        <option value="$PROJECT_DIR$/src/fr/neatmonster/ibmpc/IBMCGA.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/Stack.java" />
-        <option value="$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086.java" />
+        <option value="$PROJECT_DIR$/CpuCore/src/cc/emulator/core/ProgrammablePeripheralInterface.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/swing/Keyboard.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/Adapter.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/AudioAdapter.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/NetworkAdapter.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/PersonalComputer.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/fr/neatmonster/ibmpc/Intel8259.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/fr/neatmonster/ibmpc/Intel8253.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/Display.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/cc/emulator/computer/IBMPC5150.java" />
+        <option value="$PROJECT_DIR$/CpuCore/src/cc/emulator/core/DisplayController.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/fr/neatmonster/ibmpc/Motorola6845.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/VideoAdapter.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/fr/neatmonster/ibmpc/IBMCGA.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/swing/Display.java" />
+        <option value="$PROJECT_DIR$/../PcEmu/src/fr/neatmonster/ibmpc/Intel8237.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/PopSegmentRegister.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/PushSegmentRegister.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/LoadString.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/StoreString.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/ReturnImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/ReturnNoImmed.java" />
+        <option value="$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/InstructionPane.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/EU8086.java" />
+        <option value="$PROJECT_DIR$/CpuCore/src/cc/emulator/core/cpu/Instruction.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/MovRegMemFromToReg.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OpAccumulationImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OpAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/SbbRegisterMemory.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CmpAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OrAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/SbbAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/SubAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/TestAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/XorAccumulatorImmediate.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Call.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallFarProc.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallIndirect.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallNearProc.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndRegisterMemory.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcRegisterMemory.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddRegisterMemory.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CmpRegisterMemory.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecRegister.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/IncRegister.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OpRegister.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InterruptReturn.java" />
+        <option value="$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/MoveString.java" />
       </list>
     </option>
   </component>
@@ -240,6 +204,7 @@
     <exe-path />
     <annotation-enable>false</annotation-enable>
     <other-services-enabled>false</other-services-enabled>
+    <auto-save>true</auto-save>
   </component>
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
@@ -254,10 +219,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="9" />
-    <option name="y" value="14" />
-    <option name="width" value="2871" />
-    <option name="height" value="1576" />
+    <option name="x" value="4" />
+    <option name="y" value="7" />
+    <option name="width" value="2880" />
+    <option name="height" value="1571" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -290,10 +255,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="PackagesPane" />
       <pane id="AndroidView" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -304,56 +269,215 @@
             <path>
               <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
               <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="Arm" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="Arm" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
               <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="Arm" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="arm" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="Arm" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="arm" type="462c0819:PsiDirectoryNode" />
+              <item name="decoder" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="Arm" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="arm" type="462c0819:PsiDirectoryNode" />
+              <item name="instruction" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="CpuCore" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="CpuCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="CpuCore" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="emulator" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
               <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="CpuCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="emulator" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="CpuCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="emulator" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="x86" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="x86" type="462c0819:PsiDirectoryNode" />
+              <item name="i386" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="x86" type="462c0819:PsiDirectoryNode" />
+              <item name="i8086" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="X86" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="x86" type="462c0819:PsiDirectoryNode" />
+              <item name="i8086" type="462c0819:PsiDirectoryNode" />
+              <item name="instruction" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+              <item name="UiCore" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+              <item name="UiCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+              <item name="UiCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="ui" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+              <item name="UiCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="ui" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EmuUI" type="462c0819:PsiDirectoryNode" />
+              <item name="UiCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="ui" type="462c0819:PsiDirectoryNode" />
+              <item name="swing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="PcCore" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="PcCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="PcCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="computer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="PcCore" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="computer" type="462c0819:PsiDirectoryNode" />
+              <item name="swing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="emulator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="emulator" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="emulator" type="462c0819:PsiDirectoryNode" />
               <item name="computer" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="emulator" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="emulator" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="computer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="emulator" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="cpu" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="emulator" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="cpu" type="462c0819:PsiDirectoryNode" />
-              <item name="intel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CpuEmu" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CpuEmu" type="462c0819:PsiDirectoryNode" />
+              <item name="PcEmu" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="ibmpc" type="462c0819:PsiDirectoryNode" />
             </path>
@@ -364,22 +488,33 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="nodejs_interpreter_path" value="D:/Program Files/nodejs/node" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Red5/red5-flash/player4" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="cc.emulator.core.cpu" />
-      <recent name="cc.emulator.core.cpu.intel" />
+      <recent name="cc.emulator.core.computer.swing" />
+      <recent name="cc.emulator.computer" />
+      <recent name="cc.emulator.core.computer" />
+      <recent name="cc.emulator.ui.core" />
+      <recent name="cc.emulator.x86.i8086" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="cc.emulator.ui.swing" />
+      <recent name="cc.emulator.arch.arm.instruction" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
-      <recent name="cc.emulator.core.cpu.intel" />
       <recent name="cc.emulator.core.cpu" />
+      <recent name="cc.emulator.arch.arm.instruction" />
+      <recent name="cc.emulator.arch.arm.decoder" />
+      <recent name="cc.emulator.core.cpu.intel" />
       <recent name="cc.emulator.core.cc.emulator.computer" />
     </key>
   </component>
@@ -396,14 +531,20 @@
     </option>
   </component>
   <component name="RunManager" selected="Application.MyComputer">
-    <configuration name="Intel8086" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+    </configuration>
+    <configuration name="Decoder8086" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="cc.emulator.core.cpu.intel.*" />
+          <option name="PATTERN" value="cc.emulator.x86.i8086.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="cc.emulator.core.cpu.intel.Intel8086" />
+      <option name="MAIN_CLASS_NAME" value="cc.emulator.x86.i8086.Decoder8086" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -412,7 +553,7 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="CpuEmu" />
+      <module name="X86" />
       <envs />
     </configuration>
     <configuration name="MyComputer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -422,7 +563,7 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="cc.emulator.apps.computer.MyComputer" />
+      <option name="MAIN_CLASS_NAME" value="cc.emulator.apps.MyComputer" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -431,14 +572,8 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="CpuEmu" />
+      <module name="PcEmu" />
       <envs />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <module />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
@@ -474,12 +609,6 @@
       <envs />
       <patterns />
     </configuration>
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
-      <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
-      <option name="PROGRAM_PARAMETERS" />
-      <predefined_log_file id="idea.log" enabled="true" />
-    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -514,19 +643,34 @@
       <properties />
       <listeners />
     </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file id="idea.log" enabled="true" />
+    </configuration>
     <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Application.Intel8086" />
-      <item index="1" class="java.lang.String" itemvalue="Application.MyComputer" />
+      <item index="0" class="java.lang.String" itemvalue="Application.MyComputer" />
+      <item index="1" class="java.lang.String" itemvalue="Application.Decoder8086" />
     </list>
     <recent_temporary>
       <list size="2">
         <item index="0" class="java.lang.String" itemvalue="Application.MyComputer" />
-        <item index="1" class="java.lang.String" itemvalue="Application.Intel8086" />
+        <item index="1" class="java.lang.String" itemvalue="Application.Decoder8086" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SbtLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="NONE" />
   </component>
   <component name="SvnConfiguration">
     <configuration>C:\Users\Shyq_2\AppData\Roaming\Subversion</configuration>
@@ -542,45 +686,116 @@
       <workItem from="1500994531085" duration="6280000" />
       <workItem from="1501034257355" duration="10000" />
       <workItem from="1501034578955" duration="23020000" />
+      <workItem from="1505705118543" duration="14646000" />
+      <workItem from="1505736135662" duration="596000" />
+      <workItem from="1505790733049" duration="3325000" />
+      <workItem from="1505798908628" duration="22887000" />
+      <workItem from="1505831710542" duration="8998000" />
+      <workItem from="1505873427517" duration="21602000" />
+      <workItem from="1505918830602" duration="717000" />
+      <workItem from="1505968762245" duration="19078000" />
+      <workItem from="1506007466839" duration="7060000" />
+      <workItem from="1506041555015" duration="4566000" />
+      <workItem from="1506056948039" duration="13575000" />
+      <workItem from="1506090351631" duration="1943000" />
+      <workItem from="1506134687364" duration="4335000" />
+      <workItem from="1506149817004" duration="7796000" />
+      <workItem from="1506216406895" duration="14699000" />
+      <workItem from="1506239390102" duration="2157000" />
+      <workItem from="1506265236744" duration="648000" />
+      <workItem from="1506306228776" duration="10777000" />
+      <workItem from="1506351283962" duration="5973000" />
+      <workItem from="1506399007017" duration="9525000" />
+      <workItem from="1506438384506" duration="1753000" />
+      <workItem from="1506524260328" duration="620000" />
+      <workItem from="1506565296589" duration="1121000" />
+      <workItem from="1508154520728" duration="26537000" />
+      <workItem from="1508385060444" duration="594000" />
+      <workItem from="1508474486730" duration="611000" />
+      <workItem from="1508478269209" duration="14427000" />
+      <workItem from="1508574742151" duration="853000" />
+      <workItem from="1508728694227" duration="3634000" />
+      <workItem from="1508770725090" duration="285000" />
+      <workItem from="1508811558623" duration="927000" />
+      <workItem from="1509194067883" duration="1962000" />
+      <workItem from="1509329883367" duration="2582000" />
+      <workItem from="1517311689265" duration="27701000" />
+      <workItem from="1517450085269" duration="5775000" />
+      <workItem from="1517558697527" duration="605000" />
+      <workItem from="1517563875204" duration="22000" />
+      <workItem from="1517626068905" duration="704000" />
+      <workItem from="1517809815489" duration="5176000" />
+      <workItem from="1517816497211" duration="190000" />
+      <workItem from="1517816783444" duration="3390000" />
+      <workItem from="1517821156719" duration="1461000" />
+      <workItem from="1517905418713" duration="10225000" />
+      <workItem from="1517968501527" duration="27464000" />
+      <workItem from="1518012555784" duration="1219000" />
+      <workItem from="1518055039726" duration="17389000" />
+      <workItem from="1518086970110" duration="1865000" />
+      <workItem from="1518141202630" duration="1209000" />
+      <workItem from="1518167159461" duration="5753000" />
+      <workItem from="1518227955116" duration="3751000" />
+      <workItem from="1518255614127" duration="748000" />
+      <workItem from="1518427215841" duration="596000" />
+      <workItem from="1518501431228" duration="14345000" />
+      <workItem from="1519265540925" duration="824000" />
+      <workItem from="1519292099824" duration="753000" />
+      <workItem from="1519292931444" duration="1454000" />
+      <workItem from="1519443351589" duration="113000" />
+      <workItem from="1519443497332" duration="769000" />
+      <workItem from="1519449438780" duration="1735000" />
+      <workItem from="1519452126607" duration="595000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49268000" />
+    <option name="totallyTimeSpent" value="434285000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="9" y="14" width="2871" height="1576" extended-state="0" />
-    <editor active="true" />
+    <frame x="4" y="7" width="2880" height="1571" extended-state="0" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963786" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32879817" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Tool Output" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32879817" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32960477" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32498044" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32804233" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14527148" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16344085" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42941612" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17511687" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="ANTLR Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32955405" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0827957" sideWeight="0.49553" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27997023" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25089607" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32426304" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.117475376" sideWeight="0.50447" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2822823" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,561 +806,678 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="40" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/FlagsFromToAH.java</url>
+          <line>12</line>
+          <properties />
+          <option name="timeStamp" value="81" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/ReturnNoImmed.java</url>
+          <line>11</line>
+          <properties />
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcAccumulatorImmediate.java</url>
+          <line>8</line>
+          <properties />
+          <option name="timeStamp" value="92" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Decoder8086.java</url>
+          <line>178</line>
+          <properties />
+          <option name="timeStamp" value="94" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AsciiAdjustForSubstraction.java</url>
+          <line>23</line>
+          <properties />
+          <option name="timeStamp" value="95" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Arm/src/cc/emulator/arch/arm/ArmInstruction.java</url>
+          <line>308</line>
+          <properties />
+          <option name="timeStamp" value="118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Arm/src/cc/emulator/arch/arm/decoder/DataProcessingDecoder.java</url>
+          <line>521</line>
+          <properties />
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>261</line>
+          <properties />
+          <option name="timeStamp" value="163" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/MovImmediateToRegister.java</url>
+          <line>15</line>
+          <properties />
+          <option name="timeStamp" value="174" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/MovImmediateToRegister.java</url>
+          <line>66</line>
+          <properties />
+          <option name="timeStamp" value="175" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>310</line>
+          <properties />
+          <option name="timeStamp" value="179" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/AccumulatorZone.java</url>
+          <line>71</line>
+          <properties />
+          <option name="timeStamp" value="194" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/AccumulatorZone.java</url>
+          <line>32</line>
+          <properties />
+          <option name="timeStamp" value="195" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/PersonalComputer.java</url>
+          <line>36</line>
+          <properties />
+          <option name="timeStamp" value="208" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/AbstractMainBoard.java</url>
+          <line>87</line>
+          <properties />
+          <option name="timeStamp" value="211" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/AbstractMainBoard.java</url>
+          <line>91</line>
+          <properties />
+          <option name="timeStamp" value="212" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/CpuCore/src/cc/emulator/core/cpu/Cpu.java</url>
+          <line>112</line>
+          <properties />
+          <option name="timeStamp" value="213" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>70</line>
+          <properties />
+          <option name="timeStamp" value="217" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>56</line>
+          <properties />
+          <option name="timeStamp" value="219" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>289</line>
+          <properties />
+          <option name="timeStamp" value="220" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/MemoryPane.java</url>
+          <line>79</line>
+          <properties />
+          <option name="timeStamp" value="224" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/MemoryPane.java</url>
+          <line>82</line>
+          <properties />
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/MemoryPane.java</url>
+          <line>75</line>
+          <properties />
+          <option name="timeStamp" value="227" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/MemoryPane.java</url>
+          <line>50</line>
+          <properties />
+          <option name="timeStamp" value="229" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>316</line>
+          <properties />
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/StatusRegisterZone.java</url>
+          <line>82</line>
+          <properties />
+          <option name="timeStamp" value="235" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/StatusRegisterZone.java</url>
+          <line>94</line>
+          <properties />
+          <option name="timeStamp" value="236" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>389</line>
+          <properties />
+          <option name="timeStamp" value="246" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>397</line>
+          <properties />
+          <option name="timeStamp" value="248" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>395</line>
+          <properties />
+          <option name="timeStamp" value="250" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>204</line>
+          <properties />
+          <option name="timeStamp" value="264" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/CpuCore/src/cc/emulator/core/cpu/Cpu.java</url>
+          <line>160</line>
+          <properties />
+          <option name="timeStamp" value="265" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Intel8086.java</url>
+          <line>145</line>
+          <properties />
+          <option name="timeStamp" value="268" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/EU8086.java</url>
+          <line>1436</line>
+          <properties />
+          <option name="timeStamp" value="274" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>328</line>
+          <properties />
+          <option name="timeStamp" value="278" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>51</line>
+          <properties />
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>272</line>
+          <properties />
+          <option name="timeStamp" value="285" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/PcCore/src/cc/emulator/core/computer/AbstractMainBoard.java</url>
+          <line>44</line>
+          <properties />
+          <option name="timeStamp" value="286" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>236</line>
+          <properties />
+          <option name="timeStamp" value="288" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/CpuCore/src/cc/emulator/core/cpu/Cpu.java</url>
+          <line>150</line>
+          <properties />
+          <option name="timeStamp" value="289" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>151</line>
+          <properties />
+          <option name="timeStamp" value="291" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/BIU8086.java</url>
+          <line>109</line>
+          <properties />
+          <option name="timeStamp" value="294" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Decoder8086.java</url>
+          <line>164</line>
+          <properties />
+          <option name="timeStamp" value="300" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Instruction8086.java</url>
+          <line>143</line>
+          <properties />
+          <option name="timeStamp" value="310" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../PcEmu/src/cc/emulator/apps/MyComputer.java</url>
+          <line>94</line>
+          <properties />
+          <option name="timeStamp" value="315" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/../EmuUI/UiCore/src/cc/emulator/ui/swing/InstructionPane.java</url>
+          <line>104</line>
+          <properties />
+          <option name="timeStamp" value="321" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecRegister.java</url>
+          <line>42</line>
+          <properties />
+          <option name="timeStamp" value="326" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecRegister.java</url>
+          <line>55</line>
+          <properties />
+          <option name="timeStamp" value="328" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="330" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="memory.length" language="JAVA" />
+        <watch expression="instruction" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>memory.length</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086Instruction.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/XorRegisterMemoryImmediate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9315">
-          <caret line="345" column="60" lean-forward="false" selection-start-line="345" selection-start-column="60" selection-end-line="345" selection-end-column="60" />
+        <state relative-caret-position="216">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcRegisterMemoryImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="62" lean-forward="false" selection-start-line="8" selection-start-column="62" selection-end-line="8" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndRegisterMemoryImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AsciiAdjustForAddition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AsciiAdjustForDivision.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="29">
+          <caret line="20" column="13" lean-forward="false" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AsciiAdjustForMultiply.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AsciiAdjustForSubstraction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/MemoryManager.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallIndirect.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4266">
-          <caret line="158" column="16" lean-forward="false" selection-start-line="158" selection-start-column="16" selection-end-line="158" selection-end-column="16" />
+        <state relative-caret-position="-56">
+          <caret line="7" column="3" lean-forward="true" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallNearProc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CmpAccumulatorImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="785">
+          <caret line="58" column="1" lean-forward="true" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CmpRegisterMemoryImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/ControlOp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1892">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/ConvertByteWord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-108">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecimalAdjustForSubstraction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecimalAdjustForAddition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Escape.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-56">
+          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/FlagsFromToAH.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/FlagsFromToStack.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Decoder8086.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="149" column="0" lean-forward="false" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Instruction8086.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-57">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DivRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CompareString.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="729">
+          <caret line="27" column="13" lean-forward="false" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CmpRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" column="47" lean-forward="false" selection-start-line="8" selection-start-column="47" selection-end-line="8" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OpRegisterMemory.java" />
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/IntelInstructionHelper.java" />
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/BIU8086.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1000">
+          <caret line="107" column="0" lean-forward="false" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9015#9029#0" expanded="true" />
+            <element signature="e#3612#3613#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/PersonalComputer.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/Intel8086InstructionSet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="32" column="30" lean-forward="false" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/DecRegister.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#676#677#0" expanded="true" />
+            <element signature="e#725#726#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/IncRegister.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="26" column="27" lean-forward="true" selection-start-line="26" selection-start-column="27" selection-end-line="26" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/OpRegister.java" />
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InVariablePort.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-300">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/LoadEffectiveAddress.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="20" column="13" lean-forward="false" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/IncRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="18" column="33" lean-forward="true" selection-start-line="18" selection-start-column="33" selection-end-line="18" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/MoveString.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="42" column="72" lean-forward="true" selection-start-line="42" selection-start-column="72" selection-end-line="42" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/FlagOp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcAccumulatorImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="537">
+          <caret line="28" column="15" lean-forward="true" selection-start-line="28" selection-start-column="15" selection-end-line="28" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AdcRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="573">
+          <caret line="38" column="9" lean-forward="true" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddAccumulatorImmediate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="783">
+          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddRegisterMemoryImmediate.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
-          <caret line="18" column="31" lean-forward="false" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#353#354#0" expanded="true" />
-            <element signature="e#393#394#0" expanded="true" />
-          </folding>
+          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/lang/Integer.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndAccumulatorImmediate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14337">
-          <caret line="531" column="22" lean-forward="false" selection-start-line="531" selection-start-column="22" selection-end-line="531" selection-end-column="22" />
-          <folding />
+        <state relative-caret-position="945">
+          <caret line="41" column="0" lean-forward="true" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/apps/computer/MyComputer.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Call.java" />
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AddRegisterMemory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/Computer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="9" lean-forward="false" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/BaseComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1107">
-          <caret line="47" column="40" lean-forward="false" selection-start-line="47" selection-start-column="40" selection-end-line="47" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#645#646#0" expanded="true" />
-            <element signature="e#689#690#0" expanded="true" />
-            <element signature="e#1505#1506#0" expanded="true" />
-            <element signature="e#1530#1531#0" expanded="true" />
-            <element signature="e#2164#2165#0" expanded="true" />
-            <element signature="e#2228#2229#0" expanded="true" />
-            <element signature="e#2273#2274#0" expanded="true" />
-            <element signature="e#2343#2344#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Cpu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="11" column="23" lean-forward="false" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-          <folding>
-            <element signature="e#233#234#0" expanded="true" />
-            <element signature="e#263#264#0" expanded="true" />
-            <element signature="e#712#713#0" expanded="true" />
-            <element signature="e#748#749#0" expanded="true" />
-            <element signature="e#1376#1377#0" expanded="true" />
-            <element signature="e#1404#1405#0" expanded="true" />
-            <element signature="e#1457#1458#0" expanded="true" />
-            <element signature="e#1496#1497#0" expanded="true" />
-            <element signature="e#1545#1546#0" expanded="true" />
-            <element signature="e#1582#1583#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97902">
-          <caret line="3645" column="32" lean-forward="false" selection-start-line="3645" selection-start-column="32" selection-end-line="3645" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#8316#8317#0" expanded="true" />
-            <element signature="e#8341#8342#0" expanded="true" />
-            <element signature="e#8534#8535#0" expanded="true" />
-            <element signature="e#8575#8576#0" expanded="true" />
-            <element signature="e#8626#8627#0" expanded="true" />
-            <element signature="e#8665#8666#0" expanded="true" />
-            <element signature="e#8738#8739#0" expanded="true" />
-            <element signature="e#8788#8789#0" expanded="true" />
-            <element signature="e#9736#9737#0" expanded="true" />
-            <element signature="e#9783#9784#0" expanded="true" />
-            <marker date="1501066014304" expanded="false" signature="28440:28467" ph="/unused/" />
-            <marker date="1501066014304" expanded="false" signature="43330:43341" ph=" { " />
-            <marker date="1501066014304" expanded="false" signature="43367:43373" ph=" }" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/IBMCGA.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11664">
-          <caret line="432" column="80" lean-forward="false" selection-start-line="432" selection-start-column="80" selection-end-line="432" selection-end-column="80" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/MemoryManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4158">
-          <caret line="158" column="16" lean-forward="false" selection-start-line="158" selection-start-column="16" selection-end-line="158" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9015#9029#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/PersonalComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="18" column="31" lean-forward="false" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#353#354#0" expanded="true" />
-            <element signature="e#393#394#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/lang/Integer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14337">
-          <caret line="531" column="22" lean-forward="false" selection-start-line="531" selection-start-column="22" selection-end-line="531" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/apps/computer/MyComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/Computer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="9" lean-forward="false" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/BaseComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1107">
-          <caret line="47" column="40" lean-forward="true" selection-start-line="47" selection-start-column="40" selection-end-line="47" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#645#646#0" expanded="true" />
-            <element signature="e#689#690#0" expanded="true" />
-            <element signature="e#1505#1506#0" expanded="true" />
-            <element signature="e#1530#1531#0" expanded="true" />
-            <element signature="e#2164#2165#0" expanded="true" />
-            <element signature="e#2228#2229#0" expanded="true" />
-            <element signature="e#2273#2274#0" expanded="true" />
-            <element signature="e#2343#2344#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Cpu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="11" column="23" lean-forward="false" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-          <folding>
-            <element signature="e#233#234#0" expanded="true" />
-            <element signature="e#263#264#0" expanded="true" />
-            <element signature="e#712#713#0" expanded="true" />
-            <element signature="e#748#749#0" expanded="true" />
-            <element signature="e#1376#1377#0" expanded="true" />
-            <element signature="e#1404#1405#0" expanded="true" />
-            <element signature="e#1457#1458#0" expanded="true" />
-            <element signature="e#1496#1497#0" expanded="true" />
-            <element signature="e#1545#1546#0" expanded="true" />
-            <element signature="e#1582#1583#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086Instruction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="5" column="3" lean-forward="true" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/Motorola6845.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/awt/event/KeyEvent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="293" column="28" lean-forward="false" selection-start-line="293" selection-start-column="28" selection-end-line="293" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/Intel8259.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
-          <folding>
-            <element signature="e#2522#2523#0" expanded="false" />
-            <element signature="e#2554#2555#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/Intel8255.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="88" column="23" lean-forward="false" selection-start-line="88" selection-start-column="23" selection-end-line="88" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CpuEmu.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/util/Properties.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="121" column="6" lean-forward="false" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/IBMPc.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="5" column="23" lean-forward="false" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/新建文本文档.txt" />
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/lang/Integer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13446">
-          <caret line="531" column="22" lean-forward="false" selection-start-line="531" selection-start-column="22" selection-end-line="531" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/Computer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="9" lean-forward="false" selection-start-line="7" selection-start-column="9" selection-end-line="7" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/apps/computer/MyComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="8" column="1" lean-forward="true" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/Java/jdk1.8.0/src.zip!/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="518" column="19" lean-forward="false" selection-start-line="518" selection-start-column="19" selection-end-line="518" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/AddressGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="17" lean-forward="false" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/AddressBus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="10" lean-forward="false" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelAddressBus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelDataBus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="9" column="39" lean-forward="true" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataBus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="2" selection-end-line="14" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/BaseComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-62">
-          <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/PersonalComputer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#271#272#0" expanded="true" />
-            <element signature="e#304#305#0" expanded="true" />
-            <element signature="e#353#354#0" expanded="true" />
-            <element signature="e#393#394#0" expanded="true" />
-            <element signature="e#445#446#0" expanded="true" />
-            <element signature="e#488#489#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086Instruction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="22" column="43" lean-forward="true" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelStack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelAddressGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-          <folding>
-            <element signature="e#320#321#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/IntelMemoryAccessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#384#385#0" expanded="true" />
-            <element signature="e#426#427#0" expanded="true" />
-            <element signature="e#532#533#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataRegister.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/DataBusImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
+        <state relative-caret-position="459">
           <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding>
-            <element signature="e#200#201#0" expanded="true" />
-            <element signature="e#232#233#0" expanded="true" />
-            <element signature="e#274#275#0" expanded="true" />
-            <element signature="e#301#302#0" expanded="true" />
-            <element signature="e#401#402#0" expanded="true" />
-            <element signature="e#454#455#0" expanded="true" />
-            <element signature="e#483#484#0" expanded="true" />
-            <element signature="e#558#559#0" expanded="true" />
-            <element signature="e#585#586#0" expanded="true" />
-            <element signature="e#635#636#0" expanded="true" />
-            <element signature="e#659#660#0" expanded="true" />
+            <element signature="e#412#413#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/MemoryAccessor.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InFixedPort.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="762">
-          <caret line="98" column="0" lean-forward="false" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-          <folding>
-            <element signature="e#248#249#0" expanded="true" />
-            <element signature="e#283#284#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/computer/MemoryManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="249" column="51" lean-forward="true" selection-start-line="249" selection-start-column="51" selection-end-line="249" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9015#9029#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fr/neatmonster/ibmpc/IBMCGA.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="719">
-          <caret line="435" column="73" lean-forward="true" selection-start-line="435" selection-start-column="73" selection-end-line="435" selection-end-column="73" />
+        <state relative-caret-position="81">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Cpu.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Interrupt.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="57" column="14" lean-forward="false" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
+        <state relative-caret-position="2781">
+          <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/InterruptReturn.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="999">
+          <caret line="41" column="0" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
           <folding>
-            <element signature="e#233#234#0" expanded="true" />
-            <element signature="e#263#264#0" expanded="true" />
-            <element signature="e#712#713#0" expanded="true" />
-            <element signature="e#748#749#0" expanded="true" />
-            <element signature="e#1376#1377#0" expanded="true" />
-            <element signature="e#1404#1405#0" expanded="true" />
-            <element signature="e#1457#1458#0" expanded="true" />
-            <element signature="e#1496#1497#0" expanded="true" />
-            <element signature="e#1545#1546#0" expanded="true" />
-            <element signature="e#1582#1583#0" expanded="true" />
+            <element signature="e#603#604#0" expanded="true" />
+            <element signature="e#641#642#0" expanded="true" />
+            <element signature="e#701#702#0" expanded="true" />
+            <element signature="e#750#751#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/Stack.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/Jump.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="22" column="18" lean-forward="true" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
-          <folding>
-            <element signature="e#308#309#0" expanded="true" />
-            <element signature="e#333#334#0" expanded="true" />
-            <element signature="e#359#360#0" expanded="true" />
-            <element signature="e#384#385#0" expanded="true" />
-            <element signature="e#417#418#0" expanded="true" />
-            <element signature="e#445#446#0" expanded="true" />
-            <element signature="e#478#479#0" expanded="true" />
-            <element signature="e#506#507#0" expanded="true" />
-            <element signature="e#947#948#0" expanded="true" />
-            <element signature="e#999#1000#0" expanded="true" />
-            <element signature="e#1073#1074#0" expanded="true" />
-            <element signature="e#1129#1130#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1134">
+          <caret line="42" column="13" lean-forward="false" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/cc/emulator/core/cpu/intel/Intel8086.java">
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/JumpIf.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="1336" column="20" lean-forward="true" selection-start-line="1336" selection-start-column="20" selection-end-line="1336" selection-end-column="20" />
+        <state relative-caret-position="702">
+          <caret line="26" column="13" lean-forward="false" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/AndRegisterMemory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/CallFarProc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1863">
+          <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/X86/src/cc/emulator/x86/i8086/instruction/JmpIndirect.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="481">
+          <caret line="23" column="43" lean-forward="false" selection-start-line="23" selection-start-column="43" selection-end-line="23" selection-end-column="43" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#8316#8317#0" expanded="true" />
-            <element signature="e#8341#8342#0" expanded="true" />
-            <element signature="e#8534#8535#0" expanded="true" />
-            <element signature="e#8575#8576#0" expanded="true" />
-            <element signature="e#8626#8627#0" expanded="true" />
-            <element signature="e#8665#8666#0" expanded="true" />
-            <element signature="e#8738#8739#0" expanded="true" />
-            <element signature="e#8788#8789#0" expanded="true" />
-            <element signature="e#9736#9737#0" expanded="true" />
-            <element signature="e#9783#9784#0" expanded="true" />
-            <marker date="1501066014304" expanded="false" signature="28440:28467" ph="/unused/" />
-            <marker date="1501066014304" expanded="false" signature="43330:43341" ph=" { " />
-            <marker date="1501066014304" expanded="false" signature="43367:43373" ph=" }" />
+            <element signature="e#1253#1254#0" expanded="true" />
+            <element signature="e#1281#1282#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1164,8 +1496,32 @@
           </splitter-proportions>
         </settings>
       </state>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
       <state key="Copyright.UI">
         <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1188,7 +1544,31 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.8</last-edited>
+          <last-edited>Android API 25 Platform</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Arm</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>4.6.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

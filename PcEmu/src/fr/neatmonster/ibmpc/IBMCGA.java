@@ -1,16 +1,11 @@
 package fr.neatmonster.ibmpc;
 
 import cc.emulator.core.computer.VideoAdapter;
-import cc.emulator.core.computer.swing.Display;
-import cc.emulator.core.cpu.Cpu;
+import cc.emulator.computer.swing.Display;
 import cc.emulator.core.FontInfo;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * IBM Color/Graphics Monitor Adapter
@@ -91,7 +86,7 @@ import java.util.TimerTask;
  * @author Alexandre ADAMSKI <alexandre.adamski@etu.enseeiht.fr>
  */
 @SuppressWarnings("serial")
-public class IBMCGA extends Display  {
+public class IBMCGA extends Display {
     /**
      * Lookup table for conversions from CP437 to Unicode code points.
      */

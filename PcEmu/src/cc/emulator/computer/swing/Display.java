@@ -1,4 +1,4 @@
-package cc.emulator.core.computer.swing;
+package cc.emulator.computer.swing;
 
 import cc.emulator.core.FontInfo;
 import cc.emulator.core.computer.VideoAdapter;

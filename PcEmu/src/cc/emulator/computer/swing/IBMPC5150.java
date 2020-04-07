@@ -1,8 +1,8 @@
-package cc.emulator.computer;
+package cc.emulator.computer.swing;
 
+import cc.emulator.computer.PC5150MainBoard;
 import cc.emulator.core.*;
 import cc.emulator.core.computer.*;
-import cc.emulator.core.computer.swing.Keyboard;
 import cc.emulator.core.cpu.Cpu;
 
 import fr.neatmonster.ibmpc.*;

@@ -1,6 +1,6 @@
 package cc.emulator.apps;
 
-import cc.emulator.computer.IBMPC5150;
+import cc.emulator.computer.swing.IBMPC5150;
 import cc.emulator.core.MemoryManager;
 import cc.emulator.core.computer.Computer;
 import cc.emulator.core.computer.ProgramMemoryInfo;
@@ -12,7 +12,7 @@ import cc.emulator.ui.swing.RegisterPane;
 import cc.emulator.x86.i8086.Decoder8086;
 import fr.neatmonster.ibmpc.IBMCGA;
 import cc.emulator.ui.swing.InstructionPane;
-import cc.emulator.core.computer.swing.Keyboard;
+import cc.emulator.computer.swing.Keyboard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,8 +32,19 @@ public class MyComputer {
     public static void main(final String[] args) {
         String configFile="/IBMPc.properties";
         MyComputer myComputer = new MyComputer(configFile);
-        myComputer.initUi();
+//        myComputer.initUi();
+        myComputer.start();
     }
+
+    private void start() {
+        new Thread() {
+            @Override
+            public void run() {
+                computer.start();
+            }
+        }.start();
+    }
+
     void initUi(){
         JFrame cpuFrame = new JFrame("CPU x86");
         JPanel cpuContent = initCpuEmuUi();
@@ -42,22 +53,10 @@ public class MyComputer {
         contentPanel.setLayout(new BorderLayout());
         contentPanel.add(cpuContent, BorderLayout.CENTER);
         IBMCGA display = (IBMCGA) computer.getDisplay();
-//        cpuFrame.addKeyListener(display);
-//
-//        contentPanel.add(display,BorderLayout.EAST);
 
         computer.getCpu().setStepModeListener(stepModeListener);
 
         initAppUi(cpuFrame, contentPanel);
-
-        new Thread() {
-            @Override
-            public void run() {
-                computer.start();
-            }
-        }.start();
-
-
     }
     void initAppUi(JFrame cpuFrame,JPanel contentPane ){
 

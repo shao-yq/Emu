@@ -1,4 +1,4 @@
-package cc.emulator.core.computer.swing;
+package cc.emulator.computer.swing;
 
 import cc.emulator.core.ProgrammablePeripheralInterface;
 import cc.emulator.core.computer.KeyBoard;
@@ -23,7 +23,7 @@ public class Keyboard implements KeyBoard, KeyListener {
      * Instantiates a new Keyboard.
      * @param ppi
      */
-    public Keyboard (ProgrammablePeripheralInterface ppi){
+    public Keyboard(ProgrammablePeripheralInterface ppi){
         this.ppi = ppi;
     }
 
